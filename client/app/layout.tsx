@@ -34,7 +34,7 @@ export default function RootLayout({
         {/* Content Security Policy for XSS protection */}
         <meta 
           httpEquiv="Content-Security-Policy" 
-          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://*.cloudflare.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://forsyth-chats.onrender.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org https://challenges.cloudflare.com https://*.cloudflare.com wss: ws:; frame-src 'self' https://challenges.cloudflare.com https://*.cloudflare.com; worker-src 'self' blob:; child-src 'self' https://challenges.cloudflare.com;" 
+          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://forsyth-chats.onrender.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org wss: ws:; frame-src 'self'; worker-src 'self' blob:; child-src 'self';" 
         />
         {/* Force HTTPS in production */}
         <script dangerouslySetInnerHTML={{
@@ -54,7 +54,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
       </head>
       <body className={inter.className}>
         {children}

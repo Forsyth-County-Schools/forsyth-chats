@@ -25,7 +25,7 @@ export interface JoinRoomResponse {
 }
 
 export const api = {
-  async createRoom(creatorName?: string, schoolData?: { schoolName: string; schoolCode: string; turnstileToken: string }): Promise<CreateRoomResponse> {
+  async createRoom(creatorName?: string, schoolData?: { schoolName: string; schoolCode: string }): Promise<CreateRoomResponse> {
     const response = await fetch(`${API_URL}/api/create-room`, {
       method: 'POST',
       headers: {
@@ -56,7 +56,7 @@ export const api = {
     return response.json();
   },
 
-  async joinRoom(data: { roomCode: string; name: string; turnstileToken: string }): Promise<JoinRoomResponse> {
+  async joinRoom(data: { roomCode: string; name: string }): Promise<JoinRoomResponse> {
     const response = await fetch(`${API_URL}/api/join-room`, {
       method: 'POST',
       headers: {

@@ -26,7 +26,6 @@ export default function CreatePage() {
   const [isCreating, setIsCreating] = useState(false);
   const [nameError, setNameError] = useState('');
   const [schoolError, setSchoolError] = useState('');
-  const [turnstileToken, setTurnstileToken] = useState('');
   const [roomCreated, setRoomCreated] = useState(false);
   const [createdRoomCode, setCreatedRoomCode] = useState('');
   const [createdSchoolName, setCreatedSchoolName] = useState('');
@@ -54,22 +53,6 @@ export default function CreatePage() {
       });
     }
   };
-
-  useEffect(() => {
-    // Setup Turnstile callback globally
-    if (typeof window !== 'undefined') {
-      window.onTurnstileSuccess = function(token) {
-        setTurnstileToken(token);
-      };
-      
-      // Cleanup function
-      return () => {
-        if (window.onTurnstileSuccess) {
-          window.onTurnstileSuccess = undefined;
-        }
-      };
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,15 +87,6 @@ export default function CreatePage() {
       toast({
         title: 'District Policy Required',
         description: 'Please agree to the Forsyth County Schools Acceptable Use Policy',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (!turnstileToken) {
-      toast({
-        title: 'Security Verification Required',
-        description: 'Please complete the security verification',
         variant: 'destructive',
       });
       return;
@@ -323,24 +297,11 @@ export default function CreatePage() {
                   </div>
                 </div>
 
-                {/* Cloudflare Turnstile */}
-                <div className="flex justify-center">
-                  <div 
-                    className="cf-turnstile" 
-                    data-sitekey="1x00000000000000000000AA"
-                    data-callback="onTurnstileSuccess"
-                    data-theme="auto"
-                    data-size="normal"
-                    role="button"
-                    aria-label="Complete security verification"
-                  ></div>
-                </div>
-
                 <Button
                   type="submit"
                   size="lg"
                   className="btn-red-primary w-full text-xl py-6 font-bold"
-                  disabled={isCreating || !creatorName.trim() || !selectedSchool || !agreedToPolicy || !agreedToDistrictPolicy || !turnstileToken}
+                  disabled={isCreating || !creatorName.trim() || !selectedSchool || !agreedToPolicy || !agreedToDistrictPolicy}
                 >
                   {isCreating ? (
                     <>
@@ -408,7 +369,7 @@ export default function CreatePage() {
                         setSelectedSchool('');
                         setAgreedToPolicy(false);
                         setAgreedToDistrictPolicy(false);
-                        setTurnstileToken('');
+                      }}
                       }}
                       variant="outline"
                       size="lg"

@@ -27,45 +27,11 @@ export default function JoinPage() {
   const [roomExists, setRoomExists] = useState<boolean | null>(null);
   const [codeError, setCodeError] = useState('');
   const [nameError, setNameError] = useState('');
-  const [turnstileToken, setTurnstileToken] = useState('');
   const [schoolInfo, setSchoolInfo] = useState<{ name: string; category: string } | null>(null);
   
   const router = useRouter();
   const { toast } = useToast();
   const { setUser } = useUserStore();
-
-  useEffect(() => {
-    // Setup Turnstile callback globally
-    if (typeof window !== 'undefined') {
-      window.onTurnstileSuccess = function(token) {
-        setTurnstileToken(token);
-      };
-      
-      // Cleanup function
-      return () => {
-        if (window.onTurnstileSuccess) {
-          window.onTurnstileSuccess = undefined;
-        }
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    // Load Cloudflare Turnstile script if not already loaded
-    if (typeof window !== 'undefined' && !window.turnstile) {
-      const script = document.createElement('script');
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-      
-      return () => {
-        // Cleanup script if component unmounts
-        const scripts = document.querySelectorAll('script[src*="turnstile"]');
-        scripts.forEach(script => script.remove());
-      };
-    }
-  }, []);
 
   const handleCheckRoom = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,15 +100,6 @@ export default function JoinPage() {
       });
       return;
     }
-
-    if (!turnstileToken) {
-      toast({
-        title: 'Security Verification Required',
-        description: 'Please complete the security verification',
-        variant: 'destructive',
-      });
-      return;
-    }
     
     setIsJoining(true);
     
@@ -150,7 +107,6 @@ export default function JoinPage() {
       const response = await api.joinRoom({
         roomCode: roomCode.trim(),
         name: name.trim(),
-        turnstileToken,
       });
       
       // Set user in store
@@ -366,17 +322,6 @@ export default function JoinPage() {
                         </label>
                       </div>
                     </div>
-
-                    {/* Cloudflare Turnstile */}
-                    <div className="flex justify-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
-                      <div 
-                        className="cf-turnstile" 
-                        data-sitekey="1x00000000000000000000AA"
-                        data-callback="onTurnstileSuccess"
-                        data-theme="auto"
-                        data-size="normal"
-                      ></div>
-                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -388,7 +333,6 @@ export default function JoinPage() {
                         setName('');
                         setNameError('');
                         setAgreedToPolicy(false);
-                        setTurnstileToken('');
                       }}
                       disabled={isJoining}
                       className="py-4 text-lg font-semibold border-2 border-red-200 hover:border-red-300 rounded-2xl transition-all duration-300 hover:scale-[1.02]"
@@ -399,7 +343,7 @@ export default function JoinPage() {
                       type="submit"
                       size="lg"
                       className="py-4 text-lg font-bold rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transform hover:scale-[1.02] transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-green-500/25"
-                      disabled={isJoining || !name.trim() || !agreedToPolicy || !turnstileToken}
+                      disabled={isJoining || !name.trim() || !agreedToPolicy}
                     >
                       {isJoining ? (
                         <>
