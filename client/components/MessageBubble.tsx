@@ -1,20 +1,31 @@
 'use client';
 
 import { format } from 'date-fns';
-import { Message } from '@/lib/socket';
+import { Message, Attachment } from '@/lib/socket';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
+import { useState } from 'react';
+import { getSocket } from '@/lib/socket';
+import { Download, ExternalLink, Reply, Smile } from 'lucide-react';
 
 interface MessageBubbleProps {
   message: Message;
+  onReply?: (message: Message) => void;
+  replyToMessage?: Message | null;
+  userProfiles?: Record<string, { displayName: string; profileImageUrl?: string }>;
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
-  const { name: currentUserName } = useUserStore();
+export function MessageBubble({ message, onReply, replyToMessage, userProfiles }: MessageBubbleProps) {
+  const { name: currentUserName, roomCode } = useUserStore();
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const isOwn = message.name === currentUserName;
   
   // Get initials for avatar
   const initials = message.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  
+  // Get user profile data
+  const userProfile = userProfiles?.[message.name];
+  const profileImage = userProfile?.profileImageUrl;
   
   // Generate a consistent color for each user based on their name
   const getUserColor = (name: string) => {
@@ -34,6 +45,186 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     }
     return colors[Math.abs(hash) % colors.length];
   };
+
+  const handleReaction = (emoji: string) => {
+    const socket = getSocket();
+    if (socket && roomCode && currentUserName) {
+      socket.emit('add-reaction', {
+        messageId: message._id,
+        roomCode,
+        name: currentUserName,
+        emoji
+      });
+    }
+    setShowEmojiPicker(false);
+  };
+
+  const handleDownload = async (attachment: Attachment) => {
+    try {
+      const response = await fetch(`https://forsyth-chats.onrender.com${attachment.url}`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = attachment.originalName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const renderLinkPreviews = () => {
+    if (!message.linkPreviews?.length) return null;
+
+    return (
+      <div className="mt-3 space-y-2">
+        {message.linkPreviews.map((link, index) => (
+          <a
+            key={index}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              'block rounded-2xl border overflow-hidden hover:scale-[1.02] transition-all duration-200',
+              isOwn
+                ? 'border-blue-300 bg-blue-50/20'
+                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+            )}
+          >
+            {link.image && (
+              <img
+                src={link.image}
+                alt={link.title}
+                className="w-full h-32 object-cover"
+              />
+            )}
+            <div className="p-3">
+              <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                <ExternalLink className="w-3 h-3" />
+                {link.domain}
+              </div>
+              {link.title && (
+                <h4 className={cn(
+                  'font-semibold text-sm mb-1',
+                  isOwn ? 'text-blue-100' : 'text-slate-900 dark:text-white'
+                )}>
+                  {link.title}
+                </h4>
+              )}
+              {link.description && (
+                <p className={cn(
+                  'text-xs line-clamp-2',
+                  isOwn ? 'text-blue-200' : 'text-slate-600 dark:text-slate-300'
+                )}>
+                  {link.description}
+                </p>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    );
+  };
+
+  const renderAttachments = () => {
+    if (!message.attachments?.length) return null;
+
+    return (
+      <div className="mt-3 space-y-2">
+        {message.attachments.map((attachment, index) => (
+          <div key={index}>
+            {attachment.type === 'image' ? (
+              <img
+                src={`https://forsyth-chats.onrender.com${attachment.url}`}
+                alt={attachment.originalName}
+                className="rounded-xl max-w-sm max-h-64 object-cover cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => window.open(`https://forsyth-chats.onrender.com${attachment.url}`, '_blank')}
+              />
+            ) : (
+              <div className={cn(
+                'flex items-center gap-3 p-3 rounded-xl border',
+                isOwn
+                  ? 'border-blue-300 bg-blue-50/20'
+                  : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+              )}>
+                <div className={cn(
+                  'w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold',
+                  isOwn
+                    ? 'bg-blue-200 text-blue-800'
+                    : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300'
+                )}>
+                  📄
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={cn(
+                    'font-medium text-sm truncate',
+                    isOwn ? 'text-blue-100' : 'text-slate-900 dark:text-white'
+                  )}>
+                    {attachment.originalName}
+                  </p>
+                  <p className={cn(
+                    'text-xs',
+                    isOwn ? 'text-blue-200' : 'text-slate-500 dark:text-slate-400'
+                  )}>
+                    {formatFileSize(attachment.size)}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleDownload(attachment)}
+                  className={cn(
+                    'p-2 rounded-lg transition-colors',
+                    isOwn
+                      ? 'hover:bg-blue-400/20 text-blue-100'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400'
+                  )}
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderReactions = () => {
+    if (!message.reactions?.length) return null;
+
+    return (
+      <div className="flex flex-wrap gap-1 mt-2">
+        {message.reactions.map((reaction, index) => {
+          const hasUserReacted = currentUserName ? reaction.users.includes(currentUserName) : false;
+          return (
+            <button
+              key={index}
+              onClick={() => handleReaction(reaction.emoji)}
+              className={cn(
+                'flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all',
+                hasUserReacted
+                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 ring-1 ring-blue-300 dark:ring-blue-700'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
+              )}
+            >
+              <span>{reaction.emoji}</span>
+              <span>{reaction.count}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
   
   return (
     <div
@@ -45,9 +236,17 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       {/* Avatar for other users */}
       {!isOwn && (
         <div className="flex-shrink-0 mr-4 mt-1">
-          <div className={`w-12 h-12 bg-gradient-to-br ${getUserColor(message.name)} rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-lg ring-2 ring-white dark:ring-slate-800`}>
-            {initials}
-          </div>
+          {profileImage ? (
+            <img
+              src={profileImage}
+              alt={message.name}
+              className="w-12 h-12 rounded-2xl object-cover shadow-lg ring-2 ring-white dark:ring-slate-800"
+            />
+          ) : (
+            <div className={`w-12 h-12 bg-gradient-to-br ${getUserColor(message.name)} rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-lg ring-2 ring-white dark:ring-slate-800`}>
+              {initials}
+            </div>
+          )}
         </div>
       )}
       
@@ -55,34 +254,114 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {!isOwn && (
           <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 ml-4 font-semibold">{message.name}</p>
         )}
-        <div
-          className={cn(
-            'rounded-3xl px-6 py-4 shadow-lg transition-all duration-200 group-hover:shadow-xl relative',
-            isOwn
-              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-200 dark:shadow-blue-900/50'
-              : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white shadow-slate-200 dark:shadow-slate-900/50'
-          )}
-        >
-          <p className="whitespace-pre-wrap break-words text-base leading-relaxed">
-            {message.message}
-          </p>
-          <p
+        
+        {/* Reply indicator */}
+        {message.replyTo && replyToMessage && (
+          <div className="ml-4 mb-2 p-2 border-l-2 border-blue-300 bg-slate-50 dark:bg-slate-800/50 rounded-r-lg">
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              Replying to {replyToMessage.name}
+            </p>
+            <p className="text-xs text-slate-600 dark:text-slate-300 truncate">
+              {replyToMessage.message}
+            </p>
+          </div>
+        )}
+        
+        <div className="relative">
+          <div
             className={cn(
-              'text-xs mt-3 font-medium',
-              isOwn ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
+              'rounded-3xl px-6 py-4 shadow-lg transition-all duration-200 group-hover:shadow-xl relative',
+              isOwn
+                ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-200 dark:shadow-blue-900/50'
+                : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white shadow-slate-200 dark:shadow-slate-900/50'
             )}
           >
-            {format(new Date(message.timestamp), 'h:mm a')}
-          </p>
+            {message.message.trim() && (
+              <p className="whitespace-pre-wrap break-words text-base leading-relaxed">
+                {message.message}
+              </p>
+            )}
+            
+            {renderAttachments()}
+            {renderLinkPreviews()}
+            
+            <div className="flex items-center justify-between mt-3">
+              <p
+                className={cn(
+                  'text-xs font-medium',
+                  isOwn ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
+                )}
+              >
+                {format(new Date(message.timestamp), 'h:mm a')}
+                {message.edited && ' (edited)'}
+              </p>
+              
+              {/* Action buttons */}
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => onReply?.(message)}
+                  className={cn(
+                    'p-1.5 rounded-lg transition-colors text-xs',
+                    isOwn
+                      ? 'hover:bg-blue-400/20 text-blue-100'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-400'
+                  )}
+                  title="Reply"
+                >
+                  <Reply className="w-3.5 h-3.5" />
+                </button>
+                
+                <div className="relative">
+                  <button
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className={cn(
+                      'p-1.5 rounded-lg transition-colors text-xs',
+                      isOwn
+                        ? 'hover:bg-blue-400/20 text-blue-100'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-400'
+                    )}
+                    title="Add reaction"
+                  >
+                    <Smile className="w-3.5 h-3.5" />
+                  </button>
+                  
+                  {/* Simple emoji picker */}
+                  {showEmojiPicker && (
+                    <div className="absolute top-8 right-0 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-lg p-2 flex gap-1 z-10">
+                      {['👍', '❤️', '😂', '😮', '😢', '😡'].map((emoji) => (
+                        <button
+                          key={emoji}
+                          onClick={() => handleReaction(emoji)}
+                          className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-lg"
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {renderReactions()}
         </div>
       </div>
       
       {/* Avatar for own messages */}
       {isOwn && (
         <div className="flex-shrink-0 ml-4 mt-1">
-          <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-lg ring-2 ring-white dark:ring-slate-800">
-            {initials}
-          </div>
+          {profileImage ? (
+            <img
+              src={profileImage}
+              alt={message.name}
+              className="w-12 h-12 rounded-2xl object-cover shadow-lg ring-2 ring-white dark:ring-slate-800"
+            />
+          ) : (
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-lg ring-2 ring-white dark:ring-slate-800">
+              {initials}
+            </div>
+          )}
         </div>
       )}
     </div>

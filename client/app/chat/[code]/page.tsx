@@ -33,6 +33,7 @@ export default function ChatPage() {
     isConnected,
     setMessages,
     addMessage,
+    updateMessage,
     setParticipants,
     setTypingUser,
     setConnected,
@@ -42,8 +43,15 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [schoolInfo, setSchoolInfo] = useState<{ name: string; category: string } | null>(null);
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<any>(null);
+  
+  // Create a lookup map for messages (for replies)
+  const messagesMap = messages.reduce((acc, msg) => {
+    acc[msg._id] = msg;
+    return acc;
+  }, {} as Record<string, Message>);
   
   // Rate limiting hook
   const { isRateLimited, checkRateLimit, recordMessage, getRemainingMessages, getResetTimeRemaining } = useRateLimit();
@@ -167,6 +175,11 @@ export default function ChatPage() {
       addMessage(message);
     });
 
+    socket.on('reaction-updated', ({ messageId, reactions }: { messageId: string; reactions: any[] }) => {
+      // Update the specific message with new reactions
+      updateMessage(messageId, { reactions });
+    });
+
     socket.on('participants-update', (newParticipants: string[]) => {
       setParticipants(newParticipants);
     });
@@ -202,17 +215,24 @@ export default function ChatPage() {
     });
   };
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = (message: string, attachments?: any[], replyToId?: string) => {
     if (!socketRef.current || !name) return;
 
     const sanitizedMessage = sanitizeMessage(message);
-    if (!sanitizedMessage.trim()) return;
+    if (!sanitizedMessage.trim() && (!attachments || attachments.length === 0)) return;
 
     socketRef.current.emit('send-message', {
       roomCode,
       name,
       message: sanitizedMessage,
+      replyTo: replyToId,
+      attachments: attachments || [],
     });
+
+    // Clear reply state after sending
+    if (replyingTo) {
+      setReplyingTo(null);
+    }
   };
 
   const handleTyping = () => {
@@ -321,6 +341,8 @@ export default function ChatPage() {
                   <MessageBubble
                     key={message._id}
                     message={message}
+                    onReply={(msg) => setReplyingTo(msg)}
+                    replyToMessage={message.replyTo ? messagesMap[message.replyTo] : null}
                   />
                 ))}
               </>
@@ -342,6 +364,9 @@ export default function ChatPage() {
             onTyping={handleTyping}
             onStopTyping={handleStopTyping}
             disabled={!isConnected}
+            replyingTo={replyingTo}
+            onCancelReply={() => setReplyingTo(null)}
+            roomCode={roomCode}
           />
         </div>
 

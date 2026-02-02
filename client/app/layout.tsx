@@ -3,6 +3,14 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Analytics } from '@vercel/analytics/next';
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,37 +37,62 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        {/* Content Security Policy for XSS protection */}
-        <meta 
-          httpEquiv="Content-Security-Policy" 
-          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://forsyth-chats.onrender.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org wss: ws:; frame-src 'self'; worker-src 'self' blob:; child-src 'self';" 
-        />
-        {/* Force HTTPS in production */}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-              location.replace('https:' + window.location.href.substring(window.location.protocol.length));
-            }
-          `
-        }} />
-        <script
-          dangerouslySetInnerHTML={{
+    <ClerkProvider>
+      <html lang="en">
+        <head>
+          {/* Content Security Policy for XSS protection - Updated for Clerk */}
+          <meta 
+            httpEquiv="Content-Security-Policy" 
+            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org https://*.clerk.accounts.dev https://*.clerk.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://forsyth-chats.onrender.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org https://*.clerk.accounts.dev https://*.clerk.dev wss: ws:; frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.dev; worker-src 'self' blob:; child-src 'self';" 
+          />
+          {/* Force HTTPS in production */}
+          <script dangerouslySetInnerHTML={{
             __html: `
-              (function() {
-                const theme = localStorage.getItem('theme') || 'light';
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-              })()
-            `,
-          }}
-        />
-      </head>
-      <body className={inter.className}>
-        {children}
-        <Toaster />
-        <Analytics />
-      </body>
-    </html>
+              if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                location.replace('https:' + window.location.href.substring(window.location.protocol.length));
+              }
+            `
+          }} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  const theme = localStorage.getItem('theme') || 'light';
+                  document.documentElement.classList.toggle('dark', theme === 'dark');
+                })()
+              `,
+            }}
+          />
+        </head>
+        <body className={inter.className}>
+          <header className="flex justify-end items-center p-4 gap-4 h-16 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+            <SignedOut>
+              <SignInButton>
+                <button className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors">
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton>
+                <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl font-medium text-sm h-10 px-6 cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "rounded-2xl",
+                  },
+                }}
+              />
+            </SignedIn>
+          </header>
+          {children}
+          <Toaster />
+          <Analytics />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

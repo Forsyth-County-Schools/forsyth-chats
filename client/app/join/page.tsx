@@ -16,9 +16,12 @@ import { nameSchema, roomCodeSchema } from '@/lib/validations';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { parseSchoolCode } from '@/lib/schools';
 import { validateUserName } from '@/lib/security';
+import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 
 export default function JoinPage() {
+  const { user } = useUser();
+  const { profile } = useUserStore();
   const [roomCode, setRoomCode] = useState('');
   const [name, setName] = useState('');
   const [agreedToPolicy, setAgreedToPolicy] = useState(false);
@@ -127,7 +130,8 @@ export default function JoinPage() {
 
   return (
     <GeoBlockWrapper>
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 dark:from-gray-950 dark:via-purple-950 dark:to-indigo-950 relative">
+      <SignedIn>
+        <main className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 dark:from-gray-950 dark:via-purple-950 dark:to-indigo-950 relative">
         {/* Modern gradient background */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.1)_0%,transparent_50%)] dark:bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.15)_0%,transparent_50%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(147,51,234,0.03)_25%,rgba(147,51,234,0.03)_50%,transparent_50%,transparent_75%,rgba(147,51,234,0.03)_75%)] dark:bg-[linear-gradient(45deg,transparent_25%,rgba(147,51,234,0.08)_25%,rgba(147,51,234,0.08)_50%,transparent_50%,transparent_75%,rgba(147,51,234,0.08)_75%)] bg-[length:20px_20px]" />
@@ -391,6 +395,47 @@ export default function JoinPage() {
           </div>
         </div>
       </main>
+      </SignedIn>
+      
+      <SignedOut>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 dark:from-gray-950 dark:via-purple-950 dark:to-indigo-950 relative">
+          <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-screen">
+            <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-purple-200 dark:border-purple-800 rounded-3xl p-8 shadow-2xl max-w-md w-full">
+              <div className="text-center mb-8">
+                <div className="text-6xl mb-4">🔒</div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+                  Authentication Required
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Please sign in to join a classroom chat room.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <SignInButton mode="modal">
+                  <Button className="w-full py-6 text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-2xl transition-all duration-300 hover:scale-[1.02] shadow-lg">
+                    🚪 Sign In
+                  </Button>
+                </SignInButton>
+                
+                <SignUpButton mode="modal">
+                  <Button variant="outline" className="w-full py-6 text-lg font-bold border-2 border-purple-200 hover:border-purple-300 rounded-2xl transition-all duration-300 hover:scale-[1.02]">
+                    ✨ Create Account
+                  </Button>
+                </SignUpButton>
+                
+                <Button 
+                  variant="ghost" 
+                  onClick={() => window.location.href = '/'}
+                  className="w-full py-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                >
+                  ← Back to Home
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SignedOut>
     </GeoBlockWrapper>
   );
 }

@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
 import roomRoutes from './routes/roomRoutes';
+import userRoutes from './routes/userRoutes';
 import { setupSocketHandlers } from './sockets/chatSocket';
 
 // Load environment variables
@@ -53,6 +54,7 @@ if (NODE_ENV === 'development') {
 
 // API Routes
 app.use('/api', roomRoutes);
+app.use('/api', userRoutes);
 
 // Health check endpoint
 app.get('/api/health', (_req: Request, res: Response) => {

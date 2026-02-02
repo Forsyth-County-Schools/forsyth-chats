@@ -16,6 +16,22 @@ const sendMessageSchema = z.object({
   roomCode: z.string().length(10).toUpperCase(),
   name: z.string().trim().min(2).max(30),
   message: z.string().trim().min(1).max(2000),
+  replyTo: z.string().optional(), // Message ID being replied to
+  attachments: z.array(z.object({
+    type: z.enum(['image', 'file']),
+    filename: z.string(),
+    originalName: z.string(),
+    size: z.number(),
+    url: z.string(),
+    mimeType: z.string(),
+  })).default([]),
+});
+
+const reactionSchema = z.object({
+  messageId: z.string(),
+  roomCode: z.string().length(10).toUpperCase(),
+  name: z.string().trim().min(2).max(30),
+  emoji: z.string().min(1).max(10),
 });
 
 const typingSchema = z.object({
@@ -32,6 +48,24 @@ const socketToUser = new Map<string, { roomCode: string; name: string }>();
 
 // Profanity filter
 const profanityFilter = new Filter();
+
+// Helper function to extract and process links
+const extractLinks = (text: string): Array<{ url: string; domain: string }> => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const matches = text.match(urlRegex) || [];
+  
+  return matches.map(url => {
+    try {
+      const urlObj = new URL(url);
+      return {
+        url: url,
+        domain: urlObj.hostname
+      };
+    } catch {
+      return null;
+    }
+  }).filter(Boolean) as Array<{ url: string; domain: string }>;
+};
 
 // Helper function to sanitize HTML
 const sanitizeMessage = (text: string): string => {
@@ -58,15 +92,32 @@ const addParticipant = (roomCode: string, name: string): void => {
   roomParticipants.get(roomCode)!.add(name);
 };
 
-// Helper to remove participant
-const removeParticipant = (roomCode: string, name: string): void => {
+// Helper to remove participant and cleanup room if empty
+const removeParticipant = async (roomCode: string, name: string): Promise<boolean> => {
   const participants = roomParticipants.get(roomCode);
   if (participants) {
     participants.delete(name);
     if (participants.size === 0) {
       roomParticipants.delete(roomCode);
+      
+      // Room is now empty, clean up all data
+      try {
+        // Delete all messages for this room
+        await Message.deleteMany({ roomCode });
+        console.log(`🗑️ Deleted all messages for empty room ${roomCode}`);
+        
+        // Delete the room itself
+        await Room.deleteOne({ code: roomCode });
+        console.log(`🗑️ Deleted empty room ${roomCode}`);
+        
+        return true; // Room was deleted
+      } catch (error) {
+        console.error(`❌ Error cleaning up room ${roomCode}:`, error);
+        return false;
+      }
     }
   }
+  return false; // Room not deleted
 };
 
 export const setupSocketHandlers = (io: Server): void => {
@@ -147,17 +198,35 @@ export const setupSocketHandlers = (io: Server): void => {
       try {
         // Validate input
         const validated = sendMessageSchema.parse(data);
-        const { roomCode, name, message } = validated;
+        const { roomCode, name, message, replyTo, attachments } = validated;
 
         // Sanitize message content
         const sanitizedMessage = sanitizeMessage(message);
         const filteredMessage = profanityFilter.clean(sanitizedMessage);
+
+        // Extract and process links
+        const linkPreviews = extractLinks(filteredMessage);
+
+        // Validate reply target if provided
+        let replyToMessage = null;
+        if (replyTo) {
+          replyToMessage = await Message.findById(replyTo);
+          if (!replyToMessage || replyToMessage.roomCode !== roomCode) {
+            socket.emit('error', {
+              message: 'Invalid reply target',
+            });
+            return;
+          }
+        }
 
         // Create and save message
         const newMessage = new Message({
           roomCode,
           name,
           message: filteredMessage,
+          replyTo: replyTo || undefined,
+          attachments,
+          linkPreviews,
           timestamp: new Date(),
         });
 
@@ -169,10 +238,15 @@ export const setupSocketHandlers = (io: Server): void => {
           roomCode: newMessage.roomCode,
           name: newMessage.name,
           message: newMessage.message,
+          replyTo: newMessage.replyTo,
+          reactions: newMessage.reactions,
+          attachments: newMessage.attachments,
+          linkPreviews: newMessage.linkPreviews,
           timestamp: newMessage.timestamp,
+          edited: newMessage.edited,
         });
 
-        console.log(`💬 Message in ${roomCode} from ${name}`);
+        console.log(`💬 Message in ${roomCode} from ${name}${replyTo ? ' (reply)' : ''}${attachments.length ? ` with ${attachments.length} attachment(s)` : ''}`);
 
       } catch (error) {
         if (error instanceof z.ZodError) {
@@ -184,6 +258,72 @@ export const setupSocketHandlers = (io: Server): void => {
           console.error('Error in send-message:', error);
           socket.emit('error', {
             message: 'Failed to send message',
+          });
+        }
+      }
+    });
+
+    // Handle reaction event
+    socket.on('add-reaction', async (data) => {
+      try {
+        const validated = reactionSchema.parse(data);
+        const { messageId, roomCode, name, emoji } = validated;
+
+        // Find the message
+        const message = await Message.findById(messageId);
+        if (!message || message.roomCode !== roomCode) {
+          socket.emit('error', {
+            message: 'Message not found',
+          });
+          return;
+        }
+
+        // Check if user already reacted with this emoji
+        const existingReaction = message.reactions.find(r => r.emoji === emoji);
+        
+        if (existingReaction) {
+          if (existingReaction.users.includes(name)) {
+            // Remove reaction
+            existingReaction.users = existingReaction.users.filter(u => u !== name);
+            existingReaction.count = existingReaction.users.length;
+            
+            if (existingReaction.count === 0) {
+              message.reactions = message.reactions.filter(r => r.emoji !== emoji);
+            }
+          } else {
+            // Add reaction
+            existingReaction.users.push(name);
+            existingReaction.count = existingReaction.users.length;
+          }
+        } else {
+          // New reaction
+          message.reactions.push({
+            emoji,
+            users: [name],
+            count: 1
+          });
+        }
+
+        await message.save();
+
+        // Broadcast reaction update to all clients in the room
+        io.to(roomCode).emit('reaction-updated', {
+          messageId: message._id,
+          reactions: message.reactions,
+        });
+
+        console.log(`👍 Reaction ${emoji} by ${name} on message in ${roomCode}`);
+
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          socket.emit('error', {
+            message: 'Invalid reaction data',
+            errors: error.errors,
+          });
+        } else {
+          console.error('Error in add-reaction:', error);
+          socket.emit('error', {
+            message: 'Failed to add reaction',
           });
         }
       }
@@ -224,24 +364,26 @@ export const setupSocketHandlers = (io: Server): void => {
     });
 
     // Handle disconnect
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
       const userInfo = socketToUser.get(socket.id);
 
       if (userInfo) {
         const { roomCode, name } = userInfo;
 
-        // Remove from participants
-        removeParticipant(roomCode, name);
+        // Remove from participants and check if room should be cleaned up
+        const roomDeleted = await removeParticipant(roomCode, name);
 
-        // Broadcast updated participant list
-        const participants = getParticipants(roomCode);
-        io.to(roomCode).emit('participants-update', participants);
+        if (!roomDeleted) {
+          // Room still has participants, send updates
+          const participants = getParticipants(roomCode);
+          io.to(roomCode).emit('participants-update', participants);
 
-        // Notify others that someone left
-        socket.to(roomCode).emit('user-left', {
-          name,
-          timestamp: new Date(),
-        });
+          // Notify others that someone left
+          socket.to(roomCode).emit('user-left', {
+            name,
+            timestamp: new Date(),
+          });
+        }
 
         // Clean up
         socketToUser.delete(socket.id);

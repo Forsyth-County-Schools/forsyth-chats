@@ -1,6 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { customAlphabet } from 'nanoid';
 import { z } from 'zod';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 import { Room } from '../models/Room';
 
 // Import bad-words with require for CommonJS compatibility
@@ -27,6 +30,45 @@ const createRoomSchema = z.object({
 const joinRoomSchema = z.object({
   roomCode: z.string().trim().length(10),
   name: z.string().trim().min(2).max(30),
+});
+
+// Configure multer for file uploads
+const uploadDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, `${uniqueSuffix}${ext}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+    files: 5, // Max 5 files per upload
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedMimes = [
+      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf', 'text/plain', 'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      const error = new Error('File type not allowed') as any;
+      cb(error, false);
+    }
+  }
 });
 
 // Rate limiting middleware for room creation
@@ -217,6 +259,98 @@ router.get('/room/:code', async (req: Request, res: Response) => {
       message: 'Internal server error',
     });
   }
+});
+
+// POST /api/upload - File upload endpoint
+router.post('/upload', upload.array('files', 5), async (req: Request, res: Response): Promise<void> => {
+  try {
+    const files = req.files as Express.Multer.File[];
+    const { roomCode } = req.body;
+
+    if (!files || files.length === 0) {
+      res.status(400).json({
+        success: false,
+        message: 'No files uploaded',
+      });
+      return;
+    }
+
+    if (!roomCode || roomCode.length !== 10) {
+      // Clean up uploaded files if room code is invalid
+      files.forEach(file => {
+        fs.unlink(file.path, () => {});
+      });
+      
+      res.status(400).json({
+        success: false,
+        message: 'Invalid room code',
+      });
+      return;
+    }
+
+    // Verify room exists
+    const room = await Room.findOne({ code: roomCode.toUpperCase() });
+    if (!room) {
+      // Clean up uploaded files if room doesn't exist
+      files.forEach(file => {
+        fs.unlink(file.path, () => {});
+      });
+      
+      res.status(404).json({
+        success: false,
+        message: 'Room not found',
+      });
+      return;
+    }
+
+    // Process uploaded files
+    const attachments = files.map(file => ({
+      type: file.mimetype.startsWith('image/') ? 'image' : 'file' as 'image' | 'file',
+      filename: file.filename,
+      originalName: file.originalname,
+      size: file.size,
+      url: `/api/file/${file.filename}`,
+      mimeType: file.mimetype,
+    }));
+
+    res.status(200).json({
+      success: true,
+      attachments,
+    });
+
+  } catch (error) {
+    console.error('Upload error:', error);
+    
+    // Clean up files on error
+    if (req.files) {
+      (req.files as Express.Multer.File[]).forEach(file => {
+        fs.unlink(file.path, () => {});
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Upload failed',
+    });
+  }
+});
+
+// GET /api/file/:filename - Serve uploaded files
+router.get('/file/:filename', (req: Request, res: Response): void => {
+  const { filename } = req.params;
+  const filePath = path.join(uploadDir, filename);
+  
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    res.status(404).json({
+      success: false,
+      message: 'File not found',
+    });
+    return;
+  }
+
+  // Send file
+  res.sendFile(filePath);
 });
 
 // GET /api/health - Health check endpoint
