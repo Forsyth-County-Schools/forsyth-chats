@@ -1,7 +1,5 @@
 'use client';
 
-import { Users } from 'lucide-react';
-
 interface TypingIndicatorProps {
   typingUsers: Set<string>;
 }

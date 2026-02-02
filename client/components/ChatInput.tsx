@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Smile, Paperclip, X, Reply, AlertTriangle, Mic, Image } from 'lucide-react';
+import { Send, Smile, Paperclip, X, Reply, AlertTriangle, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';

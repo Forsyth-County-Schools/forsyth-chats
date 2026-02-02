@@ -41,7 +41,6 @@ export function RoomSidebar({
 }: RoomSidebarProps) {
   const { name: currentUserName } = useUserStore();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showCreateModal, setShowCreateModal] = useState(false);
   
   // Mock data - replace with actual room data from your backend
   const mockRooms: Room[] = [

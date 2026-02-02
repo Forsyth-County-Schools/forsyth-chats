@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, Search, Plus, Crown, Lock, Check } from 'lucide-react';
+import { Users, Search, Plus } from 'lucide-react';
 import { useUserStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';

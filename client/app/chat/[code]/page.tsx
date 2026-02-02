@@ -18,7 +18,8 @@ import { useUserModeration } from '@/lib/userModeration';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { useUserStore, useChatStore } from '@/lib/store';
-import { getSocket, disconnectSocket, Message } from '@/lib/socket';
+import { getSocket, disconnectSocket, Message, Attachment, Reaction } from '@/lib/socket';
+import { Socket } from 'socket.io-client';
 import { parseSchoolCode } from '@/lib/schools';
 import { useRateLimit, sanitizeMessage } from '@/lib/security';
 import { cn } from '@/lib/utils';
@@ -54,7 +55,7 @@ export default function ChatPage() {
   const [showJumpToBottom, setShowJumpToBottom] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const socketRef = useRef<any>(null);
+  const socketRef = useRef<Socket | null>(null);
   
   // Create a lookup map for messages (for replies)
   const messagesMap = messages.reduce((acc, msg) => {
@@ -183,7 +184,7 @@ export default function ChatPage() {
       setConnected(false);
     });
 
-    socket.on('connect_error', (error) => {
+    socket.on('connect_error', (error: Error) => {
       console.error('Connection error:', error);
       toast({
         title: 'Connection Error',
@@ -201,7 +202,7 @@ export default function ChatPage() {
       addMessage(message);
     });
 
-    socket.on('reaction-updated', ({ messageId, reactions }: { messageId: string; reactions: any[] }) => {
+    socket.on('reaction-updated', ({ messageId, reactions }: { messageId: string; reactions: Reaction[] }) => {
       // Update the specific message with new reactions
       updateMessage(messageId, { reactions });
     });
@@ -241,7 +242,7 @@ export default function ChatPage() {
     });
   };
 
-  const handleSendMessage = (message: string, attachments?: any[], replyToId?: string) => {
+  const handleSendMessage = (message: string, attachments?: Attachment[], replyToId?: string) => {
     if (!socketRef.current || !name) return;
 
     const sanitizedMessage = sanitizeMessage(message);
