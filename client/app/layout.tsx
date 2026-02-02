@@ -7,8 +7,11 @@ import { Analytics } from '@vercel/analytics/next';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Classroom Chat Center',
+  title: 'Canvas Dashboard',
   description: 'Simple, respectful real-time chat for classes',
+  icons: {
+    icon: 'https://www.csc.edu/media/website/content-assets/images/tlpec/canvas_reversed_logo.png',
+  },
 };
 
 export default function RootLayout({

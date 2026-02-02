@@ -225,18 +225,18 @@ export default function ChatPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black flex items-center justify-center">
         <LoadingSpinner size="lg" text="Joining classroom..." />
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-black via-slate-950 to-black relative">
       {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 via-transparent to-purple-500/5" />
-      <div className="absolute top-0 right-1/3 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl opacity-50" />
-      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-r from-teal-500/3 via-transparent to-purple-500/3" />
+      <div className="absolute top-0 right-1/3 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl opacity-50" />
+      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl opacity-50" />
       {/* Header */}
       <header className="relative z-10 glass-dark border-slate-700/50 shadow-lg">
         <div className="flex items-center justify-between p-4">
@@ -247,9 +247,9 @@ export default function ChatPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-semibold text-slate-100">Classroom Chat</h1>
-              <div className="flex items-center gap-2 text-sm text-slate-400">
-                <span className="font-mono text-teal-400">{roomCode}</span>
+              <h1 className="text-xl font-semibold text-slate-200">Classroom Chat</h1>
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <span className="font-mono text-teal-500">{roomCode}</span>
                 <CopyButton text={roomCode} label="Copy" />
               </div>
             </div>
@@ -260,8 +260,8 @@ export default function ChatPage() {
             <div className="flex items-center gap-1 text-sm">
               {isConnected ? (
                 <>
-                  <Wifi className="h-4 w-4 text-teal-400 animate-pulse-glow" />
-                  <span className="hidden sm:inline text-slate-300">Connected</span>
+                  <Wifi className="h-4 w-4 text-teal-500 animate-pulse-glow" />
+                  <span className="hidden sm:inline text-slate-400">Connected</span>
                 </>
               ) : (
                 <>
@@ -272,9 +272,9 @@ export default function ChatPage() {
             </div>
 
             {/* Participant Count */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-teal-500/20 backdrop-blur-sm border border-teal-500/30 rounded-full">
-              <Users className="h-4 w-4 text-teal-400" />
-              <span className="text-sm font-medium text-slate-200">{participants.length}</span>
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-teal-500/10 backdrop-blur-sm border border-teal-500/20 rounded-full">
+              <Users className="h-4 w-4 text-teal-500" />
+              <span className="text-sm font-medium text-slate-300">{participants.length}</span>
             </div>
 
             {/* Theme Toggle */}
@@ -301,11 +301,11 @@ export default function ChatPage() {
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
             {messages.length === 0 ? (
               <div className="h-full flex items-center justify-center text-center">
-                <div className="text-slate-400">
-                  <div className="glass-dark p-8 rounded-2xl border border-slate-700/50 max-w-sm">
-                    <MessageSquare className="h-16 w-16 text-teal-400 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg mb-2 text-slate-300">No messages yet</p>
-                    <p className="text-sm text-slate-500">Be the first to send a message!</p>
+                <div className="text-slate-500">
+                  <div className="glass-dark p-8 rounded-2xl border border-slate-800/40 max-w-sm">
+                    <MessageSquare className="h-16 w-16 text-teal-500 mx-auto mb-4 opacity-30" />
+                    <p className="text-lg mb-2 text-slate-400">No messages yet</p>
+                    <p className="text-sm text-slate-600">Be the first to send a message!</p>
                   </div>
                 </div>
               </div>
@@ -323,7 +323,7 @@ export default function ChatPage() {
             
             {/* Typing Indicator */}
             {typingUsers.size > 0 && (
-              <div className="text-sm text-slate-400 italic px-2 animate-pulse">
+              <div className="text-sm text-slate-500 italic px-2 animate-pulse">
                 {Array.from(typingUsers).join(', ')} {typingUsers.size === 1 ? 'is' : 'are'} typing...
               </div>
             )}
@@ -341,7 +341,7 @@ export default function ChatPage() {
         </div>
 
         {/* Sidebar - Desktop */}
-        <aside className="hidden md:block w-80 glass-dark border-l border-slate-700/50">
+        <aside className="hidden md:block w-80 glass-dark border-l border-slate-800/40">
           <ParticipantList participants={participants} currentUserName={name || ''} />
         </aside>
 
@@ -349,13 +349,13 @@ export default function ChatPage() {
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
             <div
-              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
             <div className="absolute right-0 top-0 bottom-0 w-80 glass-dark shadow-2xl animate-in slide-in-from-right duration-200">
-              <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
-                <h2 className="font-semibold text-slate-200">Participants</h2>
-                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="hover:bg-slate-800 text-slate-300">
+              <div className="p-4 border-b border-slate-800/40 flex items-center justify-between">
+                <h2 className="font-semibold text-slate-300">Participants</h2>
+                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="hover:bg-slate-900 text-slate-400">
                   <X className="h-5 w-5" />
                 </Button>
               </div>

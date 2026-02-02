@@ -40,7 +40,7 @@ export function CopyButton({ text, label = 'Copy' }: CopyButtonProps) {
       onClick={handleCopy}
       variant="outline"
       size="sm"
-      className="gap-2 bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-teal-600 hover:text-white hover:border-teal-500 transition-all duration-300"
+      className="gap-2 bg-slate-950/70 border-slate-800 text-slate-400 hover:bg-teal-700 hover:text-white hover:border-teal-600 transition-all duration-300"
       aria-label={label}
     >
       {copied ? (

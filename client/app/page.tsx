@@ -5,11 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black relative overflow-hidden">
       {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 via-transparent to-purple-500/10" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 via-transparent to-purple-500/5" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-500/8 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/8 rounded-full blur-3xl animate-pulse" />
       
       <div className="relative z-10 container mx-auto px-4 py-16">
         {/* Hero Section */}
@@ -22,10 +22,10 @@ export default function Home() {
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 gradient-text">
             Classroom Chat Center
           </h1>
-          <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
             Simple, respectful real-time chat for classes. 
             <br />
-            <span className="text-teal-400 font-medium">No accounts required.</span>
+            <span className="text-teal-500 font-medium">No accounts required.</span>
           </p>
         </div>
 
