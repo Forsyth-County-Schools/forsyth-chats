@@ -7,13 +7,13 @@ import { Analytics } from '@vercel/analytics/next';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Forsyth Chat - Forsyth County Schools',
+  title: 'Canvas Dashboard',
   description: 'Secure classroom chat exclusively for Forsyth County Schools in Georgia',
   keywords: 'classroom, chat, forsyth county schools, education, georgia',
   authors: [{ name: 'Forsyth County Schools IT Department' }],
   robots: 'noindex, nofollow', // Keep private for school use
   icons: {
-    icon: '/favicon.ico',
+    icon: 'https://www.csc.edu/media/website/content-assets/images/tlpec/canvas_reversed_logo.png',
   },
   other: {
     'X-Content-Type-Options': 'nosniff',
