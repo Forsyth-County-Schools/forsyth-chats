@@ -1,8 +1,10 @@
 import { Server, Socket } from 'socket.io';
 import { z } from 'zod';
-import Filter from 'bad-words';
 import { Room } from '../models/Room';
 import { Message } from '../models/Message';
+
+// Import bad-words with require for CommonJS compatibility
+const Filter = require('bad-words');
 
 // Validation schemas
 const joinRoomSchema = z.object({
@@ -29,7 +31,7 @@ const roomParticipants = new Map<string, Set<string>>();
 const socketToUser = new Map<string, { roomCode: string; name: string }>();
 
 // Profanity filter
-const profanityFilter = new (Filter as unknown as { new (): { isProfane: (text: string) => boolean; clean: (text: string) => string } })();
+const profanityFilter = new Filter();
 
 // Helper function to sanitize HTML
 const sanitizeMessage = (text: string): string => {

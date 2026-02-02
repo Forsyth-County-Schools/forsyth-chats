@@ -211,48 +211,52 @@ export default function CreatePage() {
 
   return (
     <GeoBlockWrapper>
-      <main className="min-h-screen transition-colors duration-300 relative overflow-hidden" style={{backgroundColor: 'var(--background)'}}>
-        {/* Animated background */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-red-600/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
-          <div className="absolute top-1/3 right-1/4 w-60 h-60 bg-red-400/15 rounded-full blur-2xl animate-pulse" style={{animationDelay: '2s'}} />
-        </div>
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-950 relative">
+        {/* Modern gradient background */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.1)_0%,transparent_50%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.15)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.03)_25%,rgba(59,130,246,0.03)_50%,transparent_50%,transparent_75%,rgba(59,130,246,0.03)_75%)] bg-[length:20px_20px]" />
         
-        {/* Content */}
-        <div className="relative z-10">
         {/* Theme Toggle */}
         <div className="absolute top-6 right-6 z-10">
-          <ThemeToggle />
+          <div className="backdrop-blur-xl bg-white/80 dark:bg-slate-800/80 rounded-2xl border border-white/20 dark:border-slate-700/50 p-1 shadow-lg">
+            <ThemeToggle />
+          </div>
         </div>
         
-        <div className="container mx-auto px-6 lg:px-12 py-16 max-w-6xl">
+        <div className="container mx-auto px-6 py-16 max-w-2xl relative z-10">
           {/* Back Button */}
-          <Link href="/" className="inline-flex items-center text-red-600 hover:text-red-700 mb-8 transition-colors">
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Home
+          <Link href="/" className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 mb-8 transition-all duration-200 group">
+            <div className="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/20 dark:border-slate-700/50 shadow-lg group-hover:shadow-xl transition-all duration-200">
+              <ArrowLeft className="w-4 h-4" />
+            </div>
+            <span className="font-medium">Back to Home</span>
           </Link>
 
           {!roomCreated ? (
-            <Card className="card-modern animate-fade-in rounded-3xl w-full shadow-2xl">
-              <CardHeader className="text-center space-y-4">
+            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-slate-700/50 shadow-2xl p-8">
+              <div className="text-center space-y-6 mb-8">
                 <div className="flex justify-center">
-                  <div className="bg-gradient-to-br from-red-500 to-red-600 p-6 rounded-2xl modern-shadow-hover animate-bounce-soft">
-                    <Plus className="h-12 w-12 text-white" />
+                  <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 p-6 rounded-3xl shadow-2xl relative group">
+                    <Plus className="h-12 w-12 text-white drop-shadow-lg" />
+                    <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                 </div>
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
-                  Create Forsyth County Classroom
-                </CardTitle>
-                <CardDescription className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
-                  Set up a secure chat room for your Forsyth County Schools class 🏫
-                </CardDescription>
+                <div>
+                  <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+                    Create Classroom
+                  </h1>
+                  <p className="text-lg text-slate-600 dark:text-slate-300">
+                    Set up a secure chat room for your Forsyth County Schools class 🏫
+                  </p>
+                </div>
                 
                 {/* Rate limiting notice */}
                 {isOnCooldown && (
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 animate-fade-in">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">⏳</span>
+                  <div className="bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl p-6 backdrop-blur-sm">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-amber-500/20 rounded-2xl">
+                        <span className="text-2xl">⏳</span>
+                      </div>
                       <div>
                         <p className="font-semibold text-amber-800 dark:text-amber-200">
                           Rate Limit Active
@@ -264,37 +268,37 @@ export default function CreatePage() {
                     </div>
                   </div>
                 )}
-              </CardHeader>
-
-            <CardContent className="px-8 lg:px-12 py-10">
+              </div>
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Creator Name */}
-                <div className="space-y-3">
-                  <label htmlFor="creatorName" className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
-                    Your Name *
+                <div className="space-y-4">
+                  <label htmlFor="creatorName" className="text-lg font-semibold block text-slate-900 dark:text-white">
+                    👤 Your Name
                   </label>
-                  <Input
-                    id="creatorName"
-                    name="creatorName"
-                    type="text"
-                    value={creatorName}
-                    onChange={(e) => {
-                      setCreatorName(e.target.value);
-                      setNameError('');
-                    }}
-                    placeholder="Enter your full name"
-                    autoComplete="name"
-                    className="modern-input text-lg py-4 rounded-2xl"
-                    style={{
-                      backgroundColor: 'var(--input-background)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--foreground)'
-                    }}
-                    disabled={isCreating}
-                    required
-                  />
+                  <div className="relative group">
+                    <Input
+                      id="creatorName"
+                      name="creatorName"
+                      type="text"
+                      value={creatorName}
+                      onChange={(e) => {
+                        setCreatorName(e.target.value);
+                        setNameError('');
+                      }}
+                      placeholder="Enter your full name"
+                      autoComplete="name"
+                      className="w-full text-lg py-4 px-6 rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm focus:border-red-500 dark:focus:border-red-400 focus:ring-4 focus:ring-red-500/20 transition-all duration-200 group-hover:shadow-lg focus:shadow-xl"
+                      disabled={isCreating}
+                      required
+                    />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  </div>
                   {nameError && (
-                    <p className="text-red-600 text-sm font-medium">{nameError}</p>
+                    <div className="bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3">
+                      <p className="text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2">
+                        <span>⚠️</span> {nameError}
+                      </p>
+                    </div>
                   )}
                 </div>
 

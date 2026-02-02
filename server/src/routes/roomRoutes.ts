@@ -1,8 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { customAlphabet } from 'nanoid';
 import { z } from 'zod';
-import Filter from 'bad-words';
 import { Room } from '../models/Room';
+
+// Import bad-words with require for CommonJS compatibility
+const Filter = require('bad-words');
 
 const router = Router();
 
@@ -11,7 +13,7 @@ const router = Router();
 const generateRoomCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
 
 // Profanity filter
-const profanityFilter = new (Filter as unknown as { new (): { isProfane: (text: string) => boolean; clean: (text: string) => string } })();
+const profanityFilter = new Filter();
 
 // Rate limiting storage (in production, use Redis or database)
 const rateLimitStore = new Map<string, number>();

@@ -127,71 +127,49 @@ export default function JoinPage() {
 
   return (
     <GeoBlockWrapper>
-      <main className="min-h-screen transition-colors duration-300 relative overflow-hidden" style={{backgroundColor: 'var(--background)'}}>
-        {/* Animated background */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute -top-32 -left-32 w-64 h-64 bg-red-500/30 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-red-600/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}} />
-          <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-red-400/25 rounded-full blur-2xl animate-pulse" style={{animationDelay: '3s'}} />
-        </div>
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 dark:from-slate-900 dark:via-purple-950 dark:to-indigo-950 relative">
+        {/* Modern gradient background */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.1)_0%,transparent_50%)] dark:bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.15)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(147,51,234,0.03)_25%,rgba(147,51,234,0.03)_50%,transparent_50%,transparent_75%,rgba(147,51,234,0.03)_75%)] bg-[length:20px_20px]" />
         
-        {/* Content */}
-        <div className="relative z-10">
         {/* Theme Toggle */}
         <div className="absolute top-6 right-6 z-10">
-          <ThemeToggle />
+          <div className="backdrop-blur-xl bg-white/80 dark:bg-slate-800/80 rounded-2xl border border-white/20 dark:border-slate-700/50 p-1 shadow-lg">
+            <ThemeToggle />
+          </div>
         </div>
         
-        <div className="container mx-auto px-6 lg:px-12 py-16 max-w-6xl">
+        <div className="container mx-auto px-6 py-16 max-w-2xl relative z-10">
           {/* Back Button */}
-          <Link href="/" className="inline-flex items-center text-red-600 hover:text-red-700 mb-8 transition-colors">
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Home
+          <Link href="/" className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-8 transition-all duration-200 group">
+            <div className="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/20 dark:border-slate-700/50 shadow-lg group-hover:shadow-xl transition-all duration-200">
+              <ArrowLeft className="w-4 h-4" />
+            </div>
+            <span className="font-medium">Back to Home</span>
           </Link>
 
-          <Card className="card-glass border-0 shadow-2xl relative overflow-hidden animate-fade-in rounded-3xl w-full">
-            {/* Animated background pattern */}
-            <div className="absolute inset-0">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-purple-500/5 to-red-600/5 animate-shimmer" />
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-red-600 to-red-500 animate-shimmer" />
-            </div>
-            
-            <CardHeader className="text-center space-y-6 relative z-10">
-              <div className="flex justify-center mb-2">
-                <div className="relative group">
-                  <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 p-8 rounded-3xl shadow-2xl relative z-10 transform group-hover:scale-105 transition-all duration-300">
-                    <LogIn className="h-16 w-16 text-white drop-shadow-lg" />
-                  </div>
-                  {/* Enhanced floating effects */}
-                  <div className="absolute -inset-6 bg-gradient-to-r from-red-500/20 via-red-600/20 to-red-500/20 rounded-full blur-xl animate-ping" />
-                  <div className="absolute -inset-4 bg-gradient-to-r from-red-600/30 via-red-700/30 to-red-600/30 rounded-full blur-lg animate-pulse" />
-                  <div className="absolute -inset-2 bg-red-500/40 rounded-full blur-sm animate-pulse" style={{animationDelay: '0.5s'}} />
+          <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-slate-700/50 shadow-2xl p-8">
+            <div className="text-center space-y-6 mb-8">
+              <div className="flex justify-center">
+                <div className="bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 p-6 rounded-3xl shadow-2xl relative group">
+                  <LogIn className="h-12 w-12 text-white drop-shadow-lg" />
+                  <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               </div>
-              <div className="space-y-4">
-                <CardTitle className="text-4xl md:text-5xl font-black bg-gradient-to-r from-red-600 via-red-700 to-red-800 bg-clip-text text-transparent drop-shadow-sm">
-                  Join Forsyth County Classroom
-                </CardTitle>
-                <CardDescription className="text-xl leading-relaxed max-w-md mx-auto" style={{color: 'var(--foreground-secondary)'}}>
+              <div>
+                <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+                  Join Classroom
+                </h1>
+                <p className="text-lg text-slate-600 dark:text-slate-300">
                   Enter the secure room code to join the discussion 💬
-                </CardDescription>
-                {/* Animated decorative line */}
-                <div className="flex items-center justify-center space-x-3 pt-4">
-                  <div className="h-1.5 w-12 bg-gradient-to-r from-red-500 to-red-600 rounded-full animate-pulse" />
-                  <div className="h-2 w-2 bg-red-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}} />
-                  <div className="h-2 w-2 bg-red-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}} />
-                  <div className="h-2 w-2 bg-red-700 rounded-full animate-bounce" style={{animationDelay: '0.3s'}} />
-                  <div className="h-1.5 w-12 bg-gradient-to-l from-red-500 to-red-600 rounded-full animate-pulse" />
-                </div>
+                </p>
               </div>
-            </CardHeader>
-
-          <CardContent className="space-y-8 px-8 lg:px-12 py-10">
+            </div>
             {/* Room Code Form */}
             {roomExists === null && (
-              <form onSubmit={handleCheckRoom} className="space-y-8 animate-slide-up">
+              <form onSubmit={handleCheckRoom} className="space-y-8">
                 <div className="space-y-5">
-                  <label htmlFor="roomCode" className="text-xl font-black block text-center bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
+                  <label htmlFor="roomCode" className="text-xl font-semibold block text-center text-slate-900 dark:text-white">
                     🔐 Enter Room Code
                   </label>
                   <div className="relative group">
@@ -211,21 +189,16 @@ export default function JoinPage() {
                       placeholder="ABC-123DEF"
                       maxLength={10}
                       autoComplete="off"
-                      className="modern-input text-2xl py-6 text-center tracking-[0.3em] font-bold border-2 rounded-2xl transition-all duration-300 group-hover:shadow-lg focus:shadow-xl focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
-                      style={{
-                        backgroundColor: 'var(--input-background)',
-                        borderColor: codeError ? '#EF4444' : 'var(--input-border)',
-                        color: 'var(--foreground)',
-                        letterSpacing: '0.1em'
-                      }}
+                      className="w-full text-2xl py-6 px-6 text-center tracking-wider font-bold border-2 border-slate-200 dark:border-slate-600 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20 transition-all duration-200 group-hover:shadow-lg focus:shadow-xl"
                       disabled={isChecking}
                     />
-                    {/* Animated border effect */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                   </div>
                   {codeError && (
-                    <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-xl p-4 animate-shake">
-                      <p className="text-red-600 dark:text-red-400 text-sm font-semibold text-center">⚠️ {codeError}</p>
+                    <div className="bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4">
+                      <p className="text-red-600 dark:text-red-400 text-sm font-semibold text-center flex items-center justify-center gap-2">
+                        <span>⚠️</span> {codeError}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -233,7 +206,7 @@ export default function JoinPage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full text-xl py-6 font-bold rounded-2xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transform hover:scale-[1.02] transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-red-500/25"
+                  className="w-full text-xl py-6 font-bold rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-2xl hover:shadow-purple-500/25 transform hover:scale-[1.02] transition-all duration-300"
                   disabled={isChecking || !roomCode.trim()}
                 >
                   {isChecking ? (
@@ -415,10 +388,7 @@ export default function JoinPage() {
                 </Button>
               </div>
             )}
-          </CardContent>
-        </Card>
-      </div>
-
+          </div>
         </div>
       </main>
     </GeoBlockWrapper>
