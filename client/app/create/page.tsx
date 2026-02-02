@@ -110,10 +110,15 @@ How to Join:
 3. Enter the room code: ${createdRoomCode}
 4. Sign in with your school account
 
+Share This Code With Your Friends!
+====================================
+Make sure you're sharing with them using their Forsyth County email address and that's it! This ensures only authorized students can join the chat room.
+
 Important Notes:
 - This room is for educational use
 - Keep the room code private and only share with authorized participants
 - Follow all school district policies and guidelines
+- Only share with students who have Forsyth County School email accounts
 
 Created on: ${new Date().toLocaleDateString()}
     `.trim();
