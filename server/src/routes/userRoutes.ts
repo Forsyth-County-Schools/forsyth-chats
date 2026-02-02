@@ -54,7 +54,7 @@ router.post('/webhooks/clerk', async (req: Request, res: Response): Promise<void
 async function handleUserCreated(data: any) {
   const userData = {
     clerkId: data.id,
-    email: data.email_addresses[0]?.email_address || '',
+    email: data.email_addresses[0]?.email_address || `${data.username}@forsyth-chats.local`,
     displayName: `${data.first_name || ''} ${data.last_name || ''}`.trim() || data.username || 'User',
     profileImageUrl: data.image_url,
   };
@@ -78,7 +78,7 @@ async function handleUserCreated(data: any) {
 async function handleUserUpdated(data: any) {
   const userData = {
     clerkId: data.id,
-    email: data.email_addresses[0]?.email_address || '',
+    email: data.email_addresses[0]?.email_address || `${data.username}@forsyth-chats.local`,
     displayName: `${data.first_name || ''} ${data.last_name || ''}`.trim() || data.username || 'User',
     profileImageUrl: data.image_url,
   };
@@ -114,7 +114,7 @@ async function handleUserDeleted(data: any) {
 // Validation schemas
 const createUserSchema = z.object({
   clerkId: z.string(),
-  email: z.string().email(),
+  email: z.string().min(1), // Allow any non-empty string for email
   displayName: z.string().trim().min(2).max(50),
   profileImageUrl: z.string().url().optional(),
 });
