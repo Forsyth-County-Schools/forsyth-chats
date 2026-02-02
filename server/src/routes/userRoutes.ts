@@ -9,12 +9,12 @@ const createUserSchema = z.object({
   clerkId: z.string(),
   email: z.string().email(),
   displayName: z.string().trim().min(2).max(50),
-  profileImageUrl: z.string().optional().nullable(),
+  profileImageUrl: z.string().url().or(z.literal('')).optional().nullable(),
 });
 
 const updateUserSchema = z.object({
   displayName: z.string().trim().min(2).max(50).optional(),
-  profileImageUrl: z.string().optional().nullable(),
+  profileImageUrl: z.string().url().or(z.literal('')).optional().nullable(),
 });
 
 // POST /api/users - Create or update user from Clerk webhook
@@ -69,7 +69,7 @@ router.post('/users', async (req: Request, res: Response): Promise<void> => {
     }
 
     // Handle duplicate key errors (race condition where user created between check and insert)
-    if (error.code === 11000 || error.name === 'MongoServerError') {
+    if (error.code === 11000) {
       try {
         // User was created in between - try to find and return it
         const existingUser = await User.findOne({ clerkId: req.body.clerkId });

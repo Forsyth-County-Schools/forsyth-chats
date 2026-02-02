@@ -23,6 +23,7 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
   const [initialLoading, setInitialLoading] = useState(true);
   const [retryAttempt, setRetryAttempt] = useState(0);
   const [loadError, setLoadError] = useState(false);
+  const [retryTrigger, setRetryTrigger] = useState(0);
   const [displayName, setDisplayName] = useState('');
   const [profileImageUrl, setProfileImageUrl] = useState('');
 
@@ -89,14 +90,14 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
     };
 
     loadUserProfile();
-  }, [user, setProfile, toast]);
+  }, [user, setProfile, toast, retryTrigger]);
 
   const handleManualRetry = () => {
     setLoadError(false);
     setInitialLoading(true);
     setRetryAttempt(0);
-    // Trigger a re-run of the useEffect by updating a dependency
-    window.location.reload();
+    // Trigger useEffect to re-run by updating retryTrigger
+    setRetryTrigger(prev => prev + 1);
   };
 
   const handleSave = async () => {
@@ -173,7 +174,7 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
             Try Again
           </Button>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-4">
-            If this problem persists, please contact your administrator
+            If this problem persists, please contact your administrator.
           </p>
         </div>
       </Card>
