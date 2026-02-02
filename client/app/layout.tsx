@@ -7,10 +7,10 @@ import { Analytics } from '@vercel/analytics/next';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Canvas Dashboard',
-  description: 'Simple, respectful real-time chat for classes',
+  title: 'Classroom Chat Center',
+  description: 'Simple, respectful real-time chat for classes. No accounts required.',
   icons: {
-    icon: 'https://www.csc.edu/media/website/content-assets/images/tlpec/canvas_reversed_logo.png',
+    icon: '/favicon.ico',
   },
 };
 
@@ -20,19 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                const theme = localStorage.getItem('theme') || 'dark';
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-              })()
-            `,
-          }}
-        />
-      </head>
+    <html lang="en">
       <body className={inter.className}>
         {children}
         <Toaster />

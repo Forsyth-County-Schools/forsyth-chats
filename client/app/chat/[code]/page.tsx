@@ -10,7 +10,6 @@ import { MessageBubble } from '@/components/MessageBubble';
 import { ChatInput } from '@/components/ChatInput';
 import { ParticipantList } from '@/components/ParticipantList';
 import { CopyButton } from '@/components/CopyButton';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { useUserStore, useChatStore } from '@/lib/store';
@@ -225,66 +224,59 @@ export default function ChatPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black flex items-center justify-center grid-background">
+      <div className="page-container">
         <LoadingSpinner size="lg" text="Joining classroom..." />
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-black via-slate-950 to-black relative grid-background">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-r from-teal-500/3 via-transparent to-purple-500/3" />
-      <div className="absolute top-0 right-1/3 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl opacity-50" />
-      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl opacity-50" />
+    <div className="h-screen flex flex-col bg-white">
       {/* Header */}
-      <header className="relative z-10 glass-dark border-slate-700/50 shadow-lg">
+      <header className="bg-white border-b border-gray-200 shadow-sm">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" size="icon" className="hover:bg-slate-800 text-slate-300 hover:text-white">
+              <Button variant="ghost" size="icon" className="hover:bg-gray-100 text-gray-600 hover:text-gray-900">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-semibold text-slate-200">Classroom Chat</h1>
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <span className="font-mono text-teal-500">{roomCode}</span>
+              <h1 className="text-2xl font-bold text-gray-900">Classroom Chat</h1>
+              <div className="flex items-center gap-3 text-sm">
+                <span className="font-mono text-red-600 font-bold text-lg">{roomCode}</span>
                 <CopyButton text={roomCode} label="Copy" />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {/* Connection Status */}
-            <div className="flex items-center gap-1 text-sm">
+            <div className="flex items-center gap-2">
               {isConnected ? (
                 <>
-                  <Wifi className="h-4 w-4 text-teal-500 animate-pulse-glow" />
-                  <span className="hidden sm:inline text-slate-400">Connected</span>
+                  <Wifi className="h-5 w-5 text-green-600" />
+                  <span className="hidden sm:inline text-green-600 font-medium">Connected</span>
                 </>
               ) : (
                 <>
-                  <WifiOff className="h-4 w-4 text-red-400" />
-                  <span className="hidden sm:inline text-red-400">Disconnected</span>
+                  <WifiOff className="h-5 w-5 text-red-600" />
+                  <span className="hidden sm:inline text-red-600 font-medium">Disconnected</span>
                 </>
               )}
             </div>
 
             {/* Participant Count */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-teal-500/10 backdrop-blur-sm border border-teal-500/20 rounded-full">
-              <Users className="h-4 w-4 text-teal-500" />
-              <span className="text-sm font-medium text-slate-300">{participants.length}</span>
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-full">
+              <Users className="h-5 w-5 text-red-600" />
+              <span className="text-sm font-semibold text-red-700">{participants.length}</span>
             </div>
-
-            {/* Theme Toggle */}
-            <ThemeToggle />
 
             {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden hover:bg-slate-800 text-slate-300 hover:text-white"
+              className="md:hidden hover:bg-gray-100 text-gray-600 hover:text-gray-900"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -294,19 +286,19 @@ export default function ChatPage() {
       </header>
 
       {/* Main Content */}
-      <div className="relative z-10 flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden bg-gray-50">
         {/* Chat Area */}
         <div className="flex-1 flex flex-col">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {messages.length === 0 ? (
               <div className="h-full flex items-center justify-center text-center">
-                <div className="text-slate-500">
-                  <div className="glass-dark p-8 rounded-2xl border border-slate-800/40 max-w-sm">
-                    <MessageSquare className="h-16 w-16 text-teal-500 mx-auto mb-4 opacity-30" />
-                    <p className="text-lg mb-2 text-slate-400">No messages yet</p>
-                    <p className="text-sm text-slate-600">Be the first to send a message!</p>
+                <div className="card-modern p-12 max-w-md">
+                  <div className="bg-red-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <MessageSquare className="h-10 w-10 text-white" />
                   </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">No messages yet</h3>
+                  <p className="text-gray-600 text-lg">Be the first to send a message!</p>
                 </div>
               </div>
             ) : (
@@ -323,7 +315,7 @@ export default function ChatPage() {
             
             {/* Typing Indicator */}
             {typingUsers.size > 0 && (
-              <div className="text-sm text-slate-500 italic px-2 animate-pulse">
+              <div className="text-sm text-gray-500 italic px-4 animate-pulse font-medium">
                 {Array.from(typingUsers).join(', ')} {typingUsers.size === 1 ? 'is' : 'are'} typing...
               </div>
             )}
@@ -341,7 +333,7 @@ export default function ChatPage() {
         </div>
 
         {/* Sidebar - Desktop */}
-        <aside className="hidden md:block w-80 glass-dark border-l border-slate-800/40">
+        <aside className="hidden md:block w-80 bg-white border-l border-gray-200 shadow-sm">
           <ParticipantList participants={participants} currentUserName={name || ''} />
         </aside>
 
@@ -349,13 +341,13 @@ export default function ChatPage() {
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
             <div
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            <div className="absolute right-0 top-0 bottom-0 w-80 glass-dark shadow-2xl animate-in slide-in-from-right duration-200">
-              <div className="p-4 border-b border-slate-800/40 flex items-center justify-between">
-                <h2 className="font-semibold text-slate-300">Participants</h2>
-                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="hover:bg-slate-900 text-slate-400">
+            <div className="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl animate-slide-up">
+              <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                <h2 className="font-bold text-xl text-gray-900">Participants</h2>
+                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="hover:bg-gray-100 text-gray-600">
                   <X className="h-5 w-5" />
                 </Button>
               </div>

@@ -88,9 +88,9 @@ export function ChatInput({
   };
 
   return (
-    <div className="glass-dark border-t border-slate-800/40 p-4">
-      <div className="flex gap-3 items-end max-w-4xl mx-auto">
-        <div className="flex-1 bg-slate-950/80 backdrop-blur-sm border border-slate-800 focus-within:border-teal-600/50 focus-within:ring-2 focus-within:ring-teal-600/10 transition-all duration-200 rounded-xl">
+    <div className="bg-white border-t border-gray-200 p-6">
+      <div className="flex gap-4 items-end max-w-4xl mx-auto">
+        <div className="flex-1 bg-white border-2 border-gray-300 focus-within:border-red-600 focus-within:ring-4 focus-within:ring-red-100 transition-all duration-200 rounded-2xl">
           <Textarea
             ref={textareaRef}
             value={message}
@@ -98,7 +98,7 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Type a message... (Shift+Enter for new line)"
             disabled={disabled}
-            className="min-h-[60px] max-h-[150px] resize-none bg-transparent border-0 text-slate-300 placeholder:text-slate-600 focus:ring-0 focus:outline-none"
+            className="min-h-[60px] max-h-[150px] resize-none bg-transparent border-0 text-gray-900 placeholder:text-gray-500 focus:ring-0 focus:outline-none text-lg p-4"
             rows={1}
             aria-label="Message input"
           />
@@ -107,10 +107,10 @@ export function ChatInput({
           onClick={handleSend}
           disabled={!message.trim() || disabled}
           size="icon"
-          className="h-[60px] w-[60px] shrink-0 bg-gradient-to-r from-teal-700 to-cyan-700 hover:from-teal-800 hover:to-cyan-800 border-0 shadow-lg shadow-teal-600/20 hover:shadow-teal-600/30 transition-all duration-300 hover:scale-110 disabled:hover:scale-100 disabled:opacity-30"
+          className="h-[60px] w-[60px] shrink-0 bg-red-600 hover:bg-red-700 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 disabled:hover:scale-100 disabled:opacity-30 rounded-2xl"
           aria-label="Send message"
         >
-          <Send className="h-5 w-5" />
+          <Send className="h-6 w-6" />
         </Button>
       </div>
     </div>
