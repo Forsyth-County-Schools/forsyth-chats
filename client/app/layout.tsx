@@ -40,6 +40,17 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <head>
+          {/* Prevent flash of wrong theme */}
+          <style dangerouslySetInnerHTML={{
+            __html: `
+              html {
+                visibility: hidden;
+              }
+              html.dark {
+                visibility: visible;
+              }
+            `
+          }} />
           {/* Content Security Policy for XSS protection - Updated for Clerk with eval allowed */}
           <meta 
             httpEquiv="Content-Security-Policy" 
@@ -57,8 +68,20 @@ export default function RootLayout({
             dangerouslySetInnerHTML={{
               __html: `
                 (function() {
-                  const theme = localStorage.getItem('theme') || 'light';
-                  document.documentElement.classList.toggle('dark', theme === 'dark');
+                  // Force dark mode immediately
+                  document.documentElement.classList.add('dark');
+                  
+                  // Check localStorage for saved preference
+                  const savedTheme = localStorage.getItem('theme');
+                  if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                  } else {
+                    // Default to dark if no preference saved
+                    localStorage.setItem('theme', 'dark');
+                  }
+                  
+                  // Make page visible
+                  document.documentElement.style.visibility = 'visible';
                 })()
               `,
             }}
