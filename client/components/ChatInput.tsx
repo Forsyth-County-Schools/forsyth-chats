@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Smile, Paperclip, X, Reply } from 'lucide-react';
+import { Send, Smile, Paperclip, X, Reply, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Message, Attachment } from '@/lib/socket';
+import { validateContentRealtime } from '@/lib/contentFilter';
 
 interface ChatInputProps {
   onSendMessage: (message: string, attachments?: Attachment[], replyTo?: string) => void;
@@ -29,6 +30,7 @@ export function ChatInput({
   const [message, setMessage] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [contentWarning, setContentWarning] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -77,9 +79,18 @@ export function ChatInput({
   const handleSend = () => {
     const trimmedMessage = message.trim();
     if ((trimmedMessage || attachments.length > 0) && !disabled && !uploading) {
+      // Validate content before sending
+      const validation = validateContentRealtime(trimmedMessage);
+      
+      if (!validation.isValid) {
+        setContentWarning(validation.warning || 'Message contains inappropriate content');
+        return;
+      }
+      
       onSendMessage(trimmedMessage, attachments, replyingTo?._id);
       setMessage('');
       setAttachments([]);
+      setContentWarning(null);
       
       // Clear typing indicator
       if (onStopTyping) {
@@ -108,6 +119,20 @@ export function ChatInput({
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newMessage = e.target.value;
     setMessage(newMessage);
+    
+    // Real-time content validation
+    if (newMessage.trim()) {
+      const validation = validateContentRealtime(newMessage.trim());
+      if (!validation.isValid) {
+        setContentWarning(validation.warning || 'Message contains inappropriate content');
+      } else if (validation.warning) {
+        setContentWarning(validation.warning);
+      } else {
+        setContentWarning(null);
+      }
+    } else {
+      setContentWarning(null);
+    }
     
     // Auto-resize
     if (textareaRef.current) {
@@ -146,6 +171,20 @@ export function ChatInput({
 
   return (
     <div className="space-y-3">
+      {/* Content Warning */}
+      {contentWarning && (
+        <div className="flex items-center gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl transition-all duration-200">
+          <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+          <p className="text-sm text-amber-800 dark:text-amber-200">{contentWarning}</p>
+          <button
+            onClick={() => setContentWarning(null)}
+            className="ml-auto text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+      
       {/* Reply indicator */}
       {replyingTo && (
         <div className="flex items-center gap-3 p-3 bg-blue-50/80 dark:bg-blue-900/20 border-l-3 border-blue-500 rounded-r-xl transition-all duration-200 hover:bg-blue-100/80 dark:hover:bg-blue-900/30">

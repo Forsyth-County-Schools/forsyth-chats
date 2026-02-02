@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Filter } from 'bad-words';
+import { filterContent, validateContentRealtime } from './contentFilter';
 
 interface RateLimitState {
   messageCount: number;
@@ -98,9 +98,6 @@ export function useRateLimit() {
   };
 }
 
-// Profanity filter (school-appropriate)
-const profanityFilter = new Filter();
-
 export function validateUserName(name: string): { isValid: boolean; error?: string } {
   const trimmedName = name.trim();
   
@@ -118,15 +115,16 @@ export function validateUserName(name: string): { isValid: boolean; error?: stri
     return { isValid: false, error: 'Name contains invalid characters' };
   }
 
-  // Profanity check
-  if (profanityFilter.isProfane(trimmedName)) {
+  // Comprehensive content check
+  const nameValidation = filterContent(trimmedName);
+  if (!nameValidation.isClean || nameValidation.shouldBlock) {
     return { isValid: false, error: 'Please choose an appropriate name for school use' };
   }
 
   return { isValid: true };
 }
 
-// Sanitize chat messages
+// Sanitize chat messages with comprehensive filtering
 export function sanitizeMessage(message: string): string {
   const sanitized = message
     .trim()
@@ -136,5 +134,7 @@ export function sanitizeMessage(message: string): string {
     .replace(/on\w+\s*=/gi, '') // Remove event handlers
     .substring(0, 500); // Limit length
 
-  return profanityFilter.clean(sanitized);
+  // Apply comprehensive content filtering
+  const filterResult = filterContent(sanitized);
+  return filterResult.filteredContent || sanitized;
 }

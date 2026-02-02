@@ -11,6 +11,8 @@ import { ChatInput } from '@/components/ChatInput';
 import { ParticipantList } from '@/components/ParticipantList';
 import { CopyButton } from '@/components/CopyButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { WarningNotification } from '@/components/WarningNotification';
+import { useUserModeration } from '@/lib/userModeration';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { useUserStore, useChatStore } from '@/lib/store';
@@ -23,6 +25,7 @@ export default function ChatPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
+  const { isMuted } = useUserModeration();
   
   const roomCode = (params.code as string)?.toUpperCase();
   const { name, loadUser } = useUserStore();
@@ -262,8 +265,12 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
-      {/* Header */}
+    <GeoBlockWrapper>
+      <div className="h-screen flex flex-col transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
+        {/* Warning Notification */}
+        <WarningNotification />
+        
+        {/* Header */}
       <header className="border-b shadow-sm transition-all duration-300" style={{backgroundColor: 'var(--card-background)', borderColor: 'var(--border)'}}>
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-4">
@@ -368,7 +375,7 @@ export default function ChatPage() {
             onSendMessage={handleSendMessage}
             onTyping={handleTyping}
             onStopTyping={handleStopTyping}
-            disabled={!isConnected}
+            disabled={!isConnected || isMuted}
             replyingTo={replyingTo}
             onCancelReply={() => setReplyingTo(null)}
             roomCode={roomCode}
@@ -400,5 +407,6 @@ export default function ChatPage() {
         )}
       </div>
     </div>
+      </GeoBlockWrapper>
   );
 }
