@@ -8,6 +8,9 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { ProfileSetup } from '@/components/ProfileSetup';
 import { SignedIn, SignedOut, useUser } from '@clerk/nextjs';
 import { useUserStore } from '@/lib/store';
+
+// Force dynamic rendering to avoid Clerk prerendering issues
+export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 

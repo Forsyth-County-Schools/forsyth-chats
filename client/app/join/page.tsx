@@ -2,22 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, LogIn } from 'lucide-react';
+import { ArrowLeft, Users, Lock, Clock, CheckCircle, AlertCircle, User, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useToast } from '@/components/ui/use-toast';
-import { api } from '@/lib/api';
-import { useUserStore } from '@/lib/store';
-import { nameSchema, roomCodeSchema } from '@/lib/validations';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { parseSchoolCode } from '@/lib/schools';
-import { validateUserName } from '@/lib/security';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
+import { useUserStore } from '@/lib/store';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
+import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
+import { validateUserName } from '@/lib/security';
+import { api } from '@/lib/api';
+import { parseSchoolCode } from '@/lib/schools';
+
+// Force dynamic rendering to avoid Clerk prerendering issues
+export const dynamic = 'force-dynamic';
 
 export default function JoinPage() {
   const { user } = useUser();
@@ -43,10 +46,14 @@ export default function JoinPage() {
     setCodeError('');
     setRoomExists(null);
     
-    // Validate room code and extract school information
-    const validation = roomCodeSchema.safeParse({ code: roomCode.trim() });
-    if (!validation.success) {
-      setCodeError(validation.error.errors[0].message);
+    const validateRoomCode = (code: string) => {
+      // Basic validation: should be 3-4 letters, dash, then random characters
+      const pattern = /^[A-Z]{3,4}-[A-Z0-9]+$/;
+      return pattern.test(code.toUpperCase());
+    };
+
+    if (!validateRoomCode(roomCode.trim())) {
+      setCodeError('Invalid room code format. Please use XXXX-XXXX format.');
       return;
     }
     

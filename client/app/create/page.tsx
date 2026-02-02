@@ -2,22 +2,27 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Users, Lock, Clock, CheckCircle, AlertCircle, Plus, Minus } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useToast } from '@/components/ui/use-toast';
-import { api } from '@/lib/api';
-import { useUserStore } from '@/lib/store';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
+import { useUserStore } from '@/lib/store';
+import GeoBlockWrapper from '@/components/GeoBlockWrapper';
+import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { FORSYTH_SCHOOLS, SCHOOLS_BY_CATEGORY, generateSchoolCode } from '@/lib/schools';
 import { validateUserName } from '@/lib/security';
-import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
-import GeoBlockWrapper from '@/components/GeoBlockWrapper';
+import { api } from '@/lib/api';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+
+// Force dynamic rendering to avoid Clerk prerendering issues
+export const dynamic = 'force-dynamic';
 
 export default function CreatePage() {
   const { user, isSignedIn } = useUser();
