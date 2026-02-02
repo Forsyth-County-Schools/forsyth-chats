@@ -178,6 +178,15 @@ classroom-chat-center/
 
 ## 🌐 Deployment
 
+### Quick Deploy
+
+**Production URLs:**
+- 🌐 Frontend: https://forsyth-chats.vercel.app/
+- 🔧 Backend: https://forsyth-chats.onrender.com/
+- 💾 Database: MongoDB Atlas
+
+**See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.**
+
 ### Frontend (Vercel - Recommended)
 
 1. Push your code to GitHub
