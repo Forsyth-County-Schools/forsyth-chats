@@ -5,7 +5,7 @@ import { User } from '../models/User';
 const router = Router();
 
 // Clerk webhook secret for verification
-const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
+const CLERK_WEBHOOK_SECRET = 'whsec_jiezJxMGvdo2sIGN/3klKumR72RU5D2Q';
 
 // POST /api/webhooks/clerk - Handle Clerk webhooks
 router.post('/webhooks/clerk', async (req: Request, res: Response): Promise<void> => {
