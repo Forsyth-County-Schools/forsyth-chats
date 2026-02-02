@@ -33,17 +33,17 @@
   }
 
   .dark {
-    /* Dark theme variables */
-    --background: #111827;
-    --background-secondary: #1F2937;
-    --foreground: #F9FAFB;
-    --foreground-secondary: #D1D5DB;
-    --card-background: #1F2937;
-    --border: #374151;
-    --input-background: #1F2937;
-    --input-border: #4B5563;
-    --success-background: rgba(220, 68, 55, 0.1);
-    --success-border: rgba(220, 68, 55, 0.3);
+    /* Dark theme variables - Ultra Dark */
+    --background: #0A0A0B;
+    --background-secondary: #111113;
+    --foreground: #FFFFFF;
+    --foreground-secondary: #B4B4B8;
+    --card-background: #151517;
+    --border: #27272A;
+    --input-background: #151517;
+    --input-border: #3F3F46;
+    --success-background: rgba(220, 68, 55, 0.15);
+    --success-border: rgba(220, 68, 55, 0.4);
   }
 }
 

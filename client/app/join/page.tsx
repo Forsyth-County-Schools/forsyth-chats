@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, LogIn } from 'lucide-react';
 import Link from 'next/link';
@@ -24,10 +24,21 @@ export default function JoinPage() {
   const [roomExists, setRoomExists] = useState<boolean | null>(null);
   const [codeError, setCodeError] = useState('');
   const [nameError, setNameError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   
   const router = useRouter();
   const { toast } = useToast();
   const { setUser } = useUserStore();
+
+  useEffect(() => {
+    // Handle Turnstile callback
+    const handleTurnstileSuccess = (event: any) => {
+      setTurnstileToken(event.detail);
+    };
+    
+    window.addEventListener('turnstileSuccess', handleTurnstileSuccess);
+    return () => window.removeEventListener('turnstileSuccess', handleTurnstileSuccess);
+  }, []);
 
   const handleCheckRoom = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,192 +101,249 @@ export default function JoinPage() {
       });
       return;
     }
+
+    if (!turnstileToken) {
+      toast({
+        title: 'Security Verification Required',
+        description: 'Please complete the security verification',
+        variant: 'destructive',
+      });
+      return;
+    }
     
     setIsJoining(true);
     
-    // Save user info and navigate to chat
-    setUser(name.trim(), roomCode.toUpperCase());
-    router.push(`/chat/${roomCode.toUpperCase()}`);
+    try {
+      const response = await api.joinRoom({
+        roomCode: roomCode.trim(),
+        name: name.trim(),
+        turnstileToken,
+      });
+      
+      // Set user in store
+      setUser(response.user.name, roomCode.trim());
+      
+      // Navigate to chat
+      router.push(`/chat/${roomCode.trim()}`);
+    } catch (error) {
+      toast({
+        title: 'Failed to Join',
+        description: error instanceof Error ? error.message : 'An error occurred while joining the room',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsJoining(false);
+    }
   };
 
   return (
-    <main className="page-container">
+    <main className="min-h-screen transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
       {/* Theme Toggle */}
       <div className="absolute top-6 right-6 z-10">
         <ThemeToggle />
       </div>
       
-      <div className="w-full max-w-2xl">
-        <Link href="/">
-          <Button variant="ghost" className="mb-6 transition-colors duration-300" style={{color: 'var(--foreground-secondary)'}}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Button>
+      <div className="container mx-auto px-4 py-16 max-w-2xl">
+        {/* Back Button */}
+        <Link href="/" className="inline-flex items-center text-red-600 hover:text-red-700 mb-8 transition-colors">
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Home
         </Link>
 
-        <div className="card-modern p-8 animate-scale-in">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="bg-red-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 modern-shadow">
-              <LogIn className="h-10 w-10 text-white" />
+        <Card className="card-modern">
+          <CardHeader className="text-center space-y-4">
+            <div className="flex justify-center">
+              <div className="bg-red-600 p-6 rounded-2xl modern-shadow">
+                <LogIn className="h-12 w-12 text-white" />
+              </div>
             </div>
-            <h1 className="text-4xl font-black mb-3" style={{color: 'var(--foreground)'}}>Join a Classroom</h1>
-            <p className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
-              Enter the room code provided by your teacher
-            </p>
-          </div>
+            <CardTitle className="text-3xl font-bold" style={{color: 'var(--foreground)'}}>
+              Join Classroom
+            </CardTitle>
+            <CardDescription className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
+              Enter a room code to join an existing classroom chat
+            </CardDescription>
+          </CardHeader>
 
-          {/* Room Code Entry */}
-          {roomExists === null && (
-            <form onSubmit={handleCheckRoom} className="space-y-6">
-              <div>
-                <label htmlFor="roomCode" className="block text-lg font-semibold mb-3" style={{color: 'var(--foreground)'}}>
-                  Room Code
-                </label>
-                <Input
-                  id="roomCode"
-                  type="text"
-                  value={roomCode}
-                  onChange={(e) => {
-                    setRoomCode(e.target.value.toUpperCase());
-                    setCodeError('');
-                  }}
-                  placeholder="Enter 10-character code"
-                  className={`modern-input font-mono text-xl tracking-wider text-center py-4 ${codeError ? 'border-red-500 focus:border-red-500' : ''}`}
-                  maxLength={10}
-                  disabled={isChecking}
-                  required
-                />
-                {codeError && (
-                  <p className="text-sm text-red-600 mt-2 font-medium">{codeError}</p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                size="lg"
-                className="btn-red-primary w-full text-lg py-4 font-bold"
-                disabled={isChecking || roomCode.length !== 10}
-              >
-                {isChecking ? (
-                  <>
-                    <LoadingSpinner size="sm" />
-                    <span className="ml-2">Checking...</span>
-                  </>
-                ) : (
-                  'Check Room'
-                )}
-              </Button>
-            </form>
-          )}
-
-          {/* Name Entry (shown after room is found) */}
-          {roomExists && (
-            <div className="space-y-6 animate-slide-up">
-              <div className="bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-600/30 p-6 rounded-xl text-center">
-                <p className="font-semibold text-lg" style={{color: 'var(--foreground)'}}>
-                  ✓ Room <span className="font-mono font-bold text-green-600">{roomCode}</span> found!
-                </p>
-              </div>
-
-              <form onSubmit={handleJoinRoom} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-lg font-semibold mb-3" style={{color: 'var(--foreground)'}}>
-                    Your Name
+          <CardContent className="space-y-8">
+            {/* Room Code Form */}
+            {roomExists === null && (
+              <form onSubmit={handleCheckRoom} className="space-y-6 animate-slide-up">
+                <div className="space-y-3">
+                  <label htmlFor="roomCode" className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
+                    Room Code
                   </label>
                   <Input
-                    id="name"
+                    id="roomCode"
                     type="text"
-                    value={name}
+                    value={roomCode}
                     onChange={(e) => {
-                      setName(e.target.value);
-                      setNameError('');
+                      setRoomCode(e.target.value.toUpperCase());
+                      setCodeError('');
                     }}
-                    placeholder="Enter your name"
-                    className={`modern-input text-lg py-4 ${nameError ? 'border-red-500 focus:border-red-500' : ''}`}
-                    disabled={isJoining}
-                    required
+                    placeholder="Enter 10-character room code"
+                    maxLength={10}
+                    className="modern-input text-lg py-4 text-center tracking-wider font-mono"
+                    style={{
+                      backgroundColor: 'var(--input-background)',
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--foreground)'
+                    }}
+                    disabled={isChecking}
                   />
-                  {nameError && (
-                    <p className="text-sm text-red-600 mt-2 font-medium">{nameError}</p>
+                  {codeError && (
+                    <p className="text-red-600 text-sm font-medium">{codeError}</p>
                   )}
                 </div>
 
-                <div className="flex items-start space-x-3">
-                  <Checkbox
-                    id="policy"
-                    checked={agreedToPolicy}
-                    onCheckedChange={(checked) => setAgreedToPolicy(checked as boolean)}
-                    disabled={isJoining}
-                    className="mt-1 border-gray-400 data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
-                  />
-                  <label
-                    htmlFor="policy"
-                    className="text-base leading-relaxed font-medium" style={{color: 'var(--foreground-secondary)'}}
-                  >
-                    I agree to keep the chat respectful and appropriate
-                  </label>
-                </div>
-
-                <div className="flex gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setRoomExists(null);
-                      setRoomCode('');
-                      setName('');
-                      setAgreedToPolicy(false);
-                    }}
-                    disabled={isJoining}
-                    className="btn-red-outline flex-1 py-4"
-                  >
-                    Change Code
-                  </Button>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="btn-red-primary flex-2 text-lg py-4 font-bold"
-                    disabled={isJoining || !name.trim() || !agreedToPolicy}
-                  >
-                    {isJoining ? (
-                      <>
-                        <LoadingSpinner size="sm" />
-                        <span className="ml-2">Joining...</span>
-                      </>
-                    ) : (
-                      'Join Classroom'
-                    )}
-                  </Button>
-                </div>
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="btn-red-primary w-full text-lg py-4 font-semibold"
+                  disabled={isChecking || !roomCode.trim()}
+                >
+                  {isChecking ? (
+                    <>
+                      <LoadingSpinner size="sm" />
+                      <span className="ml-2">Checking...</span>
+                    </>
+                  ) : (
+                    'Check Room'
+                  )}
+                </Button>
               </form>
-            </div>
-          )}
+            )}
 
-          {/* Room Not Found */}
-          {roomExists === false && (
-            <div className="space-y-6 animate-slide-up">
-              <div className="success-box">
-                <p className="text-red-600 font-semibold text-lg">
-                  ✗ Room not found. The code might be incorrect or the room may have expired.
-                </p>
+            {/* Join Form (shown when room exists) */}
+            {roomExists === true && (
+              <div className="space-y-6 animate-slide-up">
+                <div className="success-box">
+                  <p className="text-green-700 dark:text-green-400 font-semibold text-lg">
+                    ✓ Room found! Please enter your details to join.
+                  </p>
+                </div>
+
+                <form onSubmit={handleJoinRoom} className="space-y-6">
+                  <div className="space-y-3">
+                    <label htmlFor="name" className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
+                      Your Name
+                    </label>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={name}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        setNameError('');
+                      }}
+                      placeholder="Enter your name"
+                      className="modern-input text-lg py-4"
+                      style={{
+                        backgroundColor: 'var(--input-background)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--foreground)'
+                      }}
+                      disabled={isJoining}
+                    />
+                    {nameError && (
+                      <p className="text-red-600 text-sm font-medium">{nameError}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="policy"
+                        checked={agreedToPolicy}
+                        onCheckedChange={(checked) => setAgreedToPolicy(checked === true)}
+                        disabled={isJoining}
+                      />
+                      <label htmlFor="policy" className="text-sm leading-relaxed cursor-pointer" style={{color: 'var(--foreground-secondary)'}}>
+                        I agree to keep the chat respectful and appropriate for a classroom environment. 
+                        I understand that inappropriate behavior may result in removal from the chat.
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Cloudflare Turnstile */}
+                  <div className="flex justify-center">
+                    <div 
+                      className="cf-turnstile" 
+                      data-sitekey="0x4AAAAAACW20p-WO0bwShk2"
+                      data-callback="onTurnstileSuccess"
+                    ></div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setRoomExists(null);
+                        setName('');
+                        setNameError('');
+                        setAgreedToPolicy(false);
+                        setTurnstileToken('');
+                      }}
+                      disabled={isJoining}
+                      className="btn-red-outline flex-1 py-4"
+                    >
+                      Change Code
+                    </Button>
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="btn-red-primary flex-2 text-lg py-4 font-bold"
+                      disabled={isJoining || !name.trim() || !agreedToPolicy || !turnstileToken}
+                    >
+                      {isJoining ? (
+                        <>
+                          <LoadingSpinner size="sm" />
+                          <span className="ml-2">Joining...</span>
+                        </>
+                      ) : (
+                        'Join Classroom'
+                      )}
+                    </Button>
+                  </div>
+                </form>
               </div>
+            )}
 
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setRoomExists(null);
-                  setRoomCode('');
-                  setCodeError('');
-                }}
-                className="btn-red-outline w-full py-4 text-lg font-semibold"
-              >
-                Try Another Code
-              </Button>
-            </div>
-          )}
-        </div>
+            {/* Room Not Found */}
+            {roomExists === false && (
+              <div className="space-y-6 animate-slide-up">
+                <div className="success-box">
+                  <p className="text-red-600 font-semibold text-lg">
+                    ✗ Room not found. The code might be incorrect or the room may have expired.
+                  </p>
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setRoomExists(null);
+                    setRoomCode('');
+                    setCodeError('');
+                  }}
+                  className="btn-red-outline w-full py-4 text-lg font-semibold"
+                >
+                  Try Another Code
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Turnstile Success Handler Script */}
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          window.onTurnstileSuccess = function(token) {
+            window.dispatchEvent(new CustomEvent('turnstileSuccess', { detail: token }));
+          };
+        `
+      }} />
     </main>
   );
 }

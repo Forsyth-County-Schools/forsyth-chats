@@ -14,6 +14,15 @@ export interface RoomExistsResponse {
   message?: string;
 }
 
+export interface JoinRoomResponse {
+  success: boolean;
+  user: {
+    id: string;
+    name: string;
+  };
+  message?: string;
+}
+
 export const api = {
   async createRoom(creatorName?: string): Promise<CreateRoomResponse> {
     const response = await fetch(`${API_URL}/api/create-room`, {
@@ -38,6 +47,23 @@ export const api = {
     if (!response.ok && response.status !== 404) {
       const error = await response.json();
       throw new Error(error.message || 'Failed to check room');
+    }
+
+    return response.json();
+  },
+
+  async joinRoom(data: { roomCode: string; name: string; turnstileToken: string }): Promise<JoinRoomResponse> {
+    const response = await fetch(`${API_URL}/api/join-room`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to join room');
     }
 
     return response.json();
