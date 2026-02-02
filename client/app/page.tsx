@@ -5,20 +5,12 @@ import { MessageSquare, Plus, LogIn, Lock, Shield, Users, School } from 'lucide-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { WarningNotification } from '@/components/WarningNotification';
-import HostSettingsPanel from '@/components/HostSettingsPanel';
-import { useUserModeration } from '@/lib/userModeration';
-import { useToast } from '@/components/ui/use-toast';
-import { api } from '@/lib/api';
-import { useUserStore, useChatStore } from '@/lib/store';
-import { getSocket, disconnectSocket, Message, Attachment, Reaction } from '@/lib/socket';
-import { Socket } from 'socket.io-client';
-import { sanitizeMessage } from '@/lib/security';
-import GeoBlockWrapper from '@/components/GeoBlockWrapper';
-import Image from 'next/image';
 import { SignedIn, SignedOut, useUser } from '@clerk/nextjs';
 import { useState, useEffect } from 'react';
 import { ProfileSetup } from '@/components/ProfileSetup';
+import Image from 'next/image';
+import { useUserStore } from '@/lib/store';
+import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 
 export default function Home() {
   const { user } = useUser();

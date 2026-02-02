@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { Message, Attachment } from '@/lib/socket';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { getSocket } from '@/lib/socket';
 import { Download, ExternalLink, Reply, Smile, MoreVertical, Check, CheckCheck } from 'lucide-react';
 import Image from 'next/image';

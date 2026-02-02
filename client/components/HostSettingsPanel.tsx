@@ -72,14 +72,14 @@ const HostSettingsPanel = React.memo(function HostSettingsPanel({ className, roo
 
       {/* Sidebar Panel */}
       <div className={cn(
-        "fixed inset-y-0 right-0 z-50 w-80 bg-gray-900 border-l border-gray-800 transform transition-transform duration-300 ease-in-out",
+        "fixed inset-y-0 right-0 z-[9999] w-80 bg-gray-900 border-l border-gray-800 transform transition-transform duration-300 ease-in-out",
         "rounded-l-3xl shadow-2xl",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* Overlay */}
         {isOpen && (
           <div 
-            className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 z-[9998]"
             onClick={() => setIsOpen(false)}
           />
         )}

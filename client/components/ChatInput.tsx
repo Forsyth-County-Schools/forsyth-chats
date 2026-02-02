@@ -1,16 +1,13 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { Send, Paperclip, Smile, X, Mic, MicOff, Upload, AlertTriangle, Reply } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Send, Paperclip, Smile, X, Mic, AlertTriangle, Reply } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useChatStore } from '@/lib/store';
-import { useToast } from '@/components/ui/use-toast';
-import { sanitizeMessage } from '@/lib/security';
 import Image from 'next/image';
 import { validateContentRealtime } from '@/lib/contentFilter';
 import { cn } from '@/lib/utils';
-import { getSocket, Message, Attachment } from '@/lib/socket';
+import { Message, Attachment } from '@/lib/socket';
 
 interface ChatInputProps {
   onSendMessage: (message: string, attachments?: Attachment[], replyTo?: string) => void;
