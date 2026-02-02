@@ -12,7 +12,11 @@ import {
   UserButton,
 } from '@clerk/nextjs';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true
+});
 
 export const metadata: Metadata = {
   title: 'Canvas Dashboard',
@@ -40,6 +44,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <head>
+          {/* Google Font preconnect */}
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          
           {/* Prevent flash of wrong theme */}
           <style dangerouslySetInnerHTML={{
             __html: `
