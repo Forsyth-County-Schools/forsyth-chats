@@ -370,7 +370,6 @@ export default function CreatePage() {
                         setAgreedToPolicy(false);
                         setAgreedToDistrictPolicy(false);
                       }}
-                      }}
                       variant="outline"
                       size="lg"
                       className="px-6 border-gray-300 hover:border-gray-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800"

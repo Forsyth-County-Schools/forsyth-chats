@@ -85,24 +85,28 @@ export default function Home() {
             <div className="flex justify-center mb-8 animate-fade-in-up">
               <div className="relative group">
                 {/* Main logo container */}
-                <div className="relative z-20 bg-gradient-to-br from-red-600 via-red-500 to-pink-600 p-8 rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-3">
-                  <MessageSquare className="h-16 w-16 text-white drop-shadow-2xl" strokeWidth={2.5} />
+                <div className="relative z-20 bg-gradient-to-br from-amber-500 via-yellow-600 to-orange-600 p-6 rounded-3xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-3">
+                  <img 
+                    src="/forsyth-logo.svg" 
+                    alt="Forsyth County Logo" 
+                    className="h-20 w-20 drop-shadow-2xl"
+                  />
                   
                   {/* Inner glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
                 
                 {/* Animated rings */}
                 <div className="absolute inset-0 -z-10">
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-pink-600 rounded-full blur-3xl opacity-50 animate-ping" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-orange-500 rounded-full blur-2xl opacity-30 animate-pulse" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full blur-3xl opacity-50 animate-ping" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full blur-2xl opacity-30 animate-pulse" />
                 </div>
                 
                 {/* Orbiting elements */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 animate-spin-slow">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-red-400 rounded-full shadow-lg shadow-red-400/50" />
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-pink-400 rounded-full shadow-lg shadow-pink-400/50" />
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-orange-400 rounded-full shadow-lg shadow-orange-400/50" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-amber-400 rounded-full shadow-lg shadow-amber-400/50" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-orange-400 rounded-full shadow-lg shadow-orange-400/50" />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/50" />
                 </div>
               </div>
             </div>
