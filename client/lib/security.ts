@@ -8,7 +8,7 @@ interface RateLimitState {
   lastReset: number;
 }
 
-const MESSAGE_LIMIT = 5; // messages
+const MESSAGE_LIMIT = 20; // messages
 const TIME_WINDOW = 10000; // 10 seconds
 const STORAGE_KEY = 'chat_rate_limit';
 

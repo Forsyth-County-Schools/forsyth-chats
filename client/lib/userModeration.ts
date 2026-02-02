@@ -50,7 +50,7 @@ export function generateHardwareFingerprint(): UserFingerprint {
         screen.colorDepth,
         new Date().getTimezoneOffset(),
         navigator.hardwareConcurrency || 'unknown',
-        (navigator as any).deviceMemory || 'unknown',
+        (navigator as unknown as { deviceMemory?: number }).deviceMemory || 'unknown',
         window.devicePixelRatio,
         canvas.toDataURL(),
         navigator.platform
@@ -62,7 +62,7 @@ export function generateHardwareFingerprint(): UserFingerprint {
     language: navigator.language,
     platform: navigator.platform,
     hardwareConcurrency: navigator.hardwareConcurrency || 0,
-    deviceMemory: (navigator as any).deviceMemory || 0,
+    deviceMemory: (navigator as unknown as { deviceMemory?: number }).deviceMemory || 0,
     colorDepth: screen.colorDepth,
     pixelRatio: window.devicePixelRatio
   };
@@ -92,7 +92,7 @@ export function getUserFingerprint(): string {
         if (verifyFingerprintMatch(parsed, current)) {
           return parsed.fingerprint;
         }
-      } catch (e) {
+      } catch {
         // Continue to next storage if parsing fails
       }
     }
@@ -155,7 +155,7 @@ export function getModerationState(): ModerationState {
             lastWarningTime: data.lastWarningTime
           };
         }
-      } catch (e) {
+      } catch {
         // Continue to next storage
       }
     }

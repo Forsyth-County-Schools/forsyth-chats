@@ -59,7 +59,7 @@ export default function CreatePage() {
     const lastCreatedTime = localStorage.getItem('lastRoomCreatedTime');
     if (lastCreatedTime) {
       const timeSinceLastCreation = Date.now() - parseInt(lastCreatedTime);
-      const cooldownDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const cooldownDuration = 60 * 1000; // 60 seconds in milliseconds
       
       if (timeSinceLastCreation < cooldownDuration) {
         setIsOnCooldown(true);
@@ -147,7 +147,7 @@ Created on: ${new Date().toLocaleDateString()}
     if (isOnCooldown) {
       toast({
         title: 'Please Wait',
-        description: `You can create another classroom in ${formatCooldownTime(cooldownTimeLeft)}`,
+        description: `You can create another classroom in ${cooldownTimeLeft} seconds`,
         variant: 'destructive',
       });
       return;
@@ -224,7 +224,7 @@ Created on: ${new Date().toLocaleDateString()}
         // Set rate limiting cooldown
         localStorage.setItem('lastRoomCreatedTime', Date.now().toString());
         setIsOnCooldown(true);
-        setCooldownTimeLeft(5 * 60); // 5 minutes in seconds
+        setCooldownTimeLeft(60); // 60 seconds
         
         // Start cooldown timer
         const cooldownTimer = setInterval(() => {
@@ -314,7 +314,7 @@ Created on: ${new Date().toLocaleDateString()}
                             Rate Limit Active
                           </p>
                           <p className="text-sm text-amber-700 dark:text-amber-300">
-                            You can create another classroom in {formatCooldownTime(cooldownTimeLeft)}
+                            You can create another classroom in {cooldownTimeLeft} seconds
                           </p>
                         </div>
                       </div>
@@ -473,7 +473,7 @@ Created on: ${new Date().toLocaleDateString()}
                   ) : isOnCooldown ? (
                     <>
                       <span className="mr-2">⏳</span>
-                      Wait {formatCooldownTime(cooldownTimeLeft)}
+                      Wait {cooldownTimeLeft}s
                     </>
                   ) : (
                     'Create Forsyth County Classroom'

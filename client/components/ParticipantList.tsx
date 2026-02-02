@@ -78,9 +78,9 @@ export function ParticipantList({ participants, className }: ParticipantListProp
   };
 
   return (
-    <div className={cn("h-full flex flex-col bg-slate-900", className)}>
+    <div className={cn("h-full flex flex-col bg-gray-900", className)}>
       {/* Header */}
-      <div className="p-4 border-b border-slate-800">
+      <div className="p-4 border-b border-gray-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
@@ -88,7 +88,7 @@ export function ParticipantList({ participants, className }: ParticipantListProp
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">Participants</h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-gray-400">
                 {participants.length} {participants.length === 1 ? 'member' : 'members'} online
               </p>
             </div>
@@ -106,11 +106,11 @@ export function ParticipantList({ participants, className }: ParticipantListProp
 
         {/* Search */}
         <div className="mt-4 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search participants..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 text-sm"
+            className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
           />
         </div>
       </div>
@@ -123,8 +123,8 @@ export function ParticipantList({ participants, className }: ParticipantListProp
               key={participant.name}
               className={cn(
                 "flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group",
-                "hover:bg-slate-800/50 border border-transparent hover:border-slate-700",
-                participant.isCurrentUser && "bg-slate-800/30 border-slate-700/50"
+                "hover:bg-gray-800/50 border border-transparent hover:border-gray-700",
+                participant.isCurrentUser && "bg-gray-800/30 border-gray-700/50"
               )}
             >
               {/* Avatar */}
@@ -132,7 +132,7 @@ export function ParticipantList({ participants, className }: ParticipantListProp
                 <div className={cn(
                   "w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold",
                   "shadow-sm transition-all duration-200 group-hover:shadow-md",
-                  "ring-2 ring-slate-800",
+                  "ring-2 ring-gray-900",
                   participant.isCurrentUser
                     ? "bg-gradient-to-br from-slate-600 to-slate-700" 
                     : `bg-gradient-to-br ${getUserColor(participant.name)}`
@@ -142,7 +142,7 @@ export function ParticipantList({ participants, className }: ParticipantListProp
                 
                 {/* Online Indicator */}
                 {participant.isOnline && (
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-slate-900 transition-all duration-200 group-hover:scale-110" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-gray-900 transition-all duration-200 group-hover:scale-110" />
                 )}
               </div>
 
@@ -173,7 +173,7 @@ export function ParticipantList({ participants, className }: ParticipantListProp
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="p-1.5 h-8 w-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700"
+                  className="p-1.5 h-8 w-8 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -185,20 +185,20 @@ export function ParticipantList({ participants, className }: ParticipantListProp
           
           {participants.length === 0 && (
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-slate-600" />
+              <div className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-gray-600" />
               </div>
               <h3 className="text-white font-semibold mb-2">No participants yet</h3>
-              <p className="text-slate-400 text-sm">Waiting for others to join...</p>
+              <p className="text-gray-400 text-sm">Waiting for others to join...</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-4 border-t border-gray-800">
         <div className="text-center">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-gray-500">
             {participants.length} {participants.length === 1 ? 'person' : 'people'} in this room
           </p>
         </div>
