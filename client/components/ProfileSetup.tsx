@@ -33,31 +33,78 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
         const response = await api.getUser(user.id);
         
         if (response.success && response.user) {
+          // User exists, load their profile
           setProfile(response.user);
           setDisplayName(response.user.displayName);
           setProfileImageUrl(response.user.profileImageUrl || '');
         } else {
-          // Create new user profile from Clerk data
+          // User doesn't exist, create them from Clerk data
+          console.log('User not found in database, creating profile...');
           const newUserData = {
             clerkId: user.id,
             email: user.primaryEmailAddress?.emailAddress || '',
-            displayName: user.fullName || user.firstName || 'User',
+            displayName: user.fullName || user.firstName || user.username || 'User',
             profileImageUrl: user.imageUrl,
           };
 
-          const createResponse = await api.createOrUpdateUser(newUserData);
-          if (createResponse.success && createResponse.user) {
-            setProfile(createResponse.user);
-            setDisplayName(createResponse.user.displayName);
-            setProfileImageUrl(createResponse.user.profileImageUrl || '');
+          try {
+            const createResponse = await api.createOrUpdateUser(newUserData);
+            if (createResponse.success && createResponse.user) {
+              setProfile(createResponse.user);
+              setDisplayName(createResponse.user.displayName);
+              setProfileImageUrl(createResponse.user.profileImageUrl || '');
+              toast({
+                title: 'Profile Created',
+                description: 'Your profile has been set up successfully!',
+              });
+            } else {
+              throw new Error('Failed to create user profile');
+            }
+          } catch (createError) {
+            console.error('Error creating user profile:', createError);
+            
+            // Fallback: create a temporary profile locally
+            const fallbackProfile = {
+              clerkId: user.id,
+              email: user.primaryEmailAddress?.emailAddress || '',
+              displayName: user.fullName || user.firstName || user.username || 'User',
+              profileImageUrl: user.imageUrl,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            };
+            
+            setProfile(fallbackProfile);
+            setDisplayName(fallbackProfile.displayName);
+            setProfileImageUrl(fallbackProfile.profileImageUrl || '');
+            
+            toast({
+              title: 'Profile Setup',
+              description: 'Please complete your profile information to continue',
+              variant: 'default',
+            });
           }
         }
       } catch (error) {
         console.error('Error loading user profile:', error);
+        
+        // Fallback: Create a basic profile from Clerk data
+        const fallbackProfile = {
+          clerkId: user.id,
+          email: user.primaryEmailAddress?.emailAddress || '',
+          displayName: user.fullName || user.firstName || user.username || 'User',
+          profileImageUrl: user.imageUrl,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        
+        setProfile(fallbackProfile);
+        setDisplayName(fallbackProfile.displayName);
+        setProfileImageUrl(fallbackProfile.profileImageUrl || '');
+        
         toast({
-          title: 'Error',
-          description: 'Failed to load user profile',
-          variant: 'destructive',
+          title: 'Profile Setup',
+          description: 'Please complete your profile information to continue',
+          variant: 'default',
         });
       } finally {
         setInitialLoading(false);

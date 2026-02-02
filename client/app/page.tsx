@@ -19,7 +19,8 @@ export default function Home() {
   useEffect(() => {
     // If user is signed in but has no profile set up, show profile setup
     if (user && !profile) {
-      setShowProfileSetup(true);
+      // Don't immediately show profile setup, let ProfileSetup component handle it
+      console.log('User authenticated, checking profile...');
     }
   }, [user, profile]);
 
@@ -37,7 +38,7 @@ export default function Home() {
         <div className="container mx-auto px-6 py-16 max-w-4xl relative z-10">
           {/* Profile Setup for authenticated users */}
           <SignedIn>
-            {showProfileSetup ? (
+            {(!profile || showProfileSetup) ? (
               <div>
                 <ProfileSetup onComplete={() => setShowProfileSetup(false)} />
               </div>

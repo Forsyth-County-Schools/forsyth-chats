@@ -406,9 +406,14 @@ export default function JoinPage() {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
                   Authentication Required
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Please sign in to join a classroom chat room.
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  Please sign in or create an account to join classroom chats. Your profile will be automatically set up.
                 </p>
+                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-700 rounded-xl p-4 mb-6">
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    ✅ Once you sign up, we'll automatically create your profile so you can start chatting right away!
+                  </p>
+                </div>
               </div>
               
               <div className="space-y-4">
