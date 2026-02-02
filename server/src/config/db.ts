@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const connectDB = async (): Promise<void> => {
   try {
-    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/classroom-chat';
+    const mongoURI = 'mongodb+srv://blakeflyz1_db_user:ErX0cMjAItvvq4rx@forsythcountychat.0rcvols.mongodb.net/?appName=ForsythCountyChat';
     
     await mongoose.connect(mongoURI);
     

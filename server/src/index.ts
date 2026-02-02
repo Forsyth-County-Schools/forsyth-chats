@@ -16,7 +16,7 @@ const httpServer = createServer(app);
 
 // Get configuration from environment
 const PORT = process.env.PORT || 4000;
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
+const CLIENT_URL = 'https://forsyth-chats.vercel.app';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Initialize Socket.io with CORS
