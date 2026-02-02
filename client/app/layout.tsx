@@ -43,7 +43,7 @@ export default function RootLayout({
           {/* Content Security Policy for XSS protection - Updated for Clerk */}
           <meta 
             httpEquiv="Content-Security-Policy" 
-            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org https://*.clerk.accounts.dev https://*.clerk.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://forsyth-chats.onrender.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org https://*.clerk.accounts.dev https://*.clerk.dev wss: ws:; frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.dev; worker-src 'self' blob:; child-src 'self';" 
+            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org https://*.clerk.accounts.dev https://*.clerk.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://forsyth-chats.onrender.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org https://*.clerk.accounts.dev https://*.clerk.dev https://clerk-telemetry.com wss: ws:; frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.dev; worker-src 'self' blob:; child-src 'self';" 
           />
           {/* Force HTTPS in production */}
           <script dangerouslySetInnerHTML={{
