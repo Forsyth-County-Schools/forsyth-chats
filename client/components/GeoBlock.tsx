@@ -156,7 +156,7 @@ export default function GeoBlock({ onLocationVerified }: GeoBlockProps) {
             </h2>
             <p className="text-lg text-gray-300 mb-6">
               We detected you are accessing from outside of Georgia, United States.
-              This educational platform is exclusively available to students, teachers, and staff
+              This educational platform is exclusively available to students
               within Forsyth County Schools district.
             </p>
             

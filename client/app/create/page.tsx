@@ -205,10 +205,10 @@ export default function CreatePage() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Teacher/Creator Name */}
+                {/* Creator Name */}
                 <div className="space-y-3">
                   <label htmlFor="creatorName" className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
-                    Your Name (Teacher/Instructor) *
+                    Your Name *
                   </label>
                   <Input
                     id="creatorName"

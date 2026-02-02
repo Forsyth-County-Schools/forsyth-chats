@@ -194,7 +194,7 @@ export default function JoinPage() {
                   Join Forsyth County Classroom
                 </CardTitle>
                 <CardDescription className="text-xl leading-relaxed max-w-md mx-auto" style={{color: 'var(--foreground-secondary)'}}>
-                  Enter your teacher's secure room code to join the discussion 💬
+                  Enter the secure room code to join the discussion 💬
                 </CardDescription>
                 {/* Animated decorative line */}
                 <div className="flex items-center justify-center space-x-3 pt-4">
