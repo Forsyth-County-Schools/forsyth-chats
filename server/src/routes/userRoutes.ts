@@ -1,11 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { User } from '../models/User';
+import crypto from 'crypto';
 
 const router = Router();
 
 // Clerk webhook secret for verification
-const CLERK_WEBHOOK_SECRET = 'whsec_jiezJxMGvdo2sIGN/3klKumR72RU5D2Q';
+const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
 // POST /api/webhooks/clerk - Handle Clerk webhooks
 router.post('/webhooks/clerk', async (req: Request, res: Response): Promise<void> => {
@@ -23,7 +24,33 @@ router.post('/webhooks/clerk', async (req: Request, res: Response): Promise<void
       return;
     }
 
-    // Get the raw body for signature verification
+    // Verify the webhook signature using the secret
+    if (CLERK_WEBHOOK_SECRET) {
+      const signatureParts = svixSignature.split(' ');
+      if (signatureParts.length !== 2 || signatureParts[0] !== 'v1') {
+        res.status(400).json({
+          success: false,
+          message: 'Invalid signature format',
+        });
+        return;
+      }
+
+      const receivedSignature = signatureParts[1];
+      const expectedSignature = crypto
+        .createHmac('sha256', CLERK_WEBHOOK_SECRET)
+        .update(`${svixId}.${svixTimestamp}.${JSON.stringify(req.body)}`)
+        .digest('hex');
+
+      if (receivedSignature !== expectedSignature) {
+        res.status(401).json({
+          success: false,
+          message: 'Invalid webhook signature',
+        });
+        return;
+      }
+    }
+
+    // Get the payload and event type
     const payload = req.body;
     const eventType = payload.type;
 
