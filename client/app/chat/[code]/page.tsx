@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Users, X, Wifi, WifiOff, MessageSquare, Search, Settings, Hash } from 'lucide-react';
+import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Search, Settings, Hash } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -40,6 +40,7 @@ export default function ChatPage() {
     updateMessage,
     setParticipants,
     setTypingUser,
+    setTypingUsers,
     setConnected,
     reset,
   } = useChatStore();
@@ -76,6 +77,83 @@ export default function ChatPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const connectToSocket = (userName: string) => {
+    const socket = getSocket();
+    socketRef.current = socket;
+
+    // Connection events
+    socket.on('connect', () => {
+      console.log('Connected to server');
+      setConnected(true);
+      
+      // Join room
+      socket.emit('join-room', {
+        code: roomCode,
+        name: userName,
+      });
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+      setConnected(false);
+    });
+
+    socket.on('connect_error', (error: Error) => {
+      console.error('Connection error:', error);
+      toast({
+        title: 'Connection Error',
+        description: 'Failed to connect to server. Retrying...',
+        variant: 'destructive',
+      });
+    });
+
+    // Chat events
+    socket.on('chat-history', (history: Message[]) => {
+      setMessages(history);
+    });
+
+    socket.on('new-message', (message: Message) => {
+      addMessage(message);
+    });
+
+    socket.on('reaction-updated', ({ messageId, reactions }: { messageId: string; reactions: Reaction[] }) => {
+      // Update the specific message with new reactions
+      updateMessage(messageId, { reactions });
+    });
+
+    socket.on('participants-update', (newParticipants: string[]) => {
+      setParticipants(newParticipants);
+    });
+
+    socket.on('user-joined', ({ name: joinedName }: { name: string }) => {
+      if (joinedName !== userName) {
+        toast({
+          title: 'User Joined',
+          description: `${joinedName} joined the room`,
+        });
+      }
+    });
+
+    socket.on('user-left', ({ name: leftName }: { name: string }) => {
+      toast({
+        title: 'User Left',
+        description: `${leftName} left the room`,
+      });
+    });
+
+    socket.on('typing-users', (users: string[]) => {
+      setTypingUsers(new Set(users));
+    });
+
+    socket.on('error', ({ message }: { message: string }) => {
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'destructive',
+      });
+    });
+  };
 
   useEffect(() => {
     const container = messagesContainerRef.current;
@@ -154,86 +232,7 @@ export default function ChatPage() {
         reset();
       }
     };
-  }, [roomCode]);
-
-  const connectToSocket = (userName: string) => {
-    const socket = getSocket();
-    socketRef.current = socket;
-
-    // Connection events
-    socket.on('connect', () => {
-      console.log('Connected to server');
-      setConnected(true);
-      
-      // Join room
-      socket.emit('join-room', {
-        code: roomCode,
-        name: userName,
-      });
-    });
-
-    socket.on('disconnect', () => {
-      console.log('Disconnected from server');
-      setConnected(false);
-    });
-
-    socket.on('connect_error', (error: Error) => {
-      console.error('Connection error:', error);
-      toast({
-        title: 'Connection Error',
-        description: 'Failed to connect to server. Retrying...',
-        variant: 'destructive',
-      });
-    });
-
-    // Chat events
-    socket.on('chat-history', (history: Message[]) => {
-      setMessages(history);
-    });
-
-    socket.on('new-message', (message: Message) => {
-      addMessage(message);
-    });
-
-    socket.on('reaction-updated', ({ messageId, reactions }: { messageId: string; reactions: Reaction[] }) => {
-      // Update the specific message with new reactions
-      updateMessage(messageId, { reactions });
-    });
-
-    socket.on('participants-update', (newParticipants: string[]) => {
-      setParticipants(newParticipants);
-    });
-
-    socket.on('user-joined', ({ name: joinedName }: { name: string }) => {
-      if (joinedName !== userName) {
-        toast({
-          title: 'User Joined',
-          description: `${joinedName} joined the classroom`,
-        });
-      }
-    });
-
-    socket.on('user-left', ({ name: leftName }: { name: string }) => {
-      toast({
-        title: 'User Left',
-        description: `${leftName} left the classroom`,
-      });
-    });
-
-    socket.on('user-typing', ({ name: typingName, isTyping }: { name: string; isTyping: boolean }) => {
-      if (typingName !== userName) {
-        setTypingUser(typingName, isTyping);
-      }
-    });
-
-    socket.on('error', ({ message }: { message: string }) => {
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
-    });
-  };
+  }, [roomCode, connectToSocket, loadUser, reset, router, toast]);
 
   const handleSendMessage = (message: string, attachments?: Attachment[], replyToId?: string) => {
     if (!socketRef.current || !name) return;

@@ -61,6 +61,7 @@ interface ChatState {
   updateMessage: (messageId: string, updates: Partial<Message>) => void;
   setParticipants: (participants: string[]) => void;
   setTypingUser: (name: string, isTyping: boolean) => void;
+  setTypingUsers: (users: Set<string>) => void;
   setSocket: (socket: Socket | null) => void;
   setConnected: (connected: boolean) => void;
   reset: () => void;
@@ -91,6 +92,7 @@ export const useChatStore = create<ChatState>((set) => ({
     }
     return { typingUsers: newTypingUsers };
   }),
+  setTypingUsers: (users: Set<string>) => set({ typingUsers: new Set(users) }),
   setSocket: (socket) => set({ socket }),
   setConnected: (connected) => set({ isConnected: connected }),
   reset: () => set({

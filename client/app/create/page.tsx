@@ -2,20 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Users, Lock, Clock, CheckCircle, AlertCircle, Plus, Minus } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { useUserStore } from '@/lib/store';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
-import { toast } from '@/components/ui/use-toast';
 import { useToast } from '@/components/ui/use-toast';
+import { Card, CardContent } from '@/components/ui/card';
 import { FORSYTH_SCHOOLS, SCHOOLS_BY_CATEGORY, generateSchoolCode } from '@/lib/schools';
 import { validateUserName } from '@/lib/security';
 import { api } from '@/lib/api';
@@ -186,7 +184,6 @@ Created on: ${new Date().toLocaleDateString()}
     try {
       // Find the selected school and generate school-aware code
       const school = FORSYTH_SCHOOLS.find(s => s.name === selectedSchool)!;
-      const schoolCode = generateSchoolCode(school.abbreviation);
       
       // For now, use the existing API and store additional data client-side
       // TODO: Update backend API to accept school information

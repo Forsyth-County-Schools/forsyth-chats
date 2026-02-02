@@ -2,18 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Users, Lock, Clock, CheckCircle, AlertCircle, User, LogIn } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { useUserStore } from '@/lib/store';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
-import { toast } from '@/components/ui/use-toast';
 import { useToast } from '@/components/ui/use-toast';
 import { validateUserName } from '@/lib/security';
 import { api } from '@/lib/api';
@@ -23,8 +20,9 @@ import { parseSchoolCode } from '@/lib/schools';
 export const dynamic = 'force-dynamic';
 
 export default function JoinPage() {
-  const { user } = useUser();
-  const { profile } = useUserStore();
+  const router = useRouter();
+  const { toast } = useToast();
+  const { setUser } = useUserStore();
   const [roomCode, setRoomCode] = useState('');
   const [name, setName] = useState('');
   const [agreedToPolicy, setAgreedToPolicy] = useState(false);
@@ -34,10 +32,6 @@ export default function JoinPage() {
   const [codeError, setCodeError] = useState('');
   const [nameError, setNameError] = useState('');
   const [schoolInfo, setSchoolInfo] = useState<{ name: string; category: string } | null>(null);
-  
-  const router = useRouter();
-  const { toast } = useToast();
-  const { setUser } = useUserStore();
 
   const handleCheckRoom = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,7 +166,7 @@ export default function JoinPage() {
             <div className="text-center space-y-6 mb-8">
               <div className="flex justify-center">
                 <div className="bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 p-6 rounded-3xl shadow-2xl relative group">
-                  <LogIn className="h-12 w-12 text-white drop-shadow-lg" />
+                  <Plus className="h-12 w-12 text-white drop-shadow-lg" />
                   <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               </div>

@@ -205,7 +205,7 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
     if (!message.reactions?.length) return null;
 
     return (
-      <div className="flex flex-wrap gap-1 mt-2">
+      <div className="flex flex-row gap-1.5 mt-2 items-center">
         {message.reactions.map((reaction, index) => {
           const hasUserReacted = currentUserName ? reaction.users.includes(currentUserName) : false;
           return (
@@ -213,14 +213,14 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
               key={index}
               onClick={() => handleReaction(reaction.emoji)}
               className={cn(
-                'flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all',
+                'flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all hover:scale-105 active:scale-95',
                 hasUserReacted
-                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 ring-1 ring-blue-300 dark:ring-blue-700'
-                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
+                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 ring-2 ring-blue-300 dark:ring-blue-700 shadow-sm'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
               )}
             >
-              <span>{reaction.emoji}</span>
-              <span>{reaction.count}</span>
+              <span className="text-sm">{reaction.emoji}</span>
+              <span className="font-semibold">{reaction.count}</span>
             </button>
           );
         })}
@@ -280,7 +280,7 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
           
           <div
             className={cn(
-              'rounded-2xl px-5 py-3 shadow-lg transition-all duration-200 group-hover:shadow-xl relative backdrop-blur-sm border',
+              'rounded-2xl px-5 py-3 shadow-lg transition-all duration-200 group-hover:shadow-xl relative backdrop-blur-sm border min-w-0',
               isOwn
                 ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-200/50 dark:shadow-blue-900/30 hover:from-blue-600 hover:to-blue-700 border-blue-400/20'
                 : 'bg-white/95 dark:bg-slate-800/95 border-slate-200/60 dark:border-slate-700/60 text-slate-900 dark:text-white shadow-slate-200/50 dark:shadow-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
