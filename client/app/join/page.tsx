@@ -138,11 +138,11 @@ export default function JoinPage() {
   return (
     <GeoBlockWrapper>
       <SignedIn>
-        <main className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black relative">
-          {/* Modern gradient background with subtle accents */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.08)_0%,transparent_50%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(147,51,234,0.02)_25%,rgba(147,51,234,0.02)_50%,transparent_50%,transparent_75%,rgba(147,51,234,0.02)_75%)] bg-[length:20px_20px]" />
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-pink-900/10" />
+        <main className="min-h-screen bg-black relative">
+          {/* Ultra dark gradient background with minimal accents */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.03)_0%,transparent_50%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(147,51,234,0.01)_25%,rgba(147,51,234,0.01)_50%,transparent_50%,transparent_75%,rgba(147,51,234,0.01)_75%)] bg-[length:20px_20px]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-950/50 via-transparent to-slate-900/50" />
         
         {/* Theme Toggle */}
         <div className="absolute top-6 right-6 z-10">
@@ -406,10 +406,10 @@ export default function JoinPage() {
       </SignedIn>
       
       <SignedOut>
-        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black relative">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.08)_0%,transparent_50%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(147,51,234,0.02)_25%,rgba(147,51,234,0.02)_50%,transparent_50%,transparent_75%,rgba(147,51,234,0.02)_75%)] bg-[length:20px_20px]" />
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-pink-900/10" />
+        <div className="min-h-screen bg-black relative">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.03)_0%,transparent_50%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(147,51,234,0.01)_25%,rgba(147,51,234,0.01)_50%,transparent_50%,transparent_75%,rgba(147,51,234,0.01)_75%)] bg-[length:20px_20px]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-950/50 via-transparent to-slate-900/50" />
           <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-screen">
             <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-purple-200 dark:border-purple-800 rounded-3xl p-8 shadow-2xl max-w-md w-full">
               <div className="text-center mb-8">

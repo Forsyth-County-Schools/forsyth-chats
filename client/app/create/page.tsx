@@ -227,11 +227,11 @@ export default function CreatePage() {
 
   return (
     <GeoBlockWrapper>
-      <main className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black relative">
-        {/* Modern gradient background with subtle accents */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08)_0%,transparent_50%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.02)_25%,rgba(59,130,246,0.02)_50%,transparent_50%,transparent_75%,rgba(59,130,246,0.02)_75%)] bg-[length:20px_20px]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-transparent to-purple-900/10" />
+      <main className="min-h-screen bg-black relative">
+        {/* Ultra dark gradient background with minimal accents */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.03)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.01)_25%,rgba(59,130,246,0.01)_50%,transparent_50%,transparent_75%,rgba(59,130,246,0.01)_75%)] bg-[length:20px_20px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/50 via-transparent to-slate-900/50" />
         
         {/* Theme Toggle */}
         <div className="absolute top-6 right-6 z-10">
