@@ -1,12 +1,16 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Send, Smile, Paperclip, X, Reply, AlertTriangle, Mic } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Send, Paperclip, Smile, X, Mic, MicOff, Upload, AlertTriangle, Reply } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
-import { Message, Attachment } from '@/lib/socket';
+import { useChatStore } from '@/lib/store';
+import { useToast } from '@/components/ui/use-toast';
+import { sanitizeMessage } from '@/lib/security';
+import Image from 'next/image';
 import { validateContentRealtime } from '@/lib/contentFilter';
+import { cn } from '@/lib/utils';
+import { getSocket, Message, Attachment } from '@/lib/socket';
 
 interface ChatInputProps {
   onSendMessage: (message: string, attachments?: Attachment[], replyTo?: string) => void;
@@ -216,9 +220,11 @@ export function ChatInput({
             <div key={index} className="relative group">
               {attachment.type === 'image' ? (
                 <div className="relative">
-                  <img
+                  <Image
                     src={`https://forsyth-chats.onrender.com${attachment.url}`}
                     alt={attachment.originalName}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 object-cover rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg border border-slate-200 dark:border-slate-700"
                   />
                   <button

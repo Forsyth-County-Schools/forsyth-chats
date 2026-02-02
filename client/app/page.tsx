@@ -5,14 +5,20 @@ import { MessageSquare, Plus, LogIn, Lock, Shield, Users, School } from 'lucide-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { ProfileSetup } from '@/components/ProfileSetup';
-import { SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import { useUserStore } from '@/lib/store';
-
-// Force dynamic rendering to avoid Clerk prerendering issues
-export const dynamic = 'force-dynamic';
-import { useState, useEffect } from 'react';
+import { WarningNotification } from '@/components/WarningNotification';
+import HostSettingsPanel from '@/components/HostSettingsPanel';
+import { useUserModeration } from '@/lib/userModeration';
+import { useToast } from '@/components/ui/use-toast';
+import { api } from '@/lib/api';
+import { useUserStore, useChatStore } from '@/lib/store';
+import { getSocket, disconnectSocket, Message, Attachment, Reaction } from '@/lib/socket';
+import { Socket } from 'socket.io-client';
+import { sanitizeMessage } from '@/lib/security';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
+import Image from 'next/image';
+import { SignedIn, SignedOut, useUser } from '@clerk/nextjs';
+import { useState, useEffect } from 'react';
+import { ProfileSetup } from '@/components/ProfileSetup';
 
 export default function Home() {
   const { user } = useUser();
@@ -53,10 +59,13 @@ export default function Home() {
                 <div className="text-center mb-12">
                   <div className="flex justify-center mb-6">
                     {profile?.profileImageUrl ? (
-                      <img
+                      <Image
                         src={profile.profileImageUrl}
                         alt={profile.displayName}
+                        width={80}
+                        height={80}
                         className="w-20 h-20 rounded-3xl shadow-xl object-cover"
+                        priority
                       />
                     ) : (
                       <div className="bg-gradient-to-br from-red-600 to-red-700 p-6 rounded-3xl shadow-xl">

@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { api } from '@/lib/api';
 import { useUserStore } from '@/lib/store';
+import { api } from '@/lib/api';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import Image from 'next/image';
 import { User, Save } from 'lucide-react';
 
 interface ProfileSetupProps {
@@ -184,9 +185,11 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
           </label>
           <div className="flex items-center gap-4">
             {profileImageUrl && (
-              <img
+              <Image
                 src={profileImageUrl}
                 alt="Profile preview"
+                width={48}
+                height={48}
                 className="w-12 h-12 rounded-xl object-cover"
               />
             )}

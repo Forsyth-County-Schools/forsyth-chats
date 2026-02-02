@@ -4,9 +4,10 @@ import { format } from 'date-fns';
 import { Message, Attachment } from '@/lib/socket';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { getSocket } from '@/lib/socket';
 import { Download, ExternalLink, Reply, Smile, MoreVertical, Check, CheckCheck } from 'lucide-react';
+import Image from 'next/image';
 
 interface MessageBubbleProps {
   message: Message;
@@ -105,9 +106,11 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
             )}
           >
             {link.image && (
-              <img
+              <Image
                 src={link.image}
-                alt={link.title}
+                alt={link.title || 'Link preview'}
+                width={400}
+                height={128}
                 className="w-full h-32 object-cover"
               />
             )}
@@ -147,9 +150,11 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
         {message.attachments.map((attachment, index) => (
           <div key={index}>
             {attachment.type === 'image' ? (
-              <img
+              <Image
                 src={`https://forsyth-chats.onrender.com${attachment.url}`}
                 alt={attachment.originalName}
+                width={320}
+                height={256}
                 className="rounded-xl max-w-sm max-h-64 object-cover cursor-pointer hover:scale-105 transition-transform"
                 onClick={() => window.open(`https://forsyth-chats.onrender.com${attachment.url}`, '_blank')}
               />
@@ -241,9 +246,11 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
       {!isOwn && (
         <div className="flex-shrink-0 mr-3 mt-1">
           {profileImage ? (
-            <img
+            <Image
               src={profileImage}
               alt={message.name}
+              width={40}
+              height={40}
               className="w-10 h-10 rounded-2xl object-cover shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg"
             />
           ) : (
@@ -397,9 +404,11 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
       {isOwn && (
         <div className="flex-shrink-0 ml-3 mt-1">
           {profileImage ? (
-            <img
+            <Image
               src={profileImage}
               alt={message.name}
+              width={40}
+              height={40}
               className="w-10 h-10 rounded-2xl object-cover shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg"
             />
           ) : (

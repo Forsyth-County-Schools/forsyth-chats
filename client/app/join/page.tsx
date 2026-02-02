@@ -14,7 +14,6 @@ import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 import { useToast } from '@/components/ui/use-toast';
 import { validateUserName } from '@/lib/security';
 import { api } from '@/lib/api';
-import { parseSchoolCode } from '@/lib/schools';
 
 // Force dynamic rendering to avoid Clerk prerendering issues
 export const dynamic = 'force-dynamic';
@@ -31,7 +30,6 @@ export default function JoinPage() {
   const [roomExists, setRoomExists] = useState<boolean | null>(null);
   const [codeError, setCodeError] = useState('');
   const [nameError, setNameError] = useState('');
-  const [schoolInfo, setSchoolInfo] = useState<{ name: string; category: string } | null>(null);
 
   const handleCheckRoom = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,14 +53,8 @@ export default function JoinPage() {
     };
 
     if (!validateRoomCode(roomCode.trim())) {
-      setCodeError('Invalid room code format. Please use XXX-XXXXX format or enter the code as provided.');
+      setCodeError('Invalid room code format. Please use XXXXXXXX format.');
       return;
-    }
-    
-    // Parse school information from code
-    const { school } = parseSchoolCode(roomCode.trim());
-    if (school) {
-      setSchoolInfo({ name: school.name, category: school.category });
     }
     
     setIsChecking(true);
@@ -249,16 +241,6 @@ export default function JoinPage() {
                       <p className="text-green-700 dark:text-green-400 font-bold text-lg mb-2">
                         ✅ Chat Found!
                       </p>
-                      {schoolInfo && (
-                        <div className="bg-white dark:bg-gray-900/50 rounded-xl p-3 border border-green-200 dark:border-green-700">
-                          <p className="font-semibold text-green-800 dark:text-green-300">
-                            📚 {schoolInfo.name}
-                          </p>
-                          <p className="text-sm text-green-600 dark:text-green-400 capitalize">
-                            {schoolInfo.category} School
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

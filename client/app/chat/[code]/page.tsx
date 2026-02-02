@@ -12,7 +12,7 @@ import { TypingIndicator } from '@/components/TypingIndicator';
 import { CopyButton } from '@/components/CopyButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { WarningNotification } from '@/components/WarningNotification';
-import { HostSettingsPanel } from '@/components/HostSettingsPanel';
+import HostSettingsPanel from '@/components/HostSettingsPanel';
 import { useUserModeration } from '@/lib/userModeration';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';

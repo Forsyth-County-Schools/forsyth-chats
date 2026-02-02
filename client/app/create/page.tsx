@@ -7,14 +7,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { useUserStore } from '@/lib/store';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
-import { FORSYTH_SCHOOLS, SCHOOLS_BY_CATEGORY } from '@/lib/schools';
 import { validateUserName } from '@/lib/security';
 import { api } from '@/lib/api';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -26,15 +24,12 @@ export default function CreatePage() {
   const { user, isSignedIn } = useUser();
   const { profile } = useUserStore();
   const [creatorName, setCreatorName] = useState('');
-  const [selectedSchool, setSelectedSchool] = useState('');
   const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const [agreedToDistrictPolicy, setAgreedToDistrictPolicy] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [nameError, setNameError] = useState('');
-  const [schoolError, setSchoolError] = useState('');
   const [roomCreated, setRoomCreated] = useState(false);
   const [createdRoomCode, setCreatedRoomCode] = useState('');
-  const [createdSchoolName, setCreatedSchoolName] = useState('');
   
   // Rate limiting states
   const [isOnCooldown, setIsOnCooldown] = useState(false);
@@ -107,7 +102,6 @@ Forsyth County Schools Classroom Chat
 =====================================
 
 Room Code: ${createdRoomCode}
-School: ${createdSchoolName}
 Created by: ${creatorName}
 
 How to Join:
@@ -117,9 +111,8 @@ How to Join:
 4. Sign in with your school account
 
 Important Notes:
-- This room is only for Forsyth County Schools students
-- Keep the room code private and only share with authorized friends
-- Teacher supervision is required
+- This room is for educational use
+- Keep the room code private and only share with authorized participants
 - Follow all school district policies and guidelines
 
 Created on: ${new Date().toLocaleDateString()}
@@ -146,18 +139,11 @@ Created on: ${new Date().toLocaleDateString()}
     
     // Reset errors
     setNameError('');
-    setSchoolError('');
     
     // Validate name with enhanced security
     const nameValidation = validateUserName(creatorName.trim());
     if (!nameValidation.isValid) {
       setNameError(nameValidation.error!);
-      return;
-    }
-    
-    // Validate school selection
-    if (!selectedSchool) {
-      setSchoolError('Please select your Forsyth County School');
       return;
     }
     
@@ -173,7 +159,7 @@ Created on: ${new Date().toLocaleDateString()}
     if (!agreedToDistrictPolicy) {
       toast({
         title: 'District Policy Required',
-        description: 'Please agree to the Forsyth County Schools Acceptable Use Policy',
+        description: 'Please agree to the Acceptable Use Policy',
         variant: 'destructive',
       });
       return;
@@ -182,55 +168,29 @@ Created on: ${new Date().toLocaleDateString()}
     setIsCreating(true);
     
     try {
-      // Find the selected school and generate school-aware code
-      const school = FORSYTH_SCHOOLS.find(s => s.name === selectedSchool)!;
-      
-      // For now, use the existing API and store additional data client-side
-      // TODO: Update backend API to accept school information
+      // Create room without school information
       const response = await api.createRoom(creatorName.trim());
       
       if (response.success && response.code) {
         // Set user in store
         setUser(creatorName.trim(), response.code);
         
-        // Store school information in localStorage for this room
-        // In production, this should be stored server-side
+        // Store room information in localStorage
         if (typeof window !== 'undefined') {
           const roomData = {
             code: response.code,
-            school: selectedSchool,
-            schoolAbbrev: school.abbreviation,
             creator: creatorName.trim(),
             created: new Date().toISOString(),
           };
           localStorage.setItem(`room_${response.code}`, JSON.stringify(roomData));
         }
         
-        // Set success state
-        setCreatedRoomCode(response.code);
-        setCreatedSchoolName(school.name);
         setRoomCreated(true);
-        
-        // Set rate limiting cooldown
-        localStorage.setItem('lastRoomCreatedTime', Date.now().toString());
-        setIsOnCooldown(true);
-        setCooldownTimeLeft(60); // 60 seconds
-        
-        // Start cooldown timer
-        const cooldownTimer = setInterval(() => {
-          setCooldownTimeLeft(prev => {
-            if (prev <= 1) {
-              setIsOnCooldown(false);
-              clearInterval(cooldownTimer);
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
+        setCreatedRoomCode(response.code);
         
         toast({
           title: '🎉 Classroom Created!',
-          description: `Your ${school.name} classroom is ready`,
+          description: `Your classroom is ready to use`,
         });
       } else {
         throw new Error(response.message || 'Failed to create classroom');
@@ -351,69 +311,6 @@ Created on: ${new Date().toLocaleDateString()}
                     </div>
                   </div>
 
-                {/* School Selection */}
-                <div className="space-y-3">
-                  <label htmlFor="schoolSelect" className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
-                    Select Your Forsyth County School *
-                  </label>
-                  <Select 
-                    value={selectedSchool} 
-                    onValueChange={(value) => {
-                      setSelectedSchool(value);
-                      setSchoolError('');
-                    }}
-                    name="schoolSelect"
-                  >
-                    <SelectTrigger 
-                      id="schoolSelect"
-                      className="modern-input text-lg py-4 rounded-2xl" 
-                      style={{
-                        backgroundColor: 'var(--input-background)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--foreground)'
-                      }}
-                      aria-label="Select your Forsyth County School"
-                    >
-                      <SelectValue placeholder="Choose your school..." />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600 max-h-[400px]">
-                      <div className="font-bold text-base text-gray-700 dark:text-gray-300 px-3 py-2 bg-gray-100 dark:bg-gray-800">High Schools</div>
-                      {SCHOOLS_BY_CATEGORY.high.map((school) => (
-                        <SelectItem 
-                          key={school.name} 
-                          value={school.name}
-                          className="text-base py-3 px-4 cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-100 dark:focus:bg-red-900/40 text-gray-900 dark:text-gray-100"
-                        >
-                          {school.name}
-                        </SelectItem>
-                      ))}
-                      <div className="font-bold text-base text-gray-700 dark:text-gray-300 px-3 py-2 bg-gray-100 dark:bg-gray-800 mt-2">Middle Schools</div>
-                      {SCHOOLS_BY_CATEGORY.middle.map((school) => (
-                        <SelectItem 
-                          key={school.name} 
-                          value={school.name}
-                          className="text-base py-3 px-4 cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-100 dark:focus:bg-red-900/40 text-gray-900 dark:text-gray-100"
-                        >
-                          {school.name}
-                        </SelectItem>
-                      ))}
-                      <div className="font-bold text-base text-gray-700 dark:text-gray-300 px-3 py-2 bg-gray-100 dark:bg-gray-800 mt-2">Elementary Schools</div>
-                      {SCHOOLS_BY_CATEGORY.elementary.map((school) => (
-                        <SelectItem 
-                          key={school.name} 
-                          value={school.name}
-                          className="text-base py-3 px-4 cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-100 dark:focus:bg-red-900/40 text-gray-900 dark:text-gray-100"
-                        >
-                          {school.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {schoolError && (
-                    <p className="text-red-600 text-sm font-medium">{schoolError}</p>
-                  )}
-                </div>
-
                 {/* Policy Agreements */}
                 <div className="space-y-6">
                   <div className="flex items-start space-x-3">
@@ -453,7 +350,7 @@ Created on: ${new Date().toLocaleDateString()}
                       ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed' 
                       : 'btn-red-primary'
                   }`}
-                  disabled={isCreating || !creatorName.trim() || !selectedSchool || !agreedToPolicy || !agreedToDistrictPolicy || isOnCooldown}
+                  disabled={isCreating || !creatorName.trim() || !agreedToPolicy || !agreedToDistrictPolicy || isOnCooldown}
                 >
                   {isCreating ? (
                     <>
@@ -515,8 +412,8 @@ Created on: ${new Date().toLocaleDateString()}
                     </h1>
                     <div className="flex items-center justify-center gap-2 text-xl text-gray-700 dark:text-gray-200">
                       <span>Your</span>
-                      <span className="font-bold text-green-600 dark:text-green-400">{createdSchoolName}</span>
-                      <span>classroom is ready</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">classroom</span>
+                      <span>is ready</span>
                       <span className="text-2xl animate-bounce">📚</span>
                     </div>
                   </div>
