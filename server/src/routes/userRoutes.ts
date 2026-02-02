@@ -9,12 +9,12 @@ const createUserSchema = z.object({
   clerkId: z.string(),
   email: z.string().email(),
   displayName: z.string().trim().min(2).max(50),
-  profileImageUrl: z.string().url().optional(),
+  profileImageUrl: z.string().optional().nullable(),
 });
 
 const updateUserSchema = z.object({
   displayName: z.string().trim().min(2).max(50).optional(),
-  profileImageUrl: z.string().url().optional().nullable(),
+  profileImageUrl: z.string().optional().nullable(),
 });
 
 // POST /api/users - Create or update user from Clerk webhook
@@ -24,7 +24,7 @@ router.post('/users', async (req: Request, res: Response): Promise<void> => {
     const { clerkId, email, displayName, profileImageUrl } = validated;
 
     // Check if user already exists
-    const existingUser = await User.findOne({ clerkId });
+    let existingUser = await User.findOne({ clerkId });
     
     if (existingUser) {
       // Update existing user
@@ -58,7 +58,7 @@ router.post('/users', async (req: Request, res: Response): Promise<void> => {
       user: newUser,
     });
 
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       res.status(400).json({
         success: false,
@@ -68,10 +68,28 @@ router.post('/users', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    // Handle duplicate key errors (race condition where user created between check and insert)
+    if (error.code === 11000 || error.name === 'MongoServerError') {
+      try {
+        // User was created in between - try to find and return it
+        const existingUser = await User.findOne({ clerkId: req.body.clerkId });
+        if (existingUser) {
+          res.status(200).json({
+            success: true,
+            user: existingUser,
+          });
+          return;
+        }
+      } catch (retryError) {
+        console.error('Error retrieving user after duplicate key error:', retryError);
+      }
+    }
+
     console.error('Error creating/updating user:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create/update user',
+      error: error.message || 'Unknown error',
     });
   }
 });

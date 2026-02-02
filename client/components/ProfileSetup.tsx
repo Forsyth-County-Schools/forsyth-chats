@@ -21,11 +21,13 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [retryAttempt, setRetryAttempt] = useState(0);
+  const [loadError, setLoadError] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [profileImageUrl, setProfileImageUrl] = useState('');
 
   useEffect(() => {
-    const loadUserProfile = async () => {
+    const loadUserProfile = async (retryCount = 0) => {
       if (!user) return;
 
       try {
@@ -36,36 +38,66 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
           setProfile(response.user);
           setDisplayName(response.user.displayName);
           setProfileImageUrl(response.user.profileImageUrl || '');
-        } else {
-          // Create new user profile from Clerk data
-          const newUserData = {
-            clerkId: user.id,
-            email: user.primaryEmailAddress?.emailAddress || '',
-            displayName: user.fullName || user.firstName || 'User',
-            profileImageUrl: user.imageUrl,
-          };
-
-          const createResponse = await api.createOrUpdateUser(newUserData);
-          if (createResponse.success && createResponse.user) {
-            setProfile(createResponse.user);
-            setDisplayName(createResponse.user.displayName);
-            setProfileImageUrl(createResponse.user.profileImageUrl || '');
-          }
+          setInitialLoading(false);
+          return;
         }
       } catch (error) {
-        console.error('Error loading user profile:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load user profile',
-          variant: 'destructive',
-        });
-      } finally {
-        setInitialLoading(false);
+        console.warn('Error checking existing user:', error);
+        // Continue to create user if lookup fails
+      }
+
+      // User doesn't exist or lookup failed - create new user
+      try {
+        const newUserData = {
+          clerkId: user.id,
+          email: user.primaryEmailAddress?.emailAddress || '',
+          displayName: user.fullName || user.firstName || 'User',
+          profileImageUrl: user.imageUrl,
+        };
+
+        const createResponse = await api.createOrUpdateUser(newUserData);
+        if (createResponse.success && createResponse.user) {
+          setProfile(createResponse.user);
+          setDisplayName(createResponse.user.displayName);
+          setProfileImageUrl(createResponse.user.profileImageUrl || '');
+          setInitialLoading(false);
+          setRetryAttempt(0); // Reset retry count on success
+        } else {
+          throw new Error('Failed to create user profile');
+        }
+      } catch (error) {
+        console.error('Error creating user profile:', error);
+        
+        // Retry logic with exponential backoff (max 3 retries)
+        if (retryCount < 3) {
+          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+          console.log(`Retrying user creation in ${delay}ms (attempt ${retryCount + 1}/3)...`);
+          setRetryAttempt(retryCount + 1);
+          setTimeout(() => loadUserProfile(retryCount + 1), delay);
+        } else {
+          // Max retries reached - show error to user
+          setLoadError(true);
+          toast({
+            title: 'Error Creating Profile',
+            description: 'Unable to create your profile automatically. Please try again or contact support.',
+            variant: 'destructive',
+          });
+          setInitialLoading(false);
+          setRetryAttempt(0);
+        }
       }
     };
 
     loadUserProfile();
   }, [user, setProfile, toast]);
+
+  const handleManualRetry = () => {
+    setLoadError(false);
+    setInitialLoading(true);
+    setRetryAttempt(0);
+    // Trigger a re-run of the useEffect by updating a dependency
+    window.location.reload();
+  };
 
   const handleSave = async () => {
     if (!user || !displayName.trim()) {
@@ -110,8 +142,41 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner size="lg" text="Loading profile..." />
+        <LoadingSpinner 
+          size="lg" 
+          text={retryAttempt > 0 
+            ? `Setting up profile... (retry ${retryAttempt}/3)` 
+            : "Loading profile..."}
+        />
       </div>
+    );
+  }
+
+  // Show error state with retry button if profile loading failed
+  if (loadError) {
+    return (
+      <Card className="p-8 max-w-md mx-auto">
+        <div className="text-center">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center mx-auto mb-4">
+            <User className="w-10 h-10 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+            Profile Setup Error
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">
+            We couldn't automatically create your profile. This might be a temporary connection issue.
+          </p>
+          <Button
+            onClick={handleManualRetry}
+            className="w-full h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+          >
+            Try Again
+          </Button>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-4">
+            If this problem persists, please contact your administrator
+          </p>
+        </div>
+      </Card>
     );
   }
 
