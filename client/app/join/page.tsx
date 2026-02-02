@@ -80,7 +80,7 @@ export default function JoinPage() {
         setRoomExists(true);
         toast({
           title: 'Room Found!',
-          description: 'Enter your name to join the classroom',
+          description: 'Enter your name to join the chat',
         });
       } else {
         setRoomExists(false);
@@ -178,7 +178,7 @@ export default function JoinPage() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-                  Join Classroom
+                  Join Chat
                 </h1>
                 <p className="text-lg text-slate-600 dark:text-slate-300">
                   Enter the secure room code to join the discussion 💬
@@ -253,7 +253,7 @@ export default function JoinPage() {
                     <div className="relative z-10 text-center">
                       <div className="text-4xl mb-2">🎉</div>
                       <p className="text-green-700 dark:text-green-400 font-bold text-lg mb-2">
-                        ✅ Classroom Found!
+                        ✅ Chat Found!
                       </p>
                       {schoolInfo && (
                         <div className="bg-white dark:bg-gray-900/50 rounded-xl p-3 border border-green-200 dark:border-green-700">
@@ -330,7 +330,7 @@ export default function JoinPage() {
                           onClick={() => setAgreedToPolicy(!agreedToPolicy)}
                         >
                           <span className="font-bold text-blue-700 dark:text-blue-300">📋 I agree to:</span><br/>
-                          Keep the classroom chat respectful and appropriate for educational purposes. 
+                          Keep the chat respectful and appropriate for educational purposes. 
                           I understand that all conversations may be monitored and inappropriate 
                           behavior will result in immediate removal.
                         </label>
@@ -365,7 +365,7 @@ export default function JoinPage() {
                           <span>Joining...</span>
                         </>
                       ) : (
-                        '🚀 Join Classroom'
+                        '🚀 Join Chat'
                       )}
                     </Button>
                   </div>
@@ -384,7 +384,7 @@ export default function JoinPage() {
                       Room Not Found
                     </h3>
                     <p className="text-red-600 dark:text-red-300 mb-6 leading-relaxed">
-                      The room code might be incorrect, expired, or the classroom may have ended.
+                      The room code might be incorrect, expired, or the chat may have ended.
                       Please double-check the code with your teacher.
                     </p>
                     <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 border border-red-200 dark:border-red-700">
@@ -426,7 +426,7 @@ export default function JoinPage() {
                   Authentication Required
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Please sign in or create an account to join classroom chats. Your profile will be automatically set up.
+                  Please sign in or create an account to join chats. Your profile will be automatically set up.
                 </p>
                 <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-700 rounded-xl p-4 mb-6">
                   <p className="text-sm text-blue-700 dark:text-blue-300">

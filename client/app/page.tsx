@@ -68,7 +68,7 @@ export default function Home() {
                     Welcome back, {profile?.displayName || user?.firstName || 'User'}!
                   </h1>
                   <p className="text-lg text-gray-600 dark:text-gray-200 mb-8">
-                    Ready to join or create a classroom chat?
+                    Ready to join or create a chat?
                   </p>
                 </div>
 
@@ -81,7 +81,7 @@ export default function Home() {
                       </div>
                       <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-50">Create Room</CardTitle>
                       <CardDescription className="text-gray-600 dark:text-gray-300 text-base">
-                        Start a new classroom conversation
+                        Start a new chat conversation
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -100,7 +100,7 @@ export default function Home() {
                       </div>
                       <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-50">Join Room</CardTitle>
                       <CardDescription className="text-gray-600 dark:text-gray-300 text-base">
-                        Enter an existing classroom chat
+                        Enter an existing chat
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -144,7 +144,7 @@ export default function Home() {
               </h1>
               
               <p className="text-xl text-gray-600 dark:text-gray-200 mb-8 max-w-2xl mx-auto">
-                Secure classroom communication platform for Forsyth County Schools
+                Secure chat platform for Forsyth County Schools
               </p>
               
               {/* Quick stats */}
@@ -206,7 +206,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-center text-base text-gray-600 dark:text-gray-200">
-                    Built for classrooms with teacher controls and safe communication tools.
+                    Built for students with safe communication tools.
                   </CardDescription>
                 </CardContent>
               </Card>

@@ -280,7 +280,7 @@ export default function ChatPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-bold transition-colors duration-300" style={{color: 'var(--foreground)'}}>Classroom Chat</h1>
+              <h1 className="text-xl font-bold transition-colors duration-300" style={{color: 'var(--foreground)'}}>Student Chat</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className="font-mono text-sm font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-lg">{roomCode}</span>
                 <CopyButton text={roomCode} label="Copy" />

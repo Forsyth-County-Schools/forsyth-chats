@@ -98,7 +98,7 @@ export default function CreatePage() {
       await navigator.clipboard.writeText(createdRoomCode);
       toast({
         title: 'Room Code Copied!',
-        description: 'Share this code with your students to join the classroom.',
+        description: 'Share this code with your friends to join the chat.',
       });
     } catch (error) {
       console.error('Failed to copy room code:', error);
@@ -127,7 +127,7 @@ How to Join:
 
 Important Notes:
 - This room is only for Forsyth County Schools students
-- Keep the room code private and only share with authorized students
+- Keep the room code private and only share with authorized friends
 - Teacher supervision is required
 - Follow all school district policies and guidelines
 
@@ -538,7 +538,7 @@ Created on: ${new Date().toLocaleDateString()}
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                         <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
                           <span className="mr-2">📤</span>
-                          Share with Students
+                          Share with Friends
                         </div>
                       </div>
                       
