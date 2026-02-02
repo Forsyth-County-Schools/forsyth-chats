@@ -219,7 +219,7 @@ export function ChatInput({
               {attachment.type === 'image' ? (
                 <div className="relative">
                   <Image
-                    src={`https://forsyth-chats.onrender.com${attachment.url}`}
+                    src={`${SERVER_URL}${attachment.url}`}
                     alt={attachment.originalName}
                     width={64}
                     height={64}

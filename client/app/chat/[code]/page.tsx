@@ -360,7 +360,7 @@ export default function ChatPage() {
                       <span className="font-mono text-xs text-blue-400 bg-blue-500/10 px-2 py-1 rounded-lg">
                         {roomCode}
                       </span>
-                      <CopyButton text={roomCode} label="Copy" />
+                      <CopyButton text={roomCode} />
                     </div>
                   </div>
                 </div>

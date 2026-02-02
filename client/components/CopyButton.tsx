@@ -10,7 +10,7 @@ interface CopyButtonProps {
   label?: string;
 }
 
-export function CopyButton({ text, label = 'Copy' }: CopyButtonProps) {
+export function CopyButton({ text, label = 'Share Code' }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
@@ -19,8 +19,9 @@ export function CopyButton({ text, label = 'Copy' }: CopyButtonProps) {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       toast({
-        title: 'Copied!',
-        description: 'Room code copied to clipboard',
+        title: 'Code Copied! 🎉',
+        description: 'Share this code with your friends! Make sure you\'re sharing with them using their Forsyth County email address.',
+        duration: 5000,
       });
       
       setTimeout(() => {

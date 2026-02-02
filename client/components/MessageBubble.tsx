@@ -65,7 +65,7 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
 
   const handleDownload = async (attachment: Attachment) => {
     try {
-      const response = await fetch(`https://forsyth-chats.onrender.com${attachment.url}`);
+      const response = await fetch(`${SERVER_URL}${attachment.url}`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
