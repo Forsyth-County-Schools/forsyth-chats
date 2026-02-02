@@ -82,13 +82,6 @@ export default function CreatePage() {
     }
   }, []);
 
-  // Format cooldown time display
-  const formatCooldownTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
   const navigateToChat = () => {
     router.push(`/chat/${createdRoomCode}`);
   };

@@ -1,4 +1,4 @@
-import { checkProfanity, Filter } from 'glin-profanity';
+import { Filter } from 'glin-profanity';
 import { addWarning, isUserMuted } from './userModeration';
 
 // Initialize the profanity filter with school-appropriate settings

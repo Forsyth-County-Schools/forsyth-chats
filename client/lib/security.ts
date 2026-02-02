@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { filterContent, validateContentRealtime } from './contentFilter';
+import { filterContent } from './contentFilter';
 
 interface RateLimitState {
   messageCount: number;
