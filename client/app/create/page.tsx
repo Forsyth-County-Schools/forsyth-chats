@@ -14,7 +14,7 @@ import { useUserStore } from '@/lib/store';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
-import { FORSYTH_SCHOOLS, SCHOOLS_BY_CATEGORY, generateSchoolCode } from '@/lib/schools';
+import { FORSYTH_SCHOOLS, SCHOOLS_BY_CATEGORY } from '@/lib/schools';
 import { validateUserName } from '@/lib/security';
 import { api } from '@/lib/api';
 import { LoadingSpinner } from '@/components/LoadingSpinner';

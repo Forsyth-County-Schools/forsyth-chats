@@ -26,7 +26,7 @@ export function CopyButton({ text, label = 'Copy' }: CopyButtonProps) {
       setTimeout(() => {
         setCopied(false);
       }, 2000);
-    } catch (error) {
+    } catch {
       toast({
         title: 'Failed to copy',
         description: 'Please try again',

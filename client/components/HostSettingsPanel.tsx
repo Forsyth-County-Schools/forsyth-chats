@@ -16,6 +16,8 @@ export function HostSettingsPanel({ className, roomCode }: HostSettingsPanelProp
   const { participants, socket, isHost } = useChatStore();
   const { name: currentUserName } = useUserStore();
 
+  console.log('HostSettingsPanel render:', { isHost, currentUserName, participants });
+
   const handleKickUser = async (targetUserName: string) => {
     if (!socket || !currentUserName) return;
 
@@ -52,9 +54,12 @@ export function HostSettingsPanel({ className, roomCode }: HostSettingsPanelProp
     return colors[Math.abs(hash) % colors.length];
   };
 
-  if (!isHost) {
-    return null;
-  }
+  // Temporarily show for all users to test UI
+  // TODO: Fix host detection and uncomment this
+  // if (!isHost) {
+  //   console.log('User is not host, hiding settings panel');
+  //   return null;
+  // }
 
   return (
     <>

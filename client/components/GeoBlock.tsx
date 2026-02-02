@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
+import { useState, useEffect, useCallback } from 'react';
 
 interface LocationData {
   country: string;
@@ -18,11 +17,7 @@ export default function GeoBlock({ onLocationVerified }: GeoBlockProps) {
   const [isBlocked, setIsBlocked] = useState(false);
   const [locationInfo, setLocationInfo] = useState<LocationData | null>(null);
 
-  useEffect(() => {
-    checkLocation();
-  }, []);
-
-  const checkLocation = async () => {
+  const checkLocation = useCallback(async () => {
     try {
       // Check if we're on allowed domains first (skip geo-check for trusted deployments)
       const currentDomain = typeof window !== 'undefined' ? window.location.hostname : '';
@@ -33,86 +28,45 @@ export default function GeoBlock({ onLocationVerified }: GeoBlockProps) {
         'forsyth-chats.onrender.com'
       ];
       
-      // Allow access from approved domains
-      if (allowedDomains.some(domain => currentDomain.includes(domain))) {
-        console.log('Access granted for trusted domain:', currentDomain);
+      if (allowedDomains.includes(currentDomain)) {
+        setIsChecking(false);
         onLocationVerified();
         return;
       }
 
-      // For other domains, try geo-location with fallback strategy
-      let data = null;
-      
-      // Try Service 1: ipwho.is (generally more CORS-friendly)
-      try {
-        const response1 = await fetch('https://ipwho.is/', {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          },
-          signal: AbortSignal.timeout(5000) // 5 second timeout
-        });
-        
-        if (response1.ok) {
-          const rawData = await response1.json();
-          data = {
-            country: rawData.country_code,
-            region: rawData.region,
-            city: rawData.city,
-          };
-          console.log('Location data from ipwho.is:', data);
-        }
-      } catch (error) {
-        console.warn('ipwho.is failed:', error);
+      // Get user's location
+      const response = await fetch('https://ipapi.co/json/');
+      if (!response.ok) {
+        throw new Error('Failed to fetch location');
       }
       
-      // Try Service 2: Alternative free service if first fails
-      if (!data || !data.country) {
-        try {
-          const response2 = await fetch('https://api.ipify.org?format=json');
-          if (response2.ok) {
-            // If we can get the IP, assume they're from a valid location
-            // This is a fallback when geo-location APIs are blocked
-            console.log('Using IP fallback - allowing access');
-            onLocationVerified();
-            return;
-          }
-        } catch (error) {
-          console.warn('IP fallback failed:', error);
-        }
-      }
+      const data = await response.json();
+      const locationData: LocationData = {
+        country: data.country,
+        region: data.region,
+        city: data.city,
+      };
       
-      // If all API calls fail, allow access (fail-safe approach)
-      if (!data || !data.country) {
-        console.warn('All geo-location services failed, allowing access (fail-safe mode)');
-        onLocationVerified();
-        return;
-      }
-
-      setLocationInfo(data);
+      setLocationInfo(locationData);
       
-      // Check if user is in Georgia, USA
-      const isInGeorgia = data.country === 'US' && 
-                         (data.region === 'Georgia' || 
-                          data.region === 'GA' ||
-                          data.region?.toUpperCase() === 'GEORGIA' ||
-                          data.region?.toUpperCase() === 'GA');
-      
-      if (isInGeorgia) {
-        onLocationVerified();
-      } else {
+      // Check if user is in Georgia
+      if (data.country !== 'US' || data.region !== 'GA') {
         setIsBlocked(true);
+      } else {
+        setIsChecking(false);
+        onLocationVerified();
       }
     } catch (error) {
-      console.error('Geo-location check failed:', error);
-      // FALLBACK: Allow access if all checks fail (fail-safe approach)
-      // This prevents CORS issues from blocking legitimate users
-      console.warn('Using fail-safe mode due to geo-location errors');
-      onLocationVerified();
+      console.error('Error checking location:', error);
+      setIsBlocked(true);
     } finally {
       setIsChecking(false);
     }
-  };
+  }, [onLocationVerified]);
+
+  useEffect(() => {
+    checkLocation();
+  }, [checkLocation]);
 
   if (isChecking) {
     return (

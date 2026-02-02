@@ -20,7 +20,6 @@ import { useUserStore, useChatStore } from '@/lib/store';
 import { getSocket, disconnectSocket, Message, Attachment, Reaction } from '@/lib/socket';
 import { Socket } from 'socket.io-client';
 import { sanitizeMessage } from '@/lib/security';
-import { cn } from '@/lib/utils';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 
 export default function ChatPage() {
@@ -36,13 +35,10 @@ export default function ChatPage() {
     participants,
     typingUsers,
     isConnected,
-    isHost,
-    hostName,
     setMessages,
     addMessage,
     updateMessage,
     setParticipants,
-    setTypingUser,
     setTypingUsers,
     setConnected,
     setHost,
@@ -168,12 +164,13 @@ export default function ChatPage() {
     });
 
     socket.on('room-info', ({ creatorName }: { creatorName: string }) => {
-      const isUserHost = name === creatorName;
+      const isUserHost = userName === creatorName;
       setHost(isUserHost, creatorName);
+      console.log('Room info received:', { creatorName, isUserHost, userName });
     });
 
     socket.on('user-kicked', ({ name: kickedName, kickedBy }: { name: string; kickedBy: string }) => {
-      if (kickedName !== name) {
+      if (kickedName !== userName) {
         toast({
           title: 'User Kicked',
           description: `${kickedName} was kicked by ${kickedBy}`,
@@ -200,7 +197,7 @@ export default function ChatPage() {
         name: userName,
       });
     }
-  }, [roomCode, toast, setConnected, setMessages, addMessage, updateMessage, setParticipants, setTypingUsers, setHost, name, router]);
+  }, [roomCode, toast, setConnected, setMessages, addMessage, updateMessage, setParticipants, setTypingUsers, setHost, router]);
 
   useEffect(() => {
     const container = messagesContainerRef.current;

@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useToast } from '@/components/ui/use-toast';
-import { api, UserProfile } from '@/lib/api';
+import { api } from '@/lib/api';
 import { useUserStore } from '@/lib/store';
-import { Upload, User, Save } from 'lucide-react';
+import { User, Save } from 'lucide-react';
 
 interface ProfileSetupProps {
   onComplete?: () => void;
@@ -17,7 +17,7 @@ interface ProfileSetupProps {
 
 export function ProfileSetup({ onComplete }: ProfileSetupProps) {
   const { user } = useUser();
-  const { profile, setProfile, updateProfile } = useUserStore();
+  const { setProfile, updateProfile } = useUserStore();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);

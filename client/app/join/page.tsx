@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/nextjs';
 import { useUserStore } from '@/lib/store';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 import { useToast } from '@/components/ui/use-toast';

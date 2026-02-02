@@ -126,7 +126,7 @@ AlertDialogDescription.displayName = "AlertDialogDescription"
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<"button">,
   React.ButtonHTMLAttributes<HTMLButtonElement> & { open?: boolean; onOpenChange?: (open: boolean) => void }
->(({ className, onClick, open, onOpenChange, ...props }, ref) => (
+>(({ className, onClick, onOpenChange, ...props }, ref) => (
   <button
     ref={ref}
     className={cn("", className)}
@@ -142,7 +142,7 @@ AlertDialogAction.displayName = "AlertDialogAction"
 const AlertDialogCancel = React.forwardRef<
   React.ElementRef<"button">,
   React.ButtonHTMLAttributes<HTMLButtonElement> & { open?: boolean; onOpenChange?: (open: boolean) => void }
->(({ className, onClick, open, onOpenChange, ...props }, ref) => (
+>(({ className, onClick, onOpenChange, ...props }, ref) => (
   <button
     ref={ref}
     className={cn("", className)}
