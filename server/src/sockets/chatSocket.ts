@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { z } from 'zod';
+import Filter from 'bad-words';
 import { Room } from '../models/Room';
 import { Message } from '../models/Message';
 
@@ -26,6 +27,9 @@ const roomParticipants = new Map<string, Set<string>>();
 
 // Map socket ID to user info for cleanup on disconnect
 const socketToUser = new Map<string, { roomCode: string; name: string }>();
+
+// Profanity filter
+const profanityFilter = new (Filter as unknown as { new (): { isProfane: (text: string) => boolean; clean: (text: string) => string } })();
 
 // Helper function to sanitize HTML
 const sanitizeMessage = (text: string): string => {
@@ -73,6 +77,13 @@ export const setupSocketHandlers = (io: Server): void => {
         // Validate input
         const validated = joinRoomSchema.parse(data);
         const { code, name } = validated;
+
+        if (profanityFilter.isProfane(name)) {
+          socket.emit('error', {
+            message: 'Please choose an appropriate name for school use',
+          });
+          return;
+        }
 
         // Check if room exists
         const room = await Room.findOne({ code });
@@ -138,12 +149,13 @@ export const setupSocketHandlers = (io: Server): void => {
 
         // Sanitize message content
         const sanitizedMessage = sanitizeMessage(message);
+        const filteredMessage = profanityFilter.clean(sanitizedMessage);
 
         // Create and save message
         const newMessage = new Message({
           roomCode,
           name,
-          message: sanitizedMessage,
+          message: filteredMessage,
           timestamp: new Date(),
         });
 

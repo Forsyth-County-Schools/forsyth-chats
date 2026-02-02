@@ -226,7 +226,7 @@ export default function CreatePage() {
           <ThemeToggle />
         </div>
         
-        <div className="container mx-auto px-4 py-16 max-w-2xl">
+        <div className="container mx-auto px-6 lg:px-12 py-16 max-w-6xl">
           {/* Back Button */}
           <Link href="/" className="inline-flex items-center text-red-600 hover:text-red-700 mb-8 transition-colors">
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -234,7 +234,7 @@ export default function CreatePage() {
           </Link>
 
           {!roomCreated ? (
-            <Card className="card-modern animate-fade-in">
+            <Card className="card-modern animate-fade-in rounded-3xl w-full shadow-2xl">
               <CardHeader className="text-center space-y-4">
                 <div className="flex justify-center">
                   <div className="bg-gradient-to-br from-red-500 to-red-600 p-6 rounded-2xl modern-shadow-hover animate-bounce-soft">
@@ -266,7 +266,7 @@ export default function CreatePage() {
                 )}
               </CardHeader>
 
-            <CardContent>
+            <CardContent className="px-8 lg:px-12 py-10">
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Creator Name */}
                 <div className="space-y-3">
@@ -284,7 +284,7 @@ export default function CreatePage() {
                     }}
                     placeholder="Enter your full name"
                     autoComplete="name"
-                    className="modern-input text-lg py-4"
+                    className="modern-input text-lg py-4 rounded-2xl"
                     style={{
                       backgroundColor: 'var(--input-background)',
                       borderColor: 'var(--input-border)',
@@ -313,7 +313,7 @@ export default function CreatePage() {
                   >
                     <SelectTrigger 
                       id="schoolSelect"
-                      className="modern-input text-lg py-4" 
+                      className="modern-input text-lg py-4 rounded-2xl" 
                       style={{
                         backgroundColor: 'var(--input-background)',
                         borderColor: 'var(--input-border)',
@@ -383,7 +383,7 @@ export default function CreatePage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className={`w-full text-xl py-6 font-bold ${
+                  className={`w-full text-xl py-6 font-bold rounded-2xl ${
                     isOnCooldown 
                       ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed' 
                       : 'btn-red-primary'

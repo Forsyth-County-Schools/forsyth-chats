@@ -205,10 +205,13 @@ export default function ChatPage() {
   const handleSendMessage = (message: string) => {
     if (!socketRef.current || !name) return;
 
+    const sanitizedMessage = sanitizeMessage(message);
+    if (!sanitizedMessage.trim()) return;
+
     socketRef.current.emit('send-message', {
       roomCode,
       name,
-      message,
+      message: sanitizedMessage,
     });
   };
 

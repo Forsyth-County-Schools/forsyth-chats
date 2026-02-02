@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Filter from 'bad-words';
 
 interface RateLimitState {
   messageCount: number;
@@ -97,11 +98,8 @@ export function useRateLimit() {
   };
 }
 
-// Profanity filter for names (basic implementation)
-const BLOCKED_WORDS = [
-  'damn', 'hell', 'crap', 'stupid', 'dumb', 'idiot', 'moron', 'hate',
-  // Add more as needed - keeping it school-appropriate
-];
+// Profanity filter (school-appropriate)
+const profanityFilter = new (Filter as unknown as { new (): { isProfane: (text: string) => boolean; clean: (text: string) => string } })();
 
 export function validateUserName(name: string): { isValid: boolean; error?: string } {
   const trimmedName = name.trim();
@@ -120,12 +118,9 @@ export function validateUserName(name: string): { isValid: boolean; error?: stri
     return { isValid: false, error: 'Name contains invalid characters' };
   }
 
-  // Basic profanity check
-  const lowerName = trimmedName.toLowerCase();
-  for (const word of BLOCKED_WORDS) {
-    if (lowerName.includes(word)) {
-      return { isValid: false, error: 'Please choose an appropriate name for school use' };
-    }
+  // Profanity check
+  if (profanityFilter.isProfane(trimmedName)) {
+    return { isValid: false, error: 'Please choose an appropriate name for school use' };
   }
 
   return { isValid: true };
@@ -133,11 +128,13 @@ export function validateUserName(name: string): { isValid: boolean; error?: stri
 
 // Sanitize chat messages
 export function sanitizeMessage(message: string): string {
-  return message
+  const sanitized = message
     .trim()
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove scripts
     .replace(/<[^>]*>/g, '') // Remove HTML tags
     .replace(/javascript:/gi, '') // Remove javascript: URLs
     .replace(/on\w+\s*=/gi, '') // Remove event handlers
     .substring(0, 500); // Limit length
+
+  return profanityFilter.clean(sanitized);
 }

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { customAlphabet } from 'nanoid';
 import { z } from 'zod';
+import Filter from 'bad-words';
 import { Room } from '../models/Room';
 
 const router = Router();
@@ -8,6 +9,9 @@ const router = Router();
 // Create custom nanoid generator for room codes
 // Using uppercase letters and numbers, length 10
 const generateRoomCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
+
+// Profanity filter
+const profanityFilter = new (Filter as unknown as { new (): { isProfane: (text: string) => boolean; clean: (text: string) => string } })();
 
 // Rate limiting storage (in production, use Redis or database)
 const rateLimitStore = new Map<string, number>();
@@ -18,7 +22,7 @@ const createRoomSchema = z.object({
 });
 
 // Rate limiting middleware for room creation
-const rateLimitCreateRoom = (req: Request, res: Response, next: any) => {
+const rateLimitCreateRoom = (req: Request, res: Response, next: () => void) => {
   const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
   const now = Date.now();
   const cooldownPeriod = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -34,7 +38,7 @@ const rateLimitCreateRoom = (req: Request, res: Response, next: any) => {
     });
   }
   
-  next();
+  return next();
 };
 
 // POST /api/create-room - Create a new room
@@ -42,6 +46,13 @@ router.post('/create-room', rateLimitCreateRoom, async (req: Request, res: Respo
   try {
     // Validate request body
     const validatedData = createRoomSchema.parse(req.body);
+
+    if (validatedData.creatorName && profanityFilter.isProfane(validatedData.creatorName)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please choose an appropriate name for school use',
+      });
+    }
     
     const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
     let code: string;
