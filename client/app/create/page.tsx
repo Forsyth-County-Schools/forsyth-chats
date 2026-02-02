@@ -97,16 +97,47 @@ export default function CreatePage() {
     try {
       await navigator.clipboard.writeText(createdRoomCode);
       toast({
-        title: '📋 Copied!',
-        description: 'Room code copied to clipboard',
+        title: 'Room Code Copied!',
+        description: 'Share this code with your students to join the classroom.',
       });
     } catch (error) {
+      console.error('Failed to copy room code:', error);
       toast({
-        title: 'Copy failed',
-        description: 'Please manually copy the room code',
+        title: 'Copy Failed',
+        description: 'Please manually copy the room code.',
         variant: 'destructive',
       });
     }
+  };
+
+  const shareOnGoogleDocs = () => {
+    const docContent = `
+Forsyth County Schools Classroom Chat
+=====================================
+
+Room Code: ${createdRoomCode}
+School: ${createdSchoolName}
+Created by: ${creatorName}
+
+How to Join:
+1. Go to the classroom chat website
+2. Click "Join Classroom"
+3. Enter the room code: ${createdRoomCode}
+4. Sign in with your school account
+
+Important Notes:
+- This room is only for Forsyth County Schools students
+- Keep the room code private and only share with authorized students
+- Teacher supervision is required
+- Follow all school district policies and guidelines
+
+Created on: ${new Date().toLocaleDateString()}
+    `.trim();
+
+    const encodedContent = encodeURIComponent(docContent);
+    const googleDocsUrl = `https://docs.google.com/document/create?title=Classroom_Room_${createdRoomCode}&content=${encodedContent}`;
+    
+    window.open(googleDocsUrl, '_blank');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -512,12 +543,16 @@ export default function CreatePage() {
                       </div>
                       
                       <div className="mt-4">
-                        {/* Room code display */}
+                        {/* Room code display with text box */}
                         <div className="relative">
                           <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 rounded-2xl p-6 shadow-2xl transform transition-all duration-300 hover:scale-105 group-hover:shadow-3xl">
-                            <code className="text-4xl font-mono font-black text-white tracking-[0.3em] drop-shadow-lg select-all">
-                              {createdRoomCode}
-                            </code>
+                            <input
+                              type="text"
+                              value={createdRoomCode}
+                              readOnly
+                              className="w-full bg-transparent text-4xl font-mono font-black text-white tracking-[0.3em] drop-shadow-lg text-center outline-none cursor-pointer select-all"
+                              onClick={(e) => (e.target as HTMLInputElement).select()}
+                            />
                             {/* Animated underline */}
                             <div className="h-1 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           </div>
@@ -555,21 +590,14 @@ export default function CreatePage() {
                       <span className="ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300">→</span>
                     </Button>
                     <Button
-                      onClick={() => {
-                        setRoomCreated(false);
-                        setCreatedRoomCode('');
-                        setCreatedSchoolName('');
-                        setCreatorName('');
-                        setSelectedSchool('');
-                        setAgreedToPolicy(false);
-                        setAgreedToDistrictPolicy(false);
-                      }}
+                      onClick={shareOnGoogleDocs}
                       variant="outline"
                       size="lg"
-                      className="px-6 py-6 border-2 border-gray-300 dark:border-gray-600 hover:border-green-400 dark:hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-950/20 rounded-2xl font-bold transition-all duration-300 hover:scale-105 text-lg group"
+                      className="px-6 py-6 border-2 border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20 rounded-2xl font-bold transition-all duration-300 hover:scale-105 text-lg group"
                     >
-                      <span className="mr-2 text-xl transition-transform duration-300 group-hover:rotate-90">➕</span>
-                      Create Another
+                      <span className="mr-2 text-xl transition-transform duration-300 group-hover:scale-110">📄</span>
+                      Share on Google Docs
+                      <span className="ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300">→</span>
                     </Button>
                   </div>
                   
