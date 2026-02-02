@@ -1,0 +1,127 @@
+import { Router, Request, Response } from 'express';
+import { customAlphabet } from 'nanoid';
+import { z } from 'zod';
+import { Room } from '../models/Room';
+
+const router = Router();
+
+// Create custom nanoid generator for room codes
+// Using uppercase letters and numbers, length 10
+const generateRoomCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
+
+// Validation schema for room creation
+const createRoomSchema = z.object({
+  creatorName: z.string().trim().min(2).max(30).optional(),
+});
+
+// POST /api/create-room - Create a new room
+router.post('/create-room', async (req: Request, res: Response) => {
+  try {
+    // Validate request body
+    const validatedData = createRoomSchema.parse(req.body);
+    
+    let code: string;
+    let attempts = 0;
+    const maxAttempts = 5;
+    
+    // Generate unique code with retry logic
+    while (attempts < maxAttempts) {
+      code = generateRoomCode();
+      
+      // Check if code already exists
+      const existingRoom = await Room.findOne({ code });
+      
+      if (!existingRoom) {
+        // Create new room
+        const room = new Room({
+          code,
+          creatorName: validatedData.creatorName,
+        });
+        
+        await room.save();
+        
+        return res.status(201).json({
+          success: true,
+          code,
+          message: 'Room created successfully',
+        });
+      }
+      
+      attempts++;
+    }
+    
+    // If we couldn't generate a unique code after max attempts
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to generate unique room code. Please try again.',
+    });
+    
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        errors: error.errors,
+      });
+    }
+    
+    console.error('Error creating room:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+});
+
+// GET /api/room/:code - Check if room exists
+router.get('/room/:code', async (req: Request, res: Response) => {
+  try {
+    const { code } = req.params;
+    
+    // Validate code format
+    if (!code || code.length !== 10) {
+      return res.status(400).json({
+        success: false,
+        exists: false,
+        message: 'Invalid room code format',
+      });
+    }
+    
+    // Check if room exists
+    const room = await Room.findOne({ code: code.toUpperCase() });
+    
+    if (room) {
+      return res.status(200).json({
+        success: true,
+        exists: true,
+        code: room.code,
+        createdAt: room.createdAt,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        exists: false,
+        message: 'Room not found',
+      });
+    }
+    
+  } catch (error) {
+    console.error('Error checking room:', error);
+    return res.status(500).json({
+      success: false,
+      exists: false,
+      message: 'Internal server error',
+    });
+  }
+});
+
+// GET /api/health - Health check endpoint
+router.get('/health', (_req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+export default router;
