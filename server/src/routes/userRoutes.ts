@@ -1,15 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { User } from '../models/User';
-import crypto from 'crypto';
 
 const router = Router();
 
-// Clerk webhook secret for verification
-const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
-
 // GET /api/webhooks/test - Test endpoint
-router.get('/webhooks/test', async (req: Request, res: Response): Promise<void> => {
+router.get('/webhooks/test', async (_req: Request, res: Response): Promise<void> => {
   res.status(200).json({
     success: true,
     message: 'Webhook routes are working - UPDATED VERSION!',
