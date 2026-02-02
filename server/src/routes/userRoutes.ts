@@ -24,7 +24,7 @@ router.post('/users', async (req: Request, res: Response): Promise<void> => {
     const { clerkId, email, displayName, profileImageUrl } = validated;
 
     // Check if user already exists
-    let existingUser = await User.findOne({ clerkId });
+    const existingUser = await User.findOne({ clerkId });
     
     if (existingUser) {
       // Update existing user
@@ -72,11 +72,11 @@ router.post('/users', async (req: Request, res: Response): Promise<void> => {
     if (error.code === 11000) {
       try {
         // User was created in between - try to find and return it
-        const existingUser = await User.findOne({ clerkId: req.body.clerkId });
-        if (existingUser) {
+        const retrievedUser = await User.findOne({ clerkId: req.body.clerkId });
+        if (retrievedUser) {
           res.status(200).json({
             success: true,
-            user: existingUser,
+            user: retrievedUser,
           });
           return;
         }
@@ -89,7 +89,6 @@ router.post('/users', async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({
       success: false,
       message: 'Failed to create/update user',
-      error: error.message || 'Unknown error',
     });
   }
 });

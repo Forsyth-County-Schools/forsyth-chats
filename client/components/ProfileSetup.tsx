@@ -70,8 +70,9 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
         console.error('Error creating user profile:', error);
         
         // Retry logic with exponential backoff (max 3 retries)
+        // Delays: attempt 1=1s, attempt 2=2s, attempt 3=4s
         if (retryCount < 3) {
-          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+          const delay = Math.pow(2, retryCount) * 1000;
           console.log(`Retrying user creation in ${delay}ms (attempt ${retryCount + 1}/3)...`);
           setRetryAttempt(retryCount + 1);
           setTimeout(() => loadUserProfile(retryCount + 1), delay);
@@ -174,7 +175,7 @@ export function ProfileSetup({ onComplete }: ProfileSetupProps) {
             Try Again
           </Button>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-4">
-            If this problem persists, please contact your administrator.
+            If this problem persists, please contact support.
           </p>
         </div>
       </Card>
