@@ -305,17 +305,17 @@ export default function JoinPage() {
                   </div>
 
                   <div className="space-y-6">
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-6">
                       <div className="flex items-start space-x-4">
                         <Checkbox
                           id="policy"
                           checked={agreedToPolicy}
                           onCheckedChange={(checked) => setAgreedToPolicy(checked === true)}
                           disabled={isJoining}
-                          className="mt-1 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
+                          className="mt-1 h-6 w-6 rounded border-2 border-gray-400 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 cursor-pointer"
                         />
-                        <label htmlFor="policy" className="text-sm leading-relaxed cursor-pointer flex-1" style={{color: 'var(--foreground-secondary)'}}>
-                          <span className="font-semibold text-blue-700 dark:text-blue-300">📋 I agree to:</span><br/>
+                        <label htmlFor="policy" className="text-base leading-relaxed cursor-pointer flex-1 select-none" style={{color: 'var(--foreground)'}}>
+                          <span className="font-bold text-blue-700 dark:text-blue-300">📋 I agree to:</span><br/>
                           Keep the classroom chat respectful and appropriate for educational purposes. 
                           I understand that all conversations may be monitored and inappropriate 
                           behavior will result in immediate removal.

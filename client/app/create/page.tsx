@@ -323,22 +323,34 @@ export default function CreatePage() {
                     >
                       <SelectValue placeholder="Choose your school..." />
                     </SelectTrigger>
-                    <SelectContent>
-                      <div className="font-semibold text-sm text-gray-500 px-2 py-1">High Schools</div>
+                    <SelectContent className="bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600 max-h-[400px]">
+                      <div className="font-bold text-base text-gray-700 dark:text-gray-300 px-3 py-2 bg-gray-100 dark:bg-gray-800">High Schools</div>
                       {SCHOOLS_BY_CATEGORY.high.map((school) => (
-                        <SelectItem key={school.name} value={school.name}>
+                        <SelectItem 
+                          key={school.name} 
+                          value={school.name}
+                          className="text-base py-3 px-4 cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-100 dark:focus:bg-red-900/40 text-gray-900 dark:text-gray-100"
+                        >
                           {school.name}
                         </SelectItem>
                       ))}
-                      <div className="font-semibold text-sm text-gray-500 px-2 py-1 mt-2">Middle Schools</div>
+                      <div className="font-bold text-base text-gray-700 dark:text-gray-300 px-3 py-2 bg-gray-100 dark:bg-gray-800 mt-2">Middle Schools</div>
                       {SCHOOLS_BY_CATEGORY.middle.map((school) => (
-                        <SelectItem key={school.name} value={school.name}>
+                        <SelectItem 
+                          key={school.name} 
+                          value={school.name}
+                          className="text-base py-3 px-4 cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-100 dark:focus:bg-red-900/40 text-gray-900 dark:text-gray-100"
+                        >
                           {school.name}
                         </SelectItem>
                       ))}
-                      <div className="font-semibold text-sm text-gray-500 px-2 py-1 mt-2">Elementary Schools</div>
+                      <div className="font-bold text-base text-gray-700 dark:text-gray-300 px-3 py-2 bg-gray-100 dark:bg-gray-800 mt-2">Elementary Schools</div>
                       {SCHOOLS_BY_CATEGORY.elementary.map((school) => (
-                        <SelectItem key={school.name} value={school.name}>
+                        <SelectItem 
+                          key={school.name} 
+                          value={school.name}
+                          className="text-base py-3 px-4 cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-100 dark:focus:bg-red-900/40 text-gray-900 dark:text-gray-100"
+                        >
                           {school.name}
                         </SelectItem>
                       ))}
