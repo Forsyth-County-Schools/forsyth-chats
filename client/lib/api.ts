@@ -21,6 +21,10 @@ export interface JoinRoomResponse {
     id: string;
     name: string;
   };
+  room?: {
+    code: string;
+    createdAt: string;
+  };
   message?: string;
 }
 

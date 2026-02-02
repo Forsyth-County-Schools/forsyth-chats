@@ -23,6 +23,12 @@ const createRoomSchema = z.object({
   creatorName: z.string().trim().min(2).max(30).optional(),
 });
 
+// Validation schema for joining room
+const joinRoomSchema = z.object({
+  roomCode: z.string().trim().length(10),
+  name: z.string().trim().min(2).max(30),
+});
+
 // Rate limiting middleware for room creation
 const rateLimitCreateRoom = (req: Request, res: Response, next: () => void) => {
   const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
@@ -106,6 +112,64 @@ router.post('/create-room', rateLimitCreateRoom, async (req: Request, res: Respo
     }
     
     console.error('Error creating room:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+});
+
+// POST /api/join-room - Join an existing room
+router.post('/join-room', async (req: Request, res: Response) => {
+  try {
+    // Validate request body
+    const validatedData = joinRoomSchema.parse(req.body);
+    const { roomCode, name } = validatedData;
+
+    // Check for profanity in name
+    if (profanityFilter.isProfane(name)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please choose an appropriate name for school use',
+      });
+    }
+
+    // Check if room exists
+    const room = await Room.findOne({ code: roomCode.toUpperCase() });
+    
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        message: 'Room not found or has expired',
+      });
+    }
+
+    // Generate a simple user ID (in production, you might want something more sophisticated)
+    const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: userId,
+        name: name.trim(),
+      },
+      room: {
+        code: room.code,
+        createdAt: room.createdAt,
+      },
+      message: 'Successfully joined room',
+    });
+
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        errors: error.errors,
+      });
+    }
+    
+    console.error('Error joining room:', error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',
