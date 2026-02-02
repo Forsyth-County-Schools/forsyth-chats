@@ -16,9 +16,12 @@ import { useUserStore } from '@/lib/store';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { FORSYTH_SCHOOLS, SCHOOLS_BY_CATEGORY, generateSchoolCode } from '@/lib/schools';
 import { validateUserName } from '@/lib/security';
+import { SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 
 export default function CreatePage() {
+  const { user, isSignedIn } = useUser();
+  const { profile } = useUserStore();
   const [creatorName, setCreatorName] = useState('');
   const [selectedSchool, setSelectedSchool] = useState('');
   const [agreedToPolicy, setAgreedToPolicy] = useState(false);
@@ -37,6 +40,14 @@ export default function CreatePage() {
   const router = useRouter();
   const { toast } = useToast();
   const { setUser } = useUserStore();
+
+  // Auto-populate name when user is signed in
+  useEffect(() => {
+    if (isSignedIn && (profile?.displayName || user?.fullName || user?.firstName || user?.username)) {
+      const name = profile?.displayName || user?.fullName || user?.firstName || user?.username || '';
+      setCreatorName(name);
+    }
+  }, [isSignedIn, profile, user]);
 
   // Check for existing cooldown on component mount
   useEffect(() => {
@@ -211,10 +222,11 @@ export default function CreatePage() {
 
   return (
     <GeoBlockWrapper>
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 relative">
-        {/* Modern gradient background */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.1)_0%,transparent_50%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.15)_0%,transparent_50%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.03)_25%,rgba(59,130,246,0.03)_50%,transparent_50%,transparent_75%,rgba(59,130,246,0.03)_75%)] dark:bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.08)_25%,rgba(59,130,246,0.08)_50%,transparent_50%,transparent_75%,rgba(59,130,246,0.08)_75%)] bg-[length:20px_20px]" />
+      <main className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black relative">
+        {/* Modern gradient background with subtle accents */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.02)_25%,rgba(59,130,246,0.02)_50%,transparent_50%,transparent_75%,rgba(59,130,246,0.02)_75%)] bg-[length:20px_20px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-transparent to-purple-900/10" />
         
         {/* Theme Toggle */}
         <div className="absolute top-6 right-6 z-10">
@@ -232,75 +244,86 @@ export default function CreatePage() {
             <span className="font-medium">Back to Home</span>
           </Link>
 
-          {!roomCreated ? (
-            <div className="bg-white/90 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/50 shadow-2xl p-8">
-              <div className="text-center space-y-6 mb-8">
-                <div className="flex justify-center">
-                  <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 p-6 rounded-3xl shadow-2xl relative group">
-                    <Plus className="h-12 w-12 text-white drop-shadow-lg" />
-                    <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                </div>
-                <div>
-                  <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-                    Create Classroom
-                  </h1>
-                  <p className="text-lg text-slate-600 dark:text-slate-300">
-                    Set up a secure chat room for your Forsyth County Schools class 🏫
-                  </p>
-                </div>
-                
-                {/* Rate limiting notice */}
-                {isOnCooldown && (
-                  <div className="bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl p-6 backdrop-blur-sm">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-amber-500/20 rounded-2xl">
-                        <span className="text-2xl">⏳</span>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-amber-800 dark:text-amber-200">
-                          Rate Limit Active
-                        </p>
-                        <p className="text-sm text-amber-700 dark:text-amber-300">
-                          You can create another classroom in {formatCooldownTime(cooldownTimeLeft)}
-                        </p>
-                      </div>
+          <SignedIn>
+            {!roomCreated ? (
+              <div className="bg-white/90 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/50 shadow-2xl p-8">
+                <div className="text-center space-y-6 mb-8">
+                  <div className="flex justify-center">
+                    <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 p-6 rounded-3xl shadow-2xl relative group">
+                      <Plus className="h-12 w-12 text-white drop-shadow-lg" />
+                      <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
                   </div>
-                )}
-              </div>
-              <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Creator Name */}
-                <div className="space-y-4">
-                  <label htmlFor="creatorName" className="text-lg font-semibold block text-slate-900 dark:text-white">
-                    👤 Your Name
-                  </label>
-                  <div className="relative group">
-                    <Input
-                      id="creatorName"
-                      name="creatorName"
-                      type="text"
-                      value={creatorName}
-                      onChange={(e) => {
-                        setCreatorName(e.target.value);
-                        setNameError('');
-                      }}
-                      placeholder="Enter your full name"
-                      autoComplete="name"
-                      className="w-full text-lg py-4 px-6 rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm focus:border-red-500 dark:focus:border-red-400 focus:ring-4 focus:ring-red-500/20 transition-all duration-200 group-hover:shadow-lg focus:shadow-xl"
-                      disabled={isCreating}
-                      required
-                    />
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div>
+                    <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+                      Create Classroom
+                    </h1>
+                    <p className="text-lg text-slate-600 dark:text-slate-300">
+                      Set up a secure chat room for your Forsyth County Schools class 🏫
+                    </p>
+                    <div className="mt-2 text-sm text-green-600 dark:text-green-400 font-medium">
+                      ✅ Signed in as {profile?.displayName || user?.fullName || user?.firstName || user?.username}
+                    </div>
                   </div>
-                  {nameError && (
-                    <div className="bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3">
-                      <p className="text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2">
-                        <span>⚠️</span> {nameError}
-                      </p>
+                  
+                  {/* Rate limiting notice */}
+                  {isOnCooldown && (
+                    <div className="bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl p-6 backdrop-blur-sm">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-amber-500/20 rounded-2xl">
+                          <span className="text-2xl">⏳</span>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-amber-800 dark:text-amber-200">
+                            Rate Limit Active
+                          </p>
+                          <p className="text-sm text-amber-700 dark:text-amber-300">
+                            You can create another classroom in {formatCooldownTime(cooldownTimeLeft)}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Creator Name */}
+                  <div className="space-y-4">
+                    <label htmlFor="creatorName" className="text-lg font-semibold block text-slate-900 dark:text-white">
+                      👤 Your Name <span className="text-sm text-green-600 dark:text-green-400">(✓ Verified)</span>
+                    </label>
+                    <div className="relative group">
+                      <Input
+                        id="creatorName"
+                        name="creatorName"
+                        type="text"
+                        value={creatorName}
+                        onChange={(e) => {
+                          if (!isSignedIn) {
+                            setCreatorName(e.target.value);
+                            setNameError('');
+                          }
+                        }}
+                        placeholder="Authenticated user"
+                        autoComplete="name"
+                        className="w-full text-lg py-4 px-6 rounded-2xl border-2 border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-950/20 cursor-not-allowed backdrop-blur-sm focus:ring-4 focus:ring-green-500/20 transition-all duration-200 group-hover:shadow-lg"
+                        disabled={isCreating || isSignedIn}
+                        required
+                      />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 pointer-events-none" />
+                    </div>
+                    {nameError && (
+                      <div className="bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3">
+                        <p className="text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2">
+                          <span>⚠️</span> {nameError}
+                        </p>
+                      </div>
+                    )}
+                    <div className="bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-3">
+                      <p className="text-green-600 dark:text-green-400 text-sm font-medium flex items-center gap-2">
+                        <span>✅</span> Your name is automatically filled from your authenticated account
+                      </p>
+                    </div>
+                  </div>
 
                 {/* School Selection */}
                 <div className="space-y-3">
@@ -551,6 +574,53 @@ export default function CreatePage() {
               </Card>
             </div>
           )}
+          </SignedIn>
+
+          <SignedOut>
+            <div className="bg-white/90 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/50 shadow-2xl p-8">
+              <div className="text-center space-y-6 mb-8">
+                <div className="flex justify-center">
+                  <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 p-6 rounded-3xl shadow-2xl relative group">
+                    <Plus className="h-12 w-12 text-white drop-shadow-lg" />
+                    <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+                    Sign In Required
+                  </h1>
+                  <p className="text-lg text-slate-600 dark:text-slate-300">
+                    Please sign in to create a Forsyth County Schools classroom 🏫
+                  </p>
+                  <div className="mt-4 text-sm text-blue-600 dark:text-blue-400">
+                    Your account will be automatically verified and your name will be pre-filled
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <SignInButton mode="modal">
+                  <Button className="w-full py-6 text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-2xl transition-all duration-300 hover:scale-[1.02] shadow-lg">
+                    🚪 Sign In to Create Classroom
+                  </Button>
+                </SignInButton>
+                
+                <SignUpButton mode="modal">
+                  <Button variant="outline" className="w-full py-6 text-lg font-bold border-2 border-purple-200 hover:border-purple-300 rounded-2xl transition-all duration-300 hover:scale-[1.02]">
+                    ✨ Create Account
+                  </Button>
+                </SignUpButton>
+                
+                <Button 
+                  variant="ghost" 
+                  onClick={() => window.location.href = '/'}
+                  className="w-full py-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                >
+                  ← Back to Home
+                </Button>
+              </div>
+            </div>
+          </SignedOut>
         </div>
       </main>
     </GeoBlockWrapper>

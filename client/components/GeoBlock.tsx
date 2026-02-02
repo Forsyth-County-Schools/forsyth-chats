@@ -116,7 +116,10 @@ export default function GeoBlock({ onLocationVerified }: GeoBlockProps) {
 
   if (isChecking) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black flex items-center justify-center relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.08)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.02)_25%,rgba(59,130,246,0.02)_50%,transparent_50%,transparent_75%,rgba(59,130,246,0.02)_75%)] bg-[length:20px_20px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-transparent to-purple-900/10" />
         <div className="text-center text-white">
           <div className="relative mb-8">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-800 border-t-red-600 mx-auto"></div>
@@ -135,7 +138,10 @@ export default function GeoBlock({ onLocationVerified }: GeoBlockProps) {
 
   if (isBlocked) {
     return (
-      <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white flex items-center justify-center px-4 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.08)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(239,68,68,0.02)_25%,rgba(239,68,68,0.02)_50%,transparent_50%,transparent_75%,rgba(239,68,68,0.02)_75%)] bg-[length:20px_20px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-red-900/10 via-transparent to-orange-900/10" />
         <div className="max-w-2xl mx-auto text-center">
           {/* Forsyth County Schools Logo Area */}
           <div className="mb-8">
