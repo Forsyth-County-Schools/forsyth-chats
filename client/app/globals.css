@@ -153,6 +153,14 @@
   .animate-bounce-soft {
     animation: bounce-soft 0.5s ease-out;
   }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s infinite;
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+  }
 }
 
 @keyframes scale-in {
@@ -198,5 +206,23 @@
   }
   90% {
     transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(220, 68, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(220, 68, 55, 0.8);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
   }
 }

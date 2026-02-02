@@ -27,10 +27,33 @@ export default function CreatePage() {
   const [nameError, setNameError] = useState('');
   const [schoolError, setSchoolError] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
+  const [roomCreated, setRoomCreated] = useState(false);
+  const [createdRoomCode, setCreatedRoomCode] = useState('');
+  const [createdSchoolName, setCreatedSchoolName] = useState('');
   
   const router = useRouter();
   const { toast } = useToast();
   const { setUser } = useUserStore();
+
+  const navigateToChat = () => {
+    router.push(`/chat/${createdRoomCode}`);
+  };
+
+  const copyRoomCode = async () => {
+    try {
+      await navigator.clipboard.writeText(createdRoomCode);
+      toast({
+        title: '📋 Copied!',
+        description: 'Room code copied to clipboard',
+      });
+    } catch (error) {
+      toast({
+        title: 'Copy failed',
+        description: 'Please manually copy the room code',
+        variant: 'destructive',
+      });
+    }
+  };
 
   useEffect(() => {
     // Handle Turnstile callback
@@ -117,13 +140,15 @@ export default function CreatePage() {
           localStorage.setItem(`room_${response.code}`, JSON.stringify(roomData));
         }
         
+        // Set success state
+        setCreatedRoomCode(response.code);
+        setCreatedSchoolName(school.name);
+        setRoomCreated(true);
+        
         toast({
-          title: 'Classroom Created!',
+          title: '🎉 Classroom Created!',
           description: `Your ${school.name} classroom is ready`,
         });
-        
-        // Navigate to chat
-        router.push(`/chat/${response.code}`);
       } else {
         throw new Error(response.message || 'Failed to create classroom');
       }
@@ -140,7 +165,16 @@ export default function CreatePage() {
 
   return (
     <GeoBlockWrapper>
-      <main className="min-h-screen transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
+      <main className="min-h-screen transition-colors duration-300 relative overflow-hidden" style={{backgroundColor: 'var(--background)'}}>
+        {/* Animated background */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-red-600/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
+          <div className="absolute top-1/3 right-1/4 w-60 h-60 bg-red-400/15 rounded-full blur-2xl animate-pulse" style={{animationDelay: '2s'}} />
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10">
         {/* Theme Toggle */}
         <div className="absolute top-6 right-6 z-10">
           <ThemeToggle />
@@ -153,20 +187,21 @@ export default function CreatePage() {
             Back to Home
           </Link>
 
-          <Card className="card-modern">
-            <CardHeader className="text-center space-y-4">
-              <div className="flex justify-center">
-                <div className="bg-red-600 p-6 rounded-2xl modern-shadow">
-                  <Plus className="h-12 w-12 text-white" />
+          {!roomCreated ? (
+            <Card className="card-modern animate-fade-in">
+              <CardHeader className="text-center space-y-4">
+                <div className="flex justify-center">
+                  <div className="bg-gradient-to-br from-red-500 to-red-600 p-6 rounded-2xl modern-shadow-hover animate-bounce-soft">
+                    <Plus className="h-12 w-12 text-white" />
+                  </div>
                 </div>
-              </div>
-              <CardTitle className="text-3xl font-bold" style={{color: 'var(--foreground)'}}>
-                Create Forsyth County Classroom
-              </CardTitle>
-              <CardDescription className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
-                Set up a secure chat room for your Forsyth County Schools class
-              </CardDescription>
-            </CardHeader>
+                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
+                  Create Forsyth County Classroom
+                </CardTitle>
+                <CardDescription className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
+                  Set up a secure chat room for your Forsyth County Schools class 🏫
+                </CardDescription>
+              </CardHeader>
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-8">
@@ -299,6 +334,73 @@ export default function CreatePage() {
               </form>
             </CardContent>
           </Card>
+          ) : (
+            <div className="animate-scale-in">
+              <Card className="card-modern border-2 border-green-500/20 bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
+                <CardContent className="text-center space-y-8 pt-8">
+                  <div className="flex justify-center">
+                    <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-8 rounded-3xl modern-shadow-hover animate-bounce-soft">
+                      <span className="text-6xl">🎉</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
+                      Classroom Created!
+                    </h1>
+                    <p className="text-lg text-gray-600 dark:text-gray-300">
+                      Your {createdSchoolName} classroom is ready for students 📚
+                    </p>
+                  </div>
+
+                  <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
+                    <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3 uppercase tracking-wide">
+                      📋 Share this room code with your students
+                    </p>
+                    <div className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-950/30 dark:to-red-900/30 rounded-xl p-4 border-2 border-red-200/50 dark:border-red-800/50">
+                      <code className="text-3xl font-mono font-bold text-red-700 dark:text-red-400 tracking-wider">
+                        {createdRoomCode}
+                      </code>
+                    </div>
+                    <Button
+                      onClick={copyRoomCode}
+                      variant="outline"
+                      className="mt-4 w-full border-red-200 hover:border-red-300 hover:bg-red-50 dark:border-red-800 dark:hover:border-red-700 dark:hover:bg-red-950/30"
+                    >
+                      📋 Copy Room Code
+                    </Button>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={navigateToChat}
+                      size="lg"
+                      className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                    >
+                      🚀 Enter Classroom
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setRoomCreated(false);
+                        setCreatedRoomCode('');
+                        setCreatedSchoolName('');
+                        setCreatorName('');
+                        setSelectedSchool('');
+                        setAgreedToPolicy(false);
+                        setAgreedToDistrictPolicy(false);
+                        setTurnstileToken('');
+                      }}
+                      variant="outline"
+                      size="lg"
+                      className="px-6 border-gray-300 hover:border-gray-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800"
+                    >
+                      ➕ Create Another
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
 
         {/* Turnstile Success Handler Script */}
@@ -309,6 +411,7 @@ export default function CreatePage() {
             };
           `
         }} />
+        </div>
       </main>
     </GeoBlockWrapper>
   );

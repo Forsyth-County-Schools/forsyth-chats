@@ -148,7 +148,16 @@ export default function JoinPage() {
 
   return (
     <GeoBlockWrapper>
-      <main className="min-h-screen transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
+      <main className="min-h-screen transition-colors duration-300 relative overflow-hidden" style={{backgroundColor: 'var(--background)'}}>
+        {/* Animated background */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute -top-32 -left-32 w-64 h-64 bg-red-500/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-red-600/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}} />
+          <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-red-400/25 rounded-full blur-2xl animate-pulse" style={{animationDelay: '3s'}} />
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10">
         {/* Theme Toggle */}
         <div className="absolute top-6 right-6 z-10">
           <ThemeToggle />
@@ -161,66 +170,97 @@ export default function JoinPage() {
             Back to Home
           </Link>
 
-          <Card className="card-modern">
-            <CardHeader className="text-center space-y-4">
-              <div className="flex justify-center">
-                <div className="bg-red-600 p-6 rounded-2xl modern-shadow">
-                  <LogIn className="h-12 w-12 text-white" />
+          <Card className="card-glass border-0 shadow-2xl relative overflow-hidden animate-fade-in">
+            {/* Animated background pattern */}
+            <div className="absolute inset-0">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-purple-500/5 to-red-600/5 animate-shimmer" />
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-red-600 to-red-500 animate-shimmer" />
+            </div>
+            
+            <CardHeader className="text-center space-y-6 relative z-10">
+              <div className="flex justify-center mb-2">
+                <div className="relative group">
+                  <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 p-8 rounded-3xl shadow-2xl relative z-10 transform group-hover:scale-105 transition-all duration-300">
+                    <LogIn className="h-16 w-16 text-white drop-shadow-lg" />
+                  </div>
+                  {/* Enhanced floating effects */}
+                  <div className="absolute -inset-6 bg-gradient-to-r from-red-500/20 via-red-600/20 to-red-500/20 rounded-full blur-xl animate-ping" />
+                  <div className="absolute -inset-4 bg-gradient-to-r from-red-600/30 via-red-700/30 to-red-600/30 rounded-full blur-lg animate-pulse" />
+                  <div className="absolute -inset-2 bg-red-500/40 rounded-full blur-sm animate-pulse" style={{animationDelay: '0.5s'}} />
                 </div>
               </div>
-              <CardTitle className="text-3xl font-bold" style={{color: 'var(--foreground)'}}>
-                Join Forsyth County Classroom
-              </CardTitle>
-              <CardDescription className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
-                Enter your teacher's room code to join the secure classroom chat
-              </CardDescription>
+              <div className="space-y-4">
+                <CardTitle className="text-4xl md:text-5xl font-black bg-gradient-to-r from-red-600 via-red-700 to-red-800 bg-clip-text text-transparent drop-shadow-sm">
+                  Join Forsyth County Classroom
+                </CardTitle>
+                <CardDescription className="text-xl leading-relaxed max-w-md mx-auto" style={{color: 'var(--foreground-secondary)'}}>
+                  Enter your teacher's secure room code to join the discussion 💬
+                </CardDescription>
+                {/* Animated decorative line */}
+                <div className="flex items-center justify-center space-x-3 pt-4">
+                  <div className="h-1.5 w-12 bg-gradient-to-r from-red-500 to-red-600 rounded-full animate-pulse" />
+                  <div className="h-2 w-2 bg-red-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}} />
+                  <div className="h-2 w-2 bg-red-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}} />
+                  <div className="h-2 w-2 bg-red-700 rounded-full animate-bounce" style={{animationDelay: '0.3s'}} />
+                  <div className="h-1.5 w-12 bg-gradient-to-l from-red-500 to-red-600 rounded-full animate-pulse" />
+                </div>
+              </div>
             </CardHeader>
 
           <CardContent className="space-y-8">
             {/* Room Code Form */}
             {roomExists === null && (
-              <form onSubmit={handleCheckRoom} className="space-y-6 animate-slide-up">
-                <div className="space-y-3">
-                  <label htmlFor="roomCode" className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
-                    Room Code
+              <form onSubmit={handleCheckRoom} className="space-y-8 animate-slide-up">
+                <div className="space-y-5">
+                  <label htmlFor="roomCode" className="text-xl font-black block text-center bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
+                    🔐 Enter Room Code
                   </label>
-                  <Input
-                    id="roomCode"
-                    type="text"
-                    value={roomCode}
-                    onChange={(e) => {
-                      setRoomCode(e.target.value.toUpperCase());
-                      setCodeError('');
-                    }}
-                    placeholder="Enter 10-character room code"
-                    maxLength={10}
-                    autoComplete="off"
-                    className="modern-input text-lg py-4 text-center tracking-wider font-mono"
-                    style={{
-                      backgroundColor: 'var(--input-background)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--foreground)'
-                    }}
-                    disabled={isChecking}
-                  />
+                  <div className="relative group">
+                    <Input
+                      id="roomCode"
+                      type="text"
+                      value={roomCode}
+                      onChange={(e) => {
+                        setRoomCode(e.target.value.toUpperCase());
+                        setCodeError('');
+                      }}
+                      placeholder="ABC-123DEF"
+                      maxLength={10}
+                      autoComplete="off"
+                      className="modern-input text-2xl py-6 text-center tracking-[0.3em] font-bold border-2 rounded-2xl transition-all duration-300 group-hover:shadow-lg focus:shadow-xl focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                      style={{
+                        backgroundColor: 'var(--input-background)',
+                        borderColor: codeError ? '#EF4444' : 'var(--input-border)',
+                        color: 'var(--foreground)',
+                        letterSpacing: '0.1em'
+                      }}
+                      disabled={isChecking}
+                    />
+                    {/* Animated border effect */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none" />
+                  </div>
                   {codeError && (
-                    <p className="text-red-600 text-sm font-medium">{codeError}</p>
+                    <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-xl p-4 animate-shake">
+                      <p className="text-red-600 dark:text-red-400 text-sm font-semibold text-center">⚠️ {codeError}</p>
+                    </div>
                   )}
                 </div>
 
                 <Button
                   type="submit"
                   size="lg"
-                  className="btn-red-primary w-full text-lg py-4 font-semibold"
+                  className="w-full text-xl py-6 font-bold rounded-2xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transform hover:scale-[1.02] transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-red-500/25"
                   disabled={isChecking || !roomCode.trim()}
                 >
                   {isChecking ? (
                     <>
-                      <LoadingSpinner size="sm" />
-                      <span className="ml-2">Checking...</span>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3" />
+                      <span>Verifying...</span>
                     </>
                   ) : (
-                    'Check Room'
+                    <>
+                      <span>🚀 Check Room</span>
+                    </>
                   )}
                 </Button>
               </form>
@@ -228,70 +268,93 @@ export default function JoinPage() {
 
             {/* Join Form (shown when room exists) */}
             {roomExists === true && (
-              <div className="space-y-6 animate-slide-up">
-                <div className="success-box">
-                  <p className="text-green-700 dark:text-green-400 font-semibold text-lg">
-                    ✓ Room found! {schoolInfo && (
-                      <span className="block text-sm mt-1">
-                        {schoolInfo.name} ({schoolInfo.category.charAt(0).toUpperCase() + schoolInfo.category.slice(1)})
-                      </span>
-                    )}
-                  </p>
+              <div className="space-y-8 slide-up">
+                <div className="relative">
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-2 border-green-200 dark:border-green-800 rounded-2xl p-6 relative overflow-hidden">
+                    {/* Success animation background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-emerald-400/10 animate-pulse" />
+                    <div className="relative z-10 text-center">
+                      <div className="text-4xl mb-2">🎉</div>
+                      <p className="text-green-700 dark:text-green-400 font-bold text-lg mb-2">
+                        ✅ Classroom Found!
+                      </p>
+                      {schoolInfo && (
+                        <div className="bg-white dark:bg-gray-900/50 rounded-xl p-3 border border-green-200 dark:border-green-700">
+                          <p className="font-semibold text-green-800 dark:text-green-300">
+                            📚 {schoolInfo.name}
+                          </p>
+                          <p className="text-sm text-green-600 dark:text-green-400 capitalize">
+                            {schoolInfo.category} School
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <form onSubmit={handleJoinRoom} className="space-y-6">
-                  <div className="space-y-3">
-                    <label htmlFor="name" className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
-                      Your Name
+                  <div className="space-y-4">
+                    <label htmlFor="name" className="text-xl font-black block text-center" style={{color: 'var(--foreground)'}}>
+                      👤 Your Name
                     </label>
-                    <Input
-                      id="name"
-                      type="text"
-                      value={name}
-                      onChange={(e) => {
-                        setName(e.target.value);
-                        setNameError('');
-                      }}
-                      placeholder="Enter your name"
-                      autoComplete="name"
-                      className="modern-input text-lg py-4"
-                      style={{
-                        backgroundColor: 'var(--input-background)',
-                        borderColor: 'var(--input-border)',
-                        color: 'var(--foreground)'
-                      }}
-                      disabled={isJoining}
-                    />
+                    <div className="relative group">
+                      <Input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          setNameError('');
+                        }}
+                        placeholder="Enter your full name"
+                        autoComplete="name"
+                        className="modern-input text-xl py-6 text-center border-2 rounded-2xl transition-all duration-300 group-hover:shadow-lg focus:shadow-xl focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                        style={{
+                          backgroundColor: 'var(--input-background)',
+                          borderColor: nameError ? '#EF4444' : 'var(--input-border)',
+                          color: 'var(--foreground)'
+                        }}
+                        disabled={isJoining}
+                      />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none" />
+                    </div>
                     {nameError && (
-                      <p className="text-red-600 text-sm font-medium">{nameError}</p>
+                      <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-xl p-4 animate-shake">
+                        <p className="text-red-600 dark:text-red-400 text-sm font-semibold text-center">⚠️ {nameError}</p>
+                      </div>
                     )}
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <Checkbox
-                        id="policy"
-                        checked={agreedToPolicy}
-                        onCheckedChange={(checked) => setAgreedToPolicy(checked === true)}
-                        disabled={isJoining}
-                      />
-                      <label htmlFor="policy" className="text-sm leading-relaxed cursor-pointer" style={{color: 'var(--foreground-secondary)'}}>
-                        I agree to keep the chat respectful and appropriate for a classroom environment. 
-                        I understand that inappropriate behavior may result in removal from the chat.
-                      </label>
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6">
+                      <div className="flex items-start space-x-4">
+                        <Checkbox
+                          id="policy"
+                          checked={agreedToPolicy}
+                          onCheckedChange={(checked) => setAgreedToPolicy(checked === true)}
+                          disabled={isJoining}
+                          className="mt-1 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
+                        />
+                        <label htmlFor="policy" className="text-sm leading-relaxed cursor-pointer flex-1" style={{color: 'var(--foreground-secondary)'}}>
+                          <span className="font-semibold text-blue-700 dark:text-blue-300">📋 I agree to:</span><br/>
+                          Keep the classroom chat respectful and appropriate for educational purposes. 
+                          I understand that all conversations may be monitored and inappropriate 
+                          behavior will result in immediate removal.
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Cloudflare Turnstile */}
+                    <div className="flex justify-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
+                      <div 
+                        className="cf-turnstile" 
+                        data-sitekey="0x4AAAAAACW20p-WO0bwShk2"
+                        data-callback="onTurnstileSuccess"
+                      ></div>
                     </div>
                   </div>
 
-                  {/* Cloudflare Turnstile */}
-                  <div className="flex justify-center">
-                    <div 
-                      className="cf-turnstile" 
-                      data-sitekey="0x4AAAAAACW20p-WO0bwShk2"
-                      data-callback="onTurnstileSuccess"
-                    ></div>
-                  </div>
-
-                  <div className="flex gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Button
                       type="button"
                       variant="outline"
@@ -303,23 +366,23 @@ export default function JoinPage() {
                         setTurnstileToken('');
                       }}
                       disabled={isJoining}
-                      className="btn-red-outline flex-1 py-4"
+                      className="py-4 text-lg font-semibold border-2 border-red-200 hover:border-red-300 rounded-2xl transition-all duration-300 hover:scale-[1.02]"
                     >
-                      Change Code
+                      ↩️ Change Code
                     </Button>
                     <Button
                       type="submit"
                       size="lg"
-                      className="btn-red-primary flex-2 text-lg py-4 font-bold"
+                      className="py-4 text-lg font-bold rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transform hover:scale-[1.02] transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-green-500/25"
                       disabled={isJoining || !name.trim() || !agreedToPolicy || !turnstileToken}
                     >
                       {isJoining ? (
                         <>
-                          <LoadingSpinner size="sm" />
-                          <span className="ml-2">Joining...</span>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
+                          <span>Joining...</span>
                         </>
                       ) : (
-                        'Join Classroom'
+                        '🚀 Join Classroom'
                       )}
                     </Button>
                   </div>
@@ -329,11 +392,24 @@ export default function JoinPage() {
 
             {/* Room Not Found */}
             {roomExists === false && (
-              <div className="space-y-6 animate-slide-up">
-                <div className="success-box">
-                  <p className="text-red-600 font-semibold text-lg">
-                    ✗ Room not found. The code might be incorrect or the room may have expired.
-                  </p>
+              <div className="space-y-6 slide-up">
+                <div className="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20 border-2 border-red-200 dark:border-red-800 rounded-2xl p-8 text-center relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-400/10 to-rose-400/10 animate-pulse" />
+                  <div className="relative z-10">
+                    <div className="text-5xl mb-4">🔍</div>
+                    <h3 className="text-xl font-bold text-red-700 dark:text-red-400 mb-3">
+                      Room Not Found
+                    </h3>
+                    <p className="text-red-600 dark:text-red-300 mb-6 leading-relaxed">
+                      The room code might be incorrect, expired, or the classroom may have ended.
+                      Please double-check the code with your teacher.
+                    </p>
+                    <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 border border-red-200 dark:border-red-700">
+                      <p className="text-sm text-red-500 dark:text-red-400">
+                        💡 <strong>Tip:</strong> Room codes are case-sensitive and usually in ABC-123DEF format
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <Button
@@ -343,9 +419,9 @@ export default function JoinPage() {
                     setRoomCode('');
                     setCodeError('');
                   }}
-                  className="btn-red-outline w-full py-4 text-lg font-semibold"
+                  className="w-full py-6 text-lg font-bold border-2 border-red-200 hover:border-red-300 rounded-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20 hover:shadow-xl"
                 >
-                  Try Another Code
+                  🔄 Try Another Code
                 </Button>
               </div>
             )}
@@ -353,15 +429,16 @@ export default function JoinPage() {
         </Card>
       </div>
 
-      {/* Turnstile Success Handler Script */}
-      <script dangerouslySetInnerHTML={{
-        __html: `
-          window.onTurnstileSuccess = function(token) {
-            window.dispatchEvent(new CustomEvent('turnstileSuccess', { detail: token }));
-          };
-        `
-      }} />
-    </main>
+        {/* Turnstile Success Handler Script */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            window.onTurnstileSuccess = function(token) {
+              window.dispatchEvent(new CustomEvent('turnstileSuccess', { detail: token }));
+            };
+          `
+        }} />
+        </div>
+      </main>
     </GeoBlockWrapper>
   );
 }
