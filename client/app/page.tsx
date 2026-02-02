@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black relative overflow-hidden grid-background">
       {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 via-transparent to-purple-500/5" />
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-500/8 rounded-full blur-3xl animate-pulse" />

@@ -225,14 +225,14 @@ export default function ChatPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black flex items-center justify-center grid-background">
         <LoadingSpinner size="lg" text="Joining classroom..." />
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-black via-slate-950 to-black relative">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-black via-slate-950 to-black relative grid-background">
       {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-teal-500/3 via-transparent to-purple-500/3" />
       <div className="absolute top-0 right-1/3 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl opacity-50" />
