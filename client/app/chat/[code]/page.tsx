@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Search, Settings, Hash } from 'lucide-react';
 import Link from 'next/link';
@@ -79,22 +79,12 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const connectToSocket = (userName: string) => {
+  const connectToSocket = useCallback((userName: string) => {
     const socket = getSocket();
     socketRef.current = socket;
 
-    // Remove any existing listeners to prevent duplicates
-    socket.off('connect');
-    socket.off('disconnect');
-    socket.off('connect_error');
-    socket.off('chat-history');
-    socket.off('new-message');
-    socket.off('reaction-updated');
-    socket.off('participants-update');
-    socket.off('user-joined');
-    socket.off('user-left');
-    socket.off('typing-users');
-    socket.off('error');
+    // Remove all existing listeners to prevent duplicates
+    socket.removeAllListeners();
 
     // Connection events
     socket.on('connect', () => {
@@ -181,7 +171,7 @@ export default function ChatPage() {
         name: userName,
       });
     }
-  };
+  }, [roomCode, toast, setConnected, setMessages, addMessage, updateMessage, setParticipants, setTypingUsers]);
 
   useEffect(() => {
     const container = messagesContainerRef.current;
@@ -261,8 +251,7 @@ export default function ChatPage() {
         reset();
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomCode]);
+  }, [roomCode, connectToSocket, loadUser, reset, router, toast]);
 
   const handleSendMessage = (message: string, attachments?: Attachment[], replyToId?: string) => {
     if (!socketRef.current || !name) return;
