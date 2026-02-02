@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, Search, Plus } from 'lucide-react';
+import { Users, Search } from 'lucide-react';
 import { useUserStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -81,27 +81,16 @@ export function ParticipantList({ participants, className }: ParticipantListProp
     <div className={cn("h-full flex flex-col bg-gray-900", className)}>
       {/* Header */}
       <div className="p-4 border-b border-gray-800">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-              <Users className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-white">Participants</h2>
-              <p className="text-xs text-gray-400">
-                {participants.length} {participants.length === 1 ? 'member' : 'members'} online
-              </p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+            <Users className="w-5 h-5 text-white" />
           </div>
-          
-          {/* Invite Button */}
-          <Button
-            size="sm"
-            className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-3 py-1.5 text-xs"
-          >
-            <Plus className="w-3 h-3 mr-1" />
-            Invite
-          </Button>
+          <div>
+            <h2 className="text-lg font-bold text-white">Participants</h2>
+            <p className="text-xs text-gray-400">
+              {participants.length} {participants.length === 1 ? 'member' : 'members'} online
+            </p>
+          </div>
         </div>
 
         {/* Search */}

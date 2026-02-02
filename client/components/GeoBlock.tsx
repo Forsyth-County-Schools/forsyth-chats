@@ -179,7 +179,7 @@ export default function GeoBlock({ onLocationVerified }: GeoBlockProps) {
               <strong className="text-red-400">Forsyth County Schools</strong> • Cumming, Georgia
             </p>
             <p>
-              For technical support, contact your school's IT department.
+              For technical support, contact your school&apos;s IT department.
             </p>
           </div>
         </div>

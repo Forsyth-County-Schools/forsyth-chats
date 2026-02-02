@@ -203,7 +203,7 @@ export default function JoinPage() {
                       }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && roomCode.trim() && !isChecking) {
-                          handleCheckRoom(e as any);
+                          handleCheckRoom(e as React.KeyboardEvent<HTMLInputElement>);
                         }
                       }}
                       placeholder="ABC-123DEF"
@@ -285,7 +285,7 @@ export default function JoinPage() {
                         }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && name.trim() && agreedToPolicy && !isJoining) {
-                            handleJoinRoom(e as any);
+                            handleJoinRoom(e as React.KeyboardEvent<HTMLInputElement>);
                           }
                         }}
                         placeholder="Enter your full name"
@@ -430,7 +430,7 @@ export default function JoinPage() {
                 </p>
                 <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-700 rounded-xl p-4 mb-6">
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    ✅ Once you sign up, we'll automatically create your profile so you can start chatting right away!
+                    ✅ Once you sign up, we&apos;ll automatically create your profile so you can start chatting right away!
                   </p>
                 </div>
               </div>

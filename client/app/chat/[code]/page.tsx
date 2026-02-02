@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { MessageBubble } from '@/components/MessageBubble';
 import { ChatInput } from '@/components/ChatInput';
-import { ParticipantList } from '@/components/ParticipantList';
 import { TypingIndicator } from '@/components/TypingIndicator';
 import { CopyButton } from '@/components/CopyButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -19,7 +18,7 @@ import { api } from '@/lib/api';
 import { useUserStore, useChatStore } from '@/lib/store';
 import { getSocket, disconnectSocket, Message, Attachment, Reaction } from '@/lib/socket';
 import { Socket } from 'socket.io-client';
-import { useRateLimit, sanitizeMessage } from '@/lib/security';
+import { sanitizeMessage } from '@/lib/security';
 import { cn } from '@/lib/utils';
 import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 
@@ -46,7 +45,6 @@ export default function ChatPage() {
   } = useChatStore();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [showJumpToBottom, setShowJumpToBottom] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -59,8 +57,7 @@ export default function ChatPage() {
     return acc;
   }, {} as Record<string, Message>);
   
-  // Rate limiting hook
-  const {} = useRateLimit();
+  // No rate limiting - unlimited messaging
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -291,7 +288,7 @@ export default function ChatPage() {
   return (
     <GeoBlockWrapper>
       <div className="h-screen flex bg-black overflow-hidden">
-        {/* Main Chat Area */}
+        {/* Main Chat Area - Full Width */}
         <div className="flex-1 flex flex-col bg-gray-950">
           {/* Modern Header */}
           <header className="bg-gray-900/95 backdrop-blur-md border-b border-gray-800 px-4 py-3">
@@ -353,16 +350,11 @@ export default function ChatPage() {
                   )}
                 </div>
 
-                {/* Participant Count - Clickable to open right sidebar */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
-                  className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/50 hover:bg-gray-800 text-gray-300 hover:text-white"
-                >
+                {/* Participant Count */}
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/50">
                   <Users className="h-4 w-4" />
-                  <span className="text-sm font-medium">{participants.length}</span>
-                </Button>
+                  <span className="text-sm font-medium text-gray-300">{participants.length}</span>
+                </div>
 
                 {/* Theme Toggle */}
                 <ThemeToggle />
@@ -375,26 +367,16 @@ export default function ChatPage() {
                 >
                   <Settings className="h-5 w-5" />
                 </Button>
-
-                {/* Mobile Participant Toggle */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden text-gray-400 hover:text-white hover:bg-gray-800"
-                  onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
-                >
-                  <Users className="h-5 w-5" />
-                </Button>
               </div>
             </div>
           </header>
 
-          {/* Messages Area */}
+          {/* Messages Area - Expanded */}
           <div 
             ref={messagesContainerRef}
             className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-950 to-black"
           >
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <div className="max-w-6xl mx-auto px-4 py-6">
               {messages.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-center py-20">
                   <div className="bg-gray-900/50 backdrop-blur-sm p-12 rounded-3xl border border-gray-800 max-w-md">
@@ -446,7 +428,7 @@ export default function ChatPage() {
 
           {/* Chat Input */}
           <div className="bg-gray-900/95 backdrop-blur-md border-t border-gray-800 p-4">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               <ChatInput
                 onSendMessage={handleSendMessage}
                 onTyping={handleTyping}
@@ -459,39 +441,6 @@ export default function ChatPage() {
             </div>
           </div>
         </div>
-
-        {/* Right Sidebar - Participants */}
-        <div className={cn(
-          "fixed md:static inset-y-0 right-0 z-40 w-80 bg-gray-900 border-l border-gray-800 transition-transform duration-300 ease-in-out",
-          "flex flex-col",
-          rightSidebarOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"
-        )}>
-          {/* Mobile Header */}
-          <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-800">
-            <h2 className="text-lg font-bold text-white">Participants</h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setRightSidebarOpen(false)}
-              className="text-gray-400 hover:text-white"
-            >
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-
-          {/* Participant List */}
-          <div className="flex-1 overflow-hidden">
-            <ParticipantList participants={participants} />
-          </div>
-        </div>
-
-        {/* Mobile Overlay for Right Sidebar */}
-        {rightSidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden"
-            onClick={() => setRightSidebarOpen(false)}
-          />
-        )}
       </div>
 
       {/* Warning Notification */}
