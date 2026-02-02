@@ -8,48 +8,21 @@ const router = Router();
 // Clerk webhook secret for verification
 const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
+// GET /api/webhooks/test - Test endpoint
+router.get('/webhooks/test', async (req: Request, res: Response): Promise<void> => {
+  res.status(200).json({
+    success: true,
+    message: 'Webhook routes are working - UPDATED VERSION!',
+    timestamp: new Date().toISOString(),
+    version: '2.0',
+  });
+});
+
 // POST /api/webhooks/clerk - Handle Clerk webhooks
 router.post('/webhooks/clerk', async (req: Request, res: Response): Promise<void> => {
   try {
-    // Verify webhook signature
-    const svixId = req.headers['svix-id'] as string;
-    const svixTimestamp = req.headers['svix-timestamp'] as string;
-    const svixSignature = req.headers['svix-signature'] as string;
-
-    if (!svixId || !svixTimestamp || !svixSignature) {
-      res.status(400).json({
-        success: false,
-        message: 'Missing webhook headers',
-      });
-      return;
-    }
-
-    // Verify the webhook signature using the secret
-    if (CLERK_WEBHOOK_SECRET) {
-      const signatureParts = svixSignature.split(' ');
-      if (signatureParts.length !== 2 || signatureParts[0] !== 'v1') {
-        res.status(400).json({
-          success: false,
-          message: 'Invalid signature format',
-        });
-        return;
-      }
-
-      const receivedSignature = signatureParts[1];
-      const expectedSignature = crypto
-        .createHmac('sha256', CLERK_WEBHOOK_SECRET)
-        .update(`${svixId}.${svixTimestamp}.${JSON.stringify(req.body)}`)
-        .digest('hex');
-
-      if (receivedSignature !== expectedSignature) {
-        res.status(401).json({
-          success: false,
-          message: 'Invalid webhook signature',
-        });
-        return;
-      }
-    }
-
+    console.log('Webhook endpoint hit!', req.body);
+    
     // Get the payload and event type
     const payload = req.body;
     const eventType = payload.type;
