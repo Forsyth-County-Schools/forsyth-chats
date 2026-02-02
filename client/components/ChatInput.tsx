@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { validateContentRealtime } from '@/lib/contentFilter';
 import { cn } from '@/lib/utils';
 import { Message, Attachment } from '@/lib/socket';
+import { SERVER_URL } from '@/lib/api';
 
 interface ChatInputProps {
   onSendMessage: (message: string, attachments?: Attachment[], replyTo?: string) => void;
@@ -55,7 +56,7 @@ export function ChatInput({
     formData.append('roomCode', roomCode || 'DEFAULT_ROOM'); // Replace with actual room code
     
     try {
-      const response = await fetch('https://forsyth-chats.onrender.com/api/upload', {
+      const response = await fetch(`${SERVER_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });

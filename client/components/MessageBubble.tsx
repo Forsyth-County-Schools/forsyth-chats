@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { getSocket } from '@/lib/socket';
 import { Download, ExternalLink, Reply, Smile, MoreVertical, Check, CheckCheck } from 'lucide-react';
 import Image from 'next/image';
+import { SERVER_URL } from '@/lib/api';
 
 interface MessageBubbleProps {
   message: Message;
@@ -151,12 +152,12 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
           <div key={index}>
             {attachment.type === 'image' ? (
               <Image
-                src={`https://forsyth-chats.onrender.com${attachment.url}`}
+                src={`${SERVER_URL}${attachment.url}`}
                 alt={attachment.originalName}
                 width={320}
                 height={256}
                 className="rounded-xl max-w-sm max-h-64 object-cover cursor-pointer hover:scale-105 transition-transform"
-                onClick={() => window.open(`https://forsyth-chats.onrender.com${attachment.url}`, '_blank')}
+                onClick={() => window.open(`${SERVER_URL}${attachment.url}`, '_blank')}
               />
             ) : (
               <div className={cn(
@@ -247,7 +248,7 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
         <div className="flex-shrink-0 mr-3 mt-1">
           {profileImage ? (
             <Image
-              src={profileImage}
+              src={profileImage.startsWith('http') ? profileImage : `${SERVER_URL}${profileImage}`}
               alt={message.name}
               width={40}
               height={40}
@@ -405,7 +406,7 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
         <div className="flex-shrink-0 ml-3 mt-1">
           {profileImage ? (
             <Image
-              src={profileImage}
+              src={profileImage.startsWith('http') ? profileImage : `${SERVER_URL}${profileImage}`}
               alt={message.name}
               width={40}
               height={40}

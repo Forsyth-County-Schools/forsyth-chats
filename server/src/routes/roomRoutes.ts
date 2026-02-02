@@ -349,9 +349,34 @@ router.get('/file/:filename', (req: Request, res: Response): void => {
     return;
   }
 
+  // Set proper headers for image serving
+  res.setHeader('Content-Type', getContentType(filename));
+  res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   // Send file
   res.sendFile(filePath);
 });
+
+// Helper function to determine content type
+function getContentType(filename: string): string {
+  const ext = path.extname(filename).toLowerCase();
+  const mimeTypes: { [key: string]: string } = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.svg': 'image/svg+xml',
+    '.pdf': 'application/pdf',
+    '.doc': 'application/msword',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.txt': 'text/plain',
+  };
+  return mimeTypes[ext] || 'application/octet-stream';
+}
 
 // GET /api/health - Health check endpoint
 router.get('/health', (_req: Request, res: Response) => {

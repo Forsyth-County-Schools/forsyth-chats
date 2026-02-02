@@ -1,4 +1,8 @@
-const API_URL = 'https://forsyth-chats.onrender.com';
+const API_URL = process.env.NODE_ENV === 'development' 
+  ? 'http://localhost:4000' 
+  : 'https://forsyth-chats.onrender.com';
+
+export const SERVER_URL = API_URL;
 
 export interface CreateRoomResponse {
   success: boolean;
