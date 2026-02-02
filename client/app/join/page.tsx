@@ -47,13 +47,21 @@ export default function JoinPage() {
     setRoomExists(null);
     
     const validateRoomCode = (code: string) => {
-      // Basic validation: should be 3-4 letters, dash, then random characters
-      const pattern = /^[A-Z]{3,4}-[A-Z0-9]+$/;
-      return pattern.test(code.toUpperCase());
+      const upperCode = code.toUpperCase().trim();
+      
+      // Accept formats:
+      // 1. XXX-XXXXX (school abbreviation + dash + random characters)
+      // 2. XXXXXXXXX (no dash, just alphanumeric characters)
+      const patterns = [
+        /^[A-Z]{3,4}-[A-Z0-9]{5,8}$/,  // With dash: XXX-XXXXX or XXXX-XXXXXXX
+        /^[A-Z0-9]{8,12}$/              // Without dash: 8-12 alphanumeric characters
+      ];
+      
+      return patterns.some(pattern => pattern.test(upperCode));
     };
 
     if (!validateRoomCode(roomCode.trim())) {
-      setCodeError('Invalid room code format. Please use XXXX-XXXX format.');
+      setCodeError('Invalid room code format. Please use XXX-XXXXX format or enter the code as provided.');
       return;
     }
     
@@ -381,7 +389,7 @@ export default function JoinPage() {
                     </p>
                     <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 border border-red-200 dark:border-red-700">
                       <p className="text-sm text-red-500 dark:text-red-400">
-                        💡 <strong>Tip:</strong> Room codes are case-sensitive and usually in ABC-123DEF format
+                        💡 <strong>Tip:</strong> Room codes are case-sensitive and can be in ABC-123DEF format or as provided by your teacher
                       </p>
                     </div>
                   </div>
