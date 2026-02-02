@@ -9,17 +9,41 @@ const router = Router();
 // Using uppercase letters and numbers, length 10
 const generateRoomCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
 
+// Rate limiting storage (in production, use Redis or database)
+const rateLimitStore = new Map<string, number>();
+
 // Validation schema for room creation
 const createRoomSchema = z.object({
   creatorName: z.string().trim().min(2).max(30).optional(),
 });
 
+// Rate limiting middleware for room creation
+const rateLimitCreateRoom = (req: Request, res: Response, next: any) => {
+  const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  const cooldownPeriod = 5 * 60 * 1000; // 5 minutes in milliseconds
+  
+  const lastCreated = rateLimitStore.get(clientIP);
+  
+  if (lastCreated && (now - lastCreated) < cooldownPeriod) {
+    const timeLeft = Math.ceil((cooldownPeriod - (now - lastCreated)) / 1000);
+    return res.status(429).json({
+      success: false,
+      message: `Rate limit exceeded. Please wait ${Math.ceil(timeLeft / 60)} minutes before creating another room.`,
+      timeLeftSeconds: timeLeft
+    });
+  }
+  
+  next();
+};
+
 // POST /api/create-room - Create a new room
-router.post('/create-room', async (req: Request, res: Response) => {
+router.post('/create-room', rateLimitCreateRoom, async (req: Request, res: Response) => {
   try {
     // Validate request body
     const validatedData = createRoomSchema.parse(req.body);
     
+    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
     let code: string;
     let attempts = 0;
     const maxAttempts = 5;
@@ -39,6 +63,9 @@ router.post('/create-room', async (req: Request, res: Response) => {
         });
         
         await room.save();
+        
+        // Store rate limit timestamp
+        rateLimitStore.set(clientIP, Date.now());
         
         return res.status(201).json({
           success: true,

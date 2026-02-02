@@ -30,9 +30,48 @@ export default function CreatePage() {
   const [createdRoomCode, setCreatedRoomCode] = useState('');
   const [createdSchoolName, setCreatedSchoolName] = useState('');
   
+  // Rate limiting states
+  const [isOnCooldown, setIsOnCooldown] = useState(false);
+  const [cooldownTimeLeft, setCooldownTimeLeft] = useState(0);
+  
   const router = useRouter();
   const { toast } = useToast();
   const { setUser } = useUserStore();
+
+  // Check for existing cooldown on component mount
+  useEffect(() => {
+    const lastCreatedTime = localStorage.getItem('lastRoomCreatedTime');
+    if (lastCreatedTime) {
+      const timeSinceLastCreation = Date.now() - parseInt(lastCreatedTime);
+      const cooldownDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+      
+      if (timeSinceLastCreation < cooldownDuration) {
+        setIsOnCooldown(true);
+        setCooldownTimeLeft(Math.ceil((cooldownDuration - timeSinceLastCreation) / 1000));
+        
+        // Start countdown timer
+        const timer = setInterval(() => {
+          setCooldownTimeLeft(prev => {
+            if (prev <= 1) {
+              setIsOnCooldown(false);
+              clearInterval(timer);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
+        return () => clearInterval(timer);
+      }
+    }
+  }, []);
+
+  // Format cooldown time display
+  const formatCooldownTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
 
   const navigateToChat = () => {
     router.push(`/chat/${createdRoomCode}`);
@@ -56,6 +95,16 @@ export default function CreatePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check rate limiting first
+    if (isOnCooldown) {
+      toast({
+        title: 'Please Wait',
+        description: `You can create another classroom in ${formatCooldownTime(cooldownTimeLeft)}`,
+        variant: 'destructive',
+      });
+      return;
+    }
     
     // Reset errors
     setNameError('');
@@ -125,6 +174,23 @@ export default function CreatePage() {
         setCreatedSchoolName(school.name);
         setRoomCreated(true);
         
+        // Set rate limiting cooldown
+        localStorage.setItem('lastRoomCreatedTime', Date.now().toString());
+        setIsOnCooldown(true);
+        setCooldownTimeLeft(5 * 60); // 5 minutes in seconds
+        
+        // Start cooldown timer
+        const cooldownTimer = setInterval(() => {
+          setCooldownTimeLeft(prev => {
+            if (prev <= 1) {
+              setIsOnCooldown(false);
+              clearInterval(cooldownTimer);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
         toast({
           title: '🎉 Classroom Created!',
           description: `Your ${school.name} classroom is ready`,
@@ -181,6 +247,23 @@ export default function CreatePage() {
                 <CardDescription className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
                   Set up a secure chat room for your Forsyth County Schools class 🏫
                 </CardDescription>
+                
+                {/* Rate limiting notice */}
+                {isOnCooldown && (
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 animate-fade-in">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">⏳</span>
+                      <div>
+                        <p className="font-semibold text-amber-800 dark:text-amber-200">
+                          Rate Limit Active
+                        </p>
+                        <p className="text-sm text-amber-700 dark:text-amber-300">
+                          You can create another classroom in {formatCooldownTime(cooldownTimeLeft)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardHeader>
 
             <CardContent>
@@ -300,13 +383,22 @@ export default function CreatePage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="btn-red-primary w-full text-xl py-6 font-bold"
-                  disabled={isCreating || !creatorName.trim() || !selectedSchool || !agreedToPolicy || !agreedToDistrictPolicy}
+                  className={`w-full text-xl py-6 font-bold ${
+                    isOnCooldown 
+                      ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed' 
+                      : 'btn-red-primary'
+                  }`}
+                  disabled={isCreating || !creatorName.trim() || !selectedSchool || !agreedToPolicy || !agreedToDistrictPolicy || isOnCooldown}
                 >
                   {isCreating ? (
                     <>
                       <LoadingSpinner size="sm" />
                       <span className="ml-2">Creating Secure Classroom...</span>
+                    </>
+                  ) : isOnCooldown ? (
+                    <>
+                      <span className="mr-2">⏳</span>
+                      Wait {formatCooldownTime(cooldownTimeLeft)}
                     </>
                   ) : (
                     'Create Forsyth County Classroom'
@@ -317,48 +409,107 @@ export default function CreatePage() {
           </Card>
           ) : (
             <div className="animate-scale-in">
-              <Card className="card-modern border-2 border-green-500/20 bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20">
-                <CardContent className="text-center space-y-8 pt-8">
-                  <div className="flex justify-center">
-                    <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-8 rounded-3xl modern-shadow-hover animate-bounce-soft">
-                      <span className="text-6xl">🎉</span>
+              {/* Modern Success Card with Glassmorphism */}
+              <Card className="relative overflow-hidden bg-gradient-to-br from-white/90 via-white/80 to-white/70 dark:from-gray-900/90 dark:via-gray-800/80 dark:to-gray-900/70 backdrop-blur-xl border-0 shadow-2xl">
+                {/* Animated Background Pattern */}
+                <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-emerald-500/10 to-green-600/20 animate-pulse opacity-50" />
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-green-400/30 to-emerald-600/30 rounded-full blur-3xl animate-float" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-tr from-emerald-500/20 to-green-500/20 rounded-full blur-3xl animate-float-delayed" />
+                
+                <CardContent className="relative z-10 text-center space-y-8 p-8">
+                  {/* Success Icon with Advanced Animation */}
+                  <div className="relative flex justify-center mb-8">
+                    <div className="relative">
+                      {/* Main icon container */}
+                      <div className="relative z-10 bg-gradient-to-br from-green-500 via-emerald-500 to-green-600 p-6 rounded-[2rem] shadow-2xl transform transition-all duration-500 hover:scale-110 hover:rotate-6 group">
+                        <div className="relative">
+                          <span className="text-5xl block transform transition-all duration-300 group-hover:scale-110">🎉</span>
+                          {/* Sparkle effects */}
+                          <div className="absolute -top-2 -right-2 text-2xl animate-bounce">✨</div>
+                          <div className="absolute -bottom-1 -left-1 text-xl animate-bounce" style={{animationDelay: '0.5s'}}>🌟</div>
+                        </div>
+                      </div>
+                      
+                      {/* Orbiting elements */}
+                      <div className="absolute inset-0 animate-spin-slow">
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-3 h-3 bg-green-400 rounded-full shadow-lg animate-pulse" />
+                        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2 h-2 bg-emerald-400 rounded-full shadow-lg animate-pulse" style={{animationDelay: '1s'}} />
+                        <div className="absolute top-1/2 -translate-y-1/2 -left-4 w-2 h-2 bg-green-500 rounded-full shadow-lg animate-pulse" style={{animationDelay: '2s'}} />
+                        <div className="absolute top-1/2 -translate-y-1/2 -right-4 w-3 h-3 bg-emerald-500 rounded-full shadow-lg animate-pulse" style={{animationDelay: '1.5s'}} />
+                      </div>
+                      
+                      {/* Glow effects */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur-2xl opacity-30 animate-pulse" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full blur-3xl opacity-20 animate-pulse" style={{animationDelay: '1s'}} />
                     </div>
                   </div>
-                  
+
+                  {/* Success Message */}
                   <div className="space-y-4">
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
+                    <h1 className="text-5xl font-black bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 bg-clip-text text-transparent leading-tight">
                       Classroom Created!
                     </h1>
-                    <p className="text-lg text-gray-600 dark:text-gray-300">
-                      Your {createdSchoolName} classroom is ready for students 📚
-                    </p>
-                  </div>
-
-                  <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
-                    <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3 uppercase tracking-wide">
-                      📋 Share this room code with your students
-                    </p>
-                    <div className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-950/30 dark:to-red-900/30 rounded-xl p-4 border-2 border-red-200/50 dark:border-red-800/50">
-                      <code className="text-3xl font-mono font-bold text-red-700 dark:text-red-400 tracking-wider">
-                        {createdRoomCode}
-                      </code>
+                    <div className="flex items-center justify-center gap-2 text-xl text-gray-700 dark:text-gray-200">
+                      <span>Your</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">{createdSchoolName}</span>
+                      <span>classroom is ready</span>
+                      <span className="text-2xl animate-bounce">📚</span>
                     </div>
-                    <Button
-                      onClick={copyRoomCode}
-                      variant="outline"
-                      className="mt-4 w-full border-red-200 hover:border-red-300 hover:bg-red-50 dark:border-red-800 dark:hover:border-red-700 dark:hover:bg-red-950/30"
-                    >
-                      📋 Copy Room Code
-                    </Button>
                   </div>
 
-                  <div className="flex gap-4">
+                  {/* Room Code Section - Redesigned */}
+                  <div className="relative group">
+                    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-3xl p-8 border-2 border-gray-200/50 dark:border-gray-600/50 shadow-xl backdrop-blur-sm">
+                      {/* Floating badge */}
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                        <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+                          <span className="mr-2">📤</span>
+                          Share with Students
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4">
+                        {/* Room code display */}
+                        <div className="relative">
+                          <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 rounded-2xl p-6 shadow-2xl transform transition-all duration-300 hover:scale-105 group-hover:shadow-3xl">
+                            <code className="text-4xl font-mono font-black text-white tracking-[0.3em] drop-shadow-lg select-all">
+                              {createdRoomCode}
+                            </code>
+                            {/* Animated underline */}
+                            <div className="h-1 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          </div>
+                          
+                          {/* Copy success indicator */}
+                          <div className="absolute -top-2 -right-2 opacity-0 transform scale-0 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100">
+                            <div className="bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg border border-gray-200 dark:border-gray-600">
+                              <span className="text-sm">👆</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Copy button */}
+                        <Button
+                          onClick={copyRoomCode}
+                          className="mt-6 w-full bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 border-2 border-gray-300 dark:border-gray-600 rounded-xl py-4 font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
+                        >
+                          <span className="mr-2 transition-transform duration-300 group-hover:scale-110">📋</span>
+                          Copy Room Code
+                          <span className="ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300">✨</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons - Enhanced */}
+                  <div className="flex gap-4 pt-4">
                     <Button
                       onClick={navigateToChat}
                       size="lg"
-                      className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                      className="flex-1 bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 hover:from-green-700 hover:via-emerald-700 hover:to-green-800 text-white font-black py-6 px-8 rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 text-lg group"
                     >
-                      🚀 Enter Classroom
+                      <span className="mr-3 text-2xl transition-transform duration-300 group-hover:translate-x-1">🚀</span>
+                      Enter Classroom
+                      <span className="ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300">→</span>
                     </Button>
                     <Button
                       onClick={() => {
@@ -372,11 +523,15 @@ export default function CreatePage() {
                       }}
                       variant="outline"
                       size="lg"
-                      className="px-6 border-gray-300 hover:border-gray-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800"
+                      className="px-6 py-6 border-2 border-gray-300 dark:border-gray-600 hover:border-green-400 dark:hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-950/20 rounded-2xl font-bold transition-all duration-300 hover:scale-105 text-lg group"
                     >
-                      ➕ Create Another
+                      <span className="mr-2 text-xl transition-transform duration-300 group-hover:rotate-90">➕</span>
+                      Create Another
                     </Button>
                   </div>
+                  
+                  {/* Success message animation */}
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-500 via-emerald-500 via-green-600 to-emerald-600 animate-gradient-x" />
                 </CardContent>
               </Card>
             </div>
