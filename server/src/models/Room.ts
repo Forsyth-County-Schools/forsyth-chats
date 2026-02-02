@@ -33,7 +33,5 @@ const roomSchema = new Schema<IRoom>(
   }
 );
 
-// Create TTL index to automatically delete rooms after 24 hours of creation
-roomSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
 
 export const Room = mongoose.model<IRoom>('Room', roomSchema);
