@@ -10,6 +10,7 @@ import { MessageBubble } from '@/components/MessageBubble';
 import { ChatInput } from '@/components/ChatInput';
 import { ParticipantList } from '@/components/ParticipantList';
 import { CopyButton } from '@/components/CopyButton';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { useUserStore, useChatStore } from '@/lib/store';
@@ -231,18 +232,18 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="border-b shadow-sm transition-colors duration-300" style={{backgroundColor: 'var(--card-background)', borderColor: 'var(--border)'}}>
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" size="icon" className="hover:bg-gray-100 text-gray-600 hover:text-gray-900">
+              <Button variant="ghost" size="icon" className="transition-colors duration-300" style={{color: 'var(--foreground-secondary)'}}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Classroom Chat</h1>
+              <h1 className="text-2xl font-bold" style={{color: 'var(--foreground)'}}>Classroom Chat</h1>
               <div className="flex items-center gap-3 text-sm">
                 <span className="font-mono text-red-600 font-bold text-lg">{roomCode}</span>
                 <CopyButton text={roomCode} label="Copy" />
@@ -267,16 +268,19 @@ export default function ChatPage() {
             </div>
 
             {/* Participant Count */}
-            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-full">
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-600/30 rounded-full">
               <Users className="h-5 w-5 text-red-600" />
-              <span className="text-sm font-semibold text-red-700">{participants.length}</span>
+              <span className="text-sm font-semibold text-red-700 dark:text-red-400">{participants.length}</span>
             </div>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden hover:bg-gray-100 text-gray-600 hover:text-gray-900"
+              className="md:hidden transition-colors duration-300" style={{color: 'var(--foreground-secondary)'}}
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -286,7 +290,7 @@ export default function ChatPage() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden bg-gray-50">
+      <div className="flex-1 flex overflow-hidden transition-colors duration-300" style={{backgroundColor: 'var(--background-secondary)'}}>
         {/* Chat Area */}
         <div className="flex-1 flex flex-col">
           {/* Messages */}
@@ -297,8 +301,8 @@ export default function ChatPage() {
                   <div className="bg-red-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6">
                     <MessageSquare className="h-10 w-10 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">No messages yet</h3>
-                  <p className="text-gray-600 text-lg">Be the first to send a message!</p>
+                  <h3 className="text-2xl font-bold mb-3" style={{color: 'var(--foreground)'}}>No messages yet</h3>
+                  <p className="text-lg" style={{color: 'var(--foreground-secondary)'}}>Be the first to send a message!</p>
                 </div>
               </div>
             ) : (
@@ -333,7 +337,7 @@ export default function ChatPage() {
         </div>
 
         {/* Sidebar - Desktop */}
-        <aside className="hidden md:block w-80 bg-white border-l border-gray-200 shadow-sm">
+        <aside className="hidden md:block w-80 shadow-sm border-l transition-colors duration-300" style={{backgroundColor: 'var(--card-background)', borderColor: 'var(--border)'}}>
           <ParticipantList participants={participants} currentUserName={name || ''} />
         </aside>
 
@@ -344,10 +348,10 @@ export default function ChatPage() {
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            <div className="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl animate-slide-up">
-              <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                <h2 className="font-bold text-xl text-gray-900">Participants</h2>
-                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="hover:bg-gray-100 text-gray-600">
+            <div className="absolute right-0 top-0 bottom-0 w-80 shadow-2xl animate-slide-up transition-colors duration-300" style={{backgroundColor: 'var(--card-background)'}}>
+              <div className="p-4 border-b flex items-center justify-between" style={{borderColor: 'var(--border)'}}>
+                <h2 className="font-bold text-xl" style={{color: 'var(--foreground)'}}>Participants</h2>
+                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="transition-colors duration-300" style={{color: 'var(--foreground-secondary)'}}>
                   <X className="h-5 w-5" />
                 </Button>
               </div>

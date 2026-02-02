@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { useUserStore } from '@/lib/store';
 import { nameSchema } from '@/lib/validations';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function CreatePage() {
   const [roomCode, setRoomCode] = useState<string>('');
@@ -22,6 +23,7 @@ export default function CreatePage() {
   const [isCreating, setIsCreating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [nameError, setNameError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   
   const router = useRouter();
   const { toast } = useToast();
@@ -29,6 +31,14 @@ export default function CreatePage() {
 
   useEffect(() => {
     createRoom();
+    
+    // Handle Turnstile callback
+    const handleTurnstileSuccess = (event: any) => {
+      setTurnstileToken(event.detail);
+    };
+    
+    window.addEventListener('turnstileSuccess', handleTurnstileSuccess);
+    return () => window.removeEventListener('turnstileSuccess', handleTurnstileSuccess);
   }, []);
 
   const createRoom = async () => {
@@ -94,6 +104,15 @@ export default function CreatePage() {
       return;
     }
     
+    if (!turnstileToken) {
+      toast({
+        title: 'Verification Required',
+        description: 'Please complete the security verification',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setIsCreating(true);
     
     // Save user info and navigate to chat
@@ -111,9 +130,14 @@ export default function CreatePage() {
 
   return (
     <main className="page-container">
+      {/* Theme Toggle */}
+      <div className="absolute top-6 right-6 z-10">
+        <ThemeToggle />
+      </div>
+      
       <div className="w-full max-w-2xl">
         <Link href="/">
-          <Button variant="ghost" className="mb-6 text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+          <Button variant="ghost" className="mb-6 transition-colors duration-300" style={{color: 'var(--foreground-secondary)'}}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Button>
@@ -125,8 +149,8 @@ export default function CreatePage() {
             <div className="bg-red-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-bounce-soft modern-shadow">
               <span className="text-3xl">🎉</span>
             </div>
-            <h1 className="text-4xl font-black text-gray-900 mb-3">Classroom Created!</h1>
-            <p className="text-lg text-gray-600">
+            <h1 className="text-4xl font-black mb-3" style={{color: 'var(--foreground)'}}>Classroom Created!</h1>
+            <p className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
               Share this code with your students to let them join
             </p>
           </div>
@@ -161,7 +185,7 @@ export default function CreatePage() {
           {/* Join Form */}
           <form onSubmit={handleJoinRoom} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-lg font-semibold mb-3 text-gray-900">
+              <label htmlFor="name" className="block text-lg font-semibold mb-3" style={{color: 'var(--foreground)'}}>
                 Your Name
               </label>
               <Input
@@ -192,17 +216,38 @@ export default function CreatePage() {
               />
               <label
                 htmlFor="policy"
-                className="text-base leading-relaxed text-gray-700 font-medium"
+                className="text-base leading-relaxed font-medium" style={{color: 'var(--foreground-secondary)'}}
               >
                 I agree to keep the chat respectful and appropriate
               </label>
             </div>
 
+            {/* Turnstile Widget */}
+            <div className="flex justify-center">
+              <div
+                className="cf-turnstile"
+                data-sitekey="0x4AAAAAACW20p-WO0bwShk2"
+                data-callback="onTurnstileSuccess"
+                data-theme="auto"
+              ></div>
+            </div>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.onTurnstileSuccess = function(token) {
+                    window.turnstileToken = token;
+                    const event = new CustomEvent('turnstileSuccess', { detail: token });
+                    window.dispatchEvent(event);
+                  };
+                `,
+              }}
+            />
+
             <Button
               type="submit"
               size="lg"
               className="btn-red-primary w-full text-lg py-4 font-bold"
-              disabled={isCreating || !name.trim() || !agreedToPolicy}
+              disabled={isCreating || !name.trim() || !agreedToPolicy || !turnstileToken}
             >
               {isCreating ? (
                 <>
@@ -215,9 +260,9 @@ export default function CreatePage() {
             </Button>
           </form>
 
-          <div className="bg-gray-100 p-6 rounded-xl border-l-4 border-red-600 mt-8">
-            <p className="text-gray-700 font-medium">
-              💡 <strong className="text-gray-900">Tip:</strong> This room will be automatically deleted after 24 hours.
+          <div className="success-box mt-8">
+            <p style={{color: 'var(--foreground-secondary)'}}>
+              💡 <strong style={{color: 'var(--foreground)'}}>Tip:</strong> This room will be automatically deleted after 24 hours.
               Make sure to save any important information before then.
             </p>
           </div>

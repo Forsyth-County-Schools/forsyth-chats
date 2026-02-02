@@ -88,9 +88,12 @@ export function ChatInput({
   };
 
   return (
-    <div className="bg-white border-t border-gray-200 p-6">
+    <div className="border-t p-6 transition-colors duration-300" style={{backgroundColor: 'var(--card-background)', borderColor: 'var(--border)'}}>
       <div className="flex gap-4 items-end max-w-4xl mx-auto">
-        <div className="flex-1 bg-white border-2 border-gray-300 focus-within:border-red-600 focus-within:ring-4 focus-within:ring-red-100 transition-all duration-200 rounded-2xl">
+        <div className="flex-1 border-2 rounded-2xl transition-all duration-200 focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/20" style={{
+          backgroundColor: 'var(--input-background)',
+          borderColor: 'var(--input-border)'
+        }}>
           <Textarea
             ref={textareaRef}
             value={message}
@@ -98,7 +101,8 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Type a message... (Shift+Enter for new line)"
             disabled={disabled}
-            className="min-h-[60px] max-h-[150px] resize-none bg-transparent border-0 text-gray-900 placeholder:text-gray-500 focus:ring-0 focus:outline-none text-lg p-4"
+            className="min-h-[60px] max-h-[150px] resize-none bg-transparent border-0 focus:ring-0 focus:outline-none text-lg p-4 transition-colors duration-300"
+            style={{color: 'var(--foreground)'}}
             rows={1}
             aria-label="Message input"
           />

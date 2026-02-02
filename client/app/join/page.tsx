@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { useUserStore } from '@/lib/store';
 import { nameSchema, roomCodeSchema } from '@/lib/validations';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function JoinPage() {
   const [roomCode, setRoomCode] = useState('');
@@ -99,9 +100,14 @@ export default function JoinPage() {
 
   return (
     <main className="page-container">
+      {/* Theme Toggle */}
+      <div className="absolute top-6 right-6 z-10">
+        <ThemeToggle />
+      </div>
+      
       <div className="w-full max-w-2xl">
         <Link href="/">
-          <Button variant="ghost" className="mb-6 text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+          <Button variant="ghost" className="mb-6 transition-colors duration-300" style={{color: 'var(--foreground-secondary)'}}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Button>
@@ -113,8 +119,8 @@ export default function JoinPage() {
             <div className="bg-red-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 modern-shadow">
               <LogIn className="h-10 w-10 text-white" />
             </div>
-            <h1 className="text-4xl font-black text-gray-900 mb-3">Join a Classroom</h1>
-            <p className="text-lg text-gray-600">
+            <h1 className="text-4xl font-black mb-3" style={{color: 'var(--foreground)'}}>Join a Classroom</h1>
+            <p className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
               Enter the room code provided by your teacher
             </p>
           </div>
@@ -123,7 +129,7 @@ export default function JoinPage() {
           {roomExists === null && (
             <form onSubmit={handleCheckRoom} className="space-y-6">
               <div>
-                <label htmlFor="roomCode" className="block text-lg font-semibold mb-3 text-gray-900">
+                <label htmlFor="roomCode" className="block text-lg font-semibold mb-3" style={{color: 'var(--foreground)'}}>
                   Room Code
                 </label>
                 <Input
@@ -166,15 +172,15 @@ export default function JoinPage() {
           {/* Name Entry (shown after room is found) */}
           {roomExists && (
             <div className="space-y-6 animate-slide-up">
-              <div className="bg-green-50 border border-green-200 p-6 rounded-xl text-center">
-                <p className="text-green-800 font-semibold text-lg">
-                  ✓ Room <span className="font-mono font-bold text-green-900">{roomCode}</span> found!
+              <div className="bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-600/30 p-6 rounded-xl text-center">
+                <p className="font-semibold text-lg" style={{color: 'var(--foreground)'}}>
+                  ✓ Room <span className="font-mono font-bold text-green-600">{roomCode}</span> found!
                 </p>
               </div>
 
               <form onSubmit={handleJoinRoom} className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-lg font-semibold mb-3 text-gray-900">
+                  <label htmlFor="name" className="block text-lg font-semibold mb-3" style={{color: 'var(--foreground)'}}>
                     Your Name
                   </label>
                   <Input
@@ -205,7 +211,7 @@ export default function JoinPage() {
                   />
                   <label
                     htmlFor="policy"
-                    className="text-base leading-relaxed text-gray-700 font-medium"
+                    className="text-base leading-relaxed font-medium" style={{color: 'var(--foreground-secondary)'}}
                   >
                     I agree to keep the chat respectful and appropriate
                   </label>
@@ -249,8 +255,8 @@ export default function JoinPage() {
           {/* Room Not Found */}
           {roomExists === false && (
             <div className="space-y-6 animate-slide-up">
-              <div className="bg-red-50 border border-red-200 p-6 rounded-xl text-center">
-                <p className="text-red-800 font-semibold text-lg">
+              <div className="success-box">
+                <p className="text-red-600 font-semibold text-lg">
                   ✗ Room not found. The code might be incorrect or the room may have expired.
                 </p>
               </div>

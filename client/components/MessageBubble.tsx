@@ -38,8 +38,13 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
             'rounded-2xl px-6 py-4 shadow-lg transition-all duration-200 group-hover:scale-[1.01] animate-fade-in',
             isOwn
               ? 'bg-red-600 text-white shadow-red-200'
-              : 'bg-white text-gray-900 border border-gray-200 hover:border-gray-300'
+              : 'border transition-colors duration-300'
           )}
+          style={!isOwn ? {
+            backgroundColor: 'var(--card-background)',
+            borderColor: 'var(--border)',
+            color: 'var(--foreground)'
+          } : {}}
         >
           <p className="whitespace-pre-wrap break-words text-base leading-relaxed">
             {message.message}
@@ -47,8 +52,9 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
           <p
             className={cn(
               'text-xs mt-3 font-medium',
-              isOwn ? 'text-red-100' : 'text-gray-500'
+              isOwn ? 'text-red-100' : ''
             )}
+            style={!isOwn ? {color: 'var(--foreground-secondary)'} : {}}
           >
             {format(new Date(message.timestamp), 'h:mm a')}
           </p>

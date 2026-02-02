@@ -7,10 +7,10 @@ import { Analytics } from '@vercel/analytics/next';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Classroom Chat Center',
+  title: 'Canvas Dashboard',
   description: 'Simple, respectful real-time chat for classes. No accounts required.',
   icons: {
-    icon: '/favicon.ico',
+    icon: 'https://www.csc.edu/media/website/content-assets/images/tlpec/canvas_reversed_logo.png',
   },
 };
 
@@ -21,6 +21,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const theme = localStorage.getItem('theme') || 'light';
+                document.documentElement.classList.toggle('dark', theme === 'dark');
+              })()
+            `,
+          }}
+        />
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      </head>
       <body className={inter.className}>
         {children}
         <Toaster />

@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Modern Red-White Color Palette */
+    /* Modern Red-Light Color Palette */
     --red-primary: #DB4437;
     --red-hover: #C1352F;
     --white: #FFFFFF;
@@ -19,27 +19,31 @@
     --red-light: #FCE8E6;
     --red-text: #D93025;
     
-    /* Tailwind CSS variables - updated for red-white theme */
-    --background: 0 0% 98%;
-    --foreground: 220 16% 13%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 16% 13%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 16% 13%;
-    --primary: 4 90% 58%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 220 9% 46%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 0 0% 96%;
-    --accent-foreground: 220 16% 13%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 4 90% 58%;
-    --radius: 1rem;
+    /* Light theme variables */
+    --background: #FFFFFF;
+    --background-secondary: #FAFAFA;
+    --foreground: #202124;
+    --foreground-secondary: #5F6368;
+    --card-background: #FFFFFF;
+    --border: #DADCE0;
+    --input-background: #FFFFFF;
+    --input-border: #DADCE0;
+    --success-background: #FCE8E6;
+    --success-border: #DB4437;
+  }
+
+  .dark {
+    /* Dark theme variables */
+    --background: #111827;
+    --background-secondary: #1F2937;
+    --foreground: #F9FAFB;
+    --foreground-secondary: #D1D5DB;
+    --card-background: #1F2937;
+    --border: #374151;
+    --input-background: #1F2937;
+    --input-border: #4B5563;
+    --success-background: rgba(220, 68, 55, 0.1);
+    --success-border: rgba(220, 68, 55, 0.3);
   }
 }
 
@@ -49,11 +53,13 @@
   }
   
   body {
-    @apply bg-white text-gray-900 font-sans;
+    background-color: var(--background);
+    color: var(--foreground);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -64,13 +70,17 @@
 }
 
 @layer components {
-  /* Modern Red-White Component Styles */
+  /* Modern Theme-Aware Component Styles */
   .card-modern {
-    @apply bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300;
+    background-color: var(--card-background);
+    border-color: var(--border);
+    @apply rounded-2xl shadow-lg border hover:shadow-xl transition-all duration-300;
   }
   
   .card-modern-hover {
-    @apply bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer;
+    background-color: var(--card-background);
+    border-color: var(--border);
+    @apply rounded-2xl shadow-lg border hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer;
   }
   
   .btn-red-primary {
@@ -90,7 +100,14 @@
   }
   
   .modern-input {
-    @apply bg-white border border-gray-300 focus:border-red-600 focus:ring-4 focus:ring-red-100 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-500 transition-all duration-200;
+    background-color: var(--input-background);
+    border-color: var(--input-border);
+    color: var(--foreground);
+    @apply focus:border-red-500 focus:ring-4 focus:ring-red-500/20 rounded-xl px-4 py-3 transition-all duration-200;
+  }
+  
+  .modern-input::placeholder {
+    color: var(--foreground-secondary);
   }
   
   .chat-bubble-own {
@@ -98,7 +115,7 @@
   }
   
   .chat-bubble-other {
-    @apply bg-gray-100 text-gray-900 rounded-2xl border border-gray-200;
+    @apply bg-gray-700 text-gray-100 rounded-2xl border border-gray-600;
   }
   
   .modern-shadow {
@@ -110,11 +127,14 @@
   }
   
   .page-container {
-    @apply min-h-screen bg-gray-50 flex items-center justify-center p-4;
+    background-color: var(--background-secondary);
+    @apply min-h-screen flex items-center justify-center p-4;
   }
   
   .success-box {
-    @apply bg-red-50 border border-red-200 rounded-xl p-6 text-center;
+    background-color: var(--success-background);
+    border-color: var(--success-border);
+    @apply border rounded-xl p-6 text-center;
   }
 }
 @layer utilities {
