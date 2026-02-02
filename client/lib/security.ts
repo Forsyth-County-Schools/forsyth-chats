@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Filter from 'bad-words';
+import { Filter } from 'bad-words';
 
 interface RateLimitState {
   messageCount: number;
@@ -99,7 +99,7 @@ export function useRateLimit() {
 }
 
 // Profanity filter (school-appropriate)
-const profanityFilter = new (Filter as unknown as { new (): { isProfane: (text: string) => boolean; clean: (text: string) => string } })();
+const profanityFilter = new Filter();
 
 export function validateUserName(name: string): { isValid: boolean; error?: string } {
   const trimmedName = name.trim();
