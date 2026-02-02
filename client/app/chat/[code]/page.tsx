@@ -283,31 +283,31 @@ export default function ChatPage() {
 
           <div className="flex items-center gap-3">
             {/* Connection Status */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-200">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-200">
               {isConnected ? (
                 <>
                   <div className="relative">
-                    <Wifi className="h-4 w-4 text-green-600" />
-                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <Wifi className="h-6 w-6 text-green-600" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                   </div>
-                  <span className="hidden sm:inline text-xs font-semibold text-green-600">Connected</span>
+                  <span className="hidden sm:inline text-sm font-semibold text-green-600">Connected</span>
                 </>
               ) : (
                 <>
-                  <WifiOff className="h-4 w-4 text-red-600" />
-                  <span className="hidden sm:inline text-xs font-semibold text-red-600">Disconnected</span>
+                  <WifiOff className="h-6 w-6 text-red-600" />
+                  <span className="hidden sm:inline text-sm font-semibold text-red-600">Disconnected</span>
                 </>
               )}
             </div>
 
             {/* Participant Count */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 border border-red-200 dark:border-red-700/30 rounded-full transition-all duration-200 hover:scale-105">
-              <Users className="h-4 w-4 text-red-600" />
-              <span className="text-xs font-bold text-red-700 dark:text-red-400">{participants.length}</span>
+            <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 border border-red-200 dark:border-red-700/30 rounded-full transition-all duration-200 hover:scale-105">
+              <Users className="h-6 w-6 text-red-600" />
+              <span className="text-sm font-bold text-red-700 dark:text-red-400">{participants.length}</span>
             </div>
 
             {/* Theme Toggle */}
-            <div className="transition-all duration-200 hover:scale-110">
+            <div className="transition-all duration-200 hover:scale-110 transform hover:scale-125">
               <ThemeToggle />
             </div>
 
