@@ -38,6 +38,31 @@ export default function Home() {
           ))}
         </div>
         
+        {/* Geometric background boxes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(12)].map((_, i) => {
+            const size = Math.random() * 60 + 20; // 20-80px
+            const rotation = Math.random() * 360;
+            const opacity = Math.random() * 0.1 + 0.05; // 0.05-0.15
+            return (
+              <div
+                key={`box-${i}`}
+                className="absolute border border-white/20 backdrop-blur-sm animate-float-slow"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  transform: `rotate(${rotation}deg)`,
+                  opacity: opacity,
+                  animationDelay: `${Math.random() * 10}s`,
+                  animationDuration: `${15 + Math.random() * 25}s`
+                }}
+              />
+            );
+          })}
+        </div>
+        
         {/* Theme Toggle */}
         <div className="absolute top-8 right-8 z-50">
           <div className="backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 p-1">
@@ -245,6 +270,13 @@ export default function Home() {
           @keyframes gradient-x {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
+          }
+
+          @keyframes float-slow {
+            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(10px, -15px) rotate(90deg) scale(1.1); }
+            50% { transform: translate(-10px, 10px) rotate(180deg) scale(0.9); }
+            75% { transform: translate(15px, 5px) rotate(270deg) scale(1.05); }
           }
 
           @keyframes pulse-slow {

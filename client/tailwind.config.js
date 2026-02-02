@@ -89,6 +89,12 @@ module.exports = {
           from: { opacity: 0 },
           to: { opacity: 1 },
         },
+        "float-slow": {
+          "0%, 100%": { transform: "translate(0, 0) rotate(0deg) scale(1)" },
+          "25%": { transform: "translate(10px, -15px) rotate(90deg) scale(1.1)" },
+          "50%": { transform: "translate(-10px, 10px) rotate(180deg) scale(0.9)" },
+          "75%": { transform: "translate(15px, 5px) rotate(270deg) scale(1.05)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -96,6 +102,7 @@ module.exports = {
         "pulse-glow": "pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "slide-up": "slide-up 0.3s ease-out",
         "fade-in": "fade-in 0.5s ease-out",
+        "float-slow": "float-slow 15s ease-in-out infinite",
       },
     },
   },

@@ -371,7 +371,7 @@ export default function JoinPage() {
                     <div className="flex justify-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
                       <div 
                         className="cf-turnstile" 
-                        data-sitekey="0x4AAAAAACW20p-WO0bwShk2"
+                        data-sitekey="1x00000000000000000000AA"
                         data-callback="onTurnstileSuccess"
                         data-theme="auto"
                         data-size="normal"
