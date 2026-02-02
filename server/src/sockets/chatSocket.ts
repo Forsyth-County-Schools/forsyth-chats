@@ -69,6 +69,9 @@ const extractLinks = (text: string): Array<{ url: string; domain: string }> => {
 
 // Helper function to sanitize HTML
 const sanitizeMessage = (text: string): string => {
+  if (!text || typeof text !== 'string') {
+    return '';
+  }
   return text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -200,9 +203,17 @@ export const setupSocketHandlers = (io: Server): void => {
         const validated = sendMessageSchema.parse(data);
         const { roomCode, name, message, replyTo, attachments } = validated;
 
+        // Ensure message is not null or undefined
+        if (!message || typeof message !== 'string') {
+          socket.emit('error', {
+            message: 'Invalid message content',
+          });
+          return;
+        }
+
         // Sanitize message content
         const sanitizedMessage = sanitizeMessage(message);
-        const filteredMessage = profanityFilter.clean(sanitizedMessage);
+        const filteredMessage = profanityFilter.clean(sanitizedMessage || '');
 
         // Extract and process links
         const linkPreviews = extractLinks(filteredMessage);
