@@ -15,9 +15,14 @@ export function LoadingSpinner({ size = 'md', text }: LoadingSpinnerProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-2">
-      <Loader2 className={`${sizeClasses[size]} animate-spin text-primary`} />
-      {text && <p className="text-sm text-muted-foreground">{text}</p>}
+    <div className="flex flex-col items-center justify-center gap-3">
+      <div className="relative">
+        <Loader2 className={`${sizeClasses[size]} animate-spin text-teal-400`} />
+        <div className={`${sizeClasses[size]} absolute inset-0 animate-ping text-teal-400/30`}>
+          <Loader2 className={sizeClasses[size]} />
+        </div>
+      </div>
+      {text && <p className="text-sm text-slate-400 animate-pulse">{text}</p>}
     </div>
   );
 }

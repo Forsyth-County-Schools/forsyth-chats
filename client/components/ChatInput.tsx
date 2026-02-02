@@ -88,24 +88,26 @@ export function ChatInput({
   };
 
   return (
-    <div className="border-t bg-background p-4">
-      <div className="flex gap-2 items-end max-w-4xl mx-auto">
-        <Textarea
-          ref={textareaRef}
-          value={message}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a message... (Shift+Enter for new line)"
-          disabled={disabled}
-          className="min-h-[60px] max-h-[150px] resize-none"
-          rows={1}
-          aria-label="Message input"
-        />
+    <div className="glass-dark border-t border-slate-700/50 p-4">
+      <div className="flex gap-3 items-end max-w-4xl mx-auto">
+        <div className="flex-1 floating-input rounded-xl">
+          <Textarea
+            ref={textareaRef}
+            value={message}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a message... (Shift+Enter for new line)"
+            disabled={disabled}
+            className="min-h-[60px] max-h-[150px] resize-none bg-transparent border-0 text-slate-200 placeholder:text-slate-500 focus:ring-0 focus:outline-none"
+            rows={1}
+            aria-label="Message input"
+          />
+        </div>
         <Button
           onClick={handleSend}
           disabled={!message.trim() || disabled}
           size="icon"
-          className="h-[60px] w-[60px] shrink-0"
+          className="h-[60px] w-[60px] shrink-0 bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-700 hover:to-cyan-600 border-0 shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 transition-all duration-300 hover:scale-110 disabled:hover:scale-100 disabled:opacity-50"
           aria-label="Send message"
         >
           <Send className="h-5 w-5" />

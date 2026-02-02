@@ -10,6 +10,7 @@ import { MessageBubble } from '@/components/MessageBubble';
 import { ChatInput } from '@/components/ChatInput';
 import { ParticipantList } from '@/components/ParticipantList';
 import { CopyButton } from '@/components/CopyButton';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { useUserStore, useChatStore } from '@/lib/store';
@@ -224,27 +225,31 @@ export default function ChatPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
         <LoadingSpinner size="lg" text="Joining classroom..." />
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative">
+      {/* Background effects */}
+      <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 via-transparent to-purple-500/5" />
+      <div className="absolute top-0 right-1/3 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl opacity-50" />
+      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl opacity-50" />
       {/* Header */}
-      <header className="border-b bg-card shadow-sm">
+      <header className="relative z-10 glass-dark border-slate-700/50 shadow-lg">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-slate-800 text-slate-300 hover:text-white">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-semibold">Classroom Chat</h1>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="font-mono">{roomCode}</span>
+              <h1 className="text-xl font-semibold text-slate-100">Classroom Chat</h1>
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <span className="font-mono text-teal-400">{roomCode}</span>
                 <CopyButton text={roomCode} label="Copy" />
               </div>
             </div>
@@ -255,28 +260,31 @@ export default function ChatPage() {
             <div className="flex items-center gap-1 text-sm">
               {isConnected ? (
                 <>
-                  <Wifi className="h-4 w-4 text-green-500" />
-                  <span className="hidden sm:inline text-muted-foreground">Connected</span>
+                  <Wifi className="h-4 w-4 text-teal-400 animate-pulse-glow" />
+                  <span className="hidden sm:inline text-slate-300">Connected</span>
                 </>
               ) : (
                 <>
-                  <WifiOff className="h-4 w-4 text-destructive" />
-                  <span className="hidden sm:inline text-destructive">Disconnected</span>
+                  <WifiOff className="h-4 w-4 text-red-400" />
+                  <span className="hidden sm:inline text-red-400">Disconnected</span>
                 </>
               )}
             </div>
 
             {/* Participant Count */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full">
-              <Users className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">{participants.length}</span>
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-teal-500/20 backdrop-blur-sm border border-teal-500/30 rounded-full">
+              <Users className="h-4 w-4 text-teal-400" />
+              <span className="text-sm font-medium text-slate-200">{participants.length}</span>
             </div>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="md:hidden hover:bg-slate-800 text-slate-300 hover:text-white"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -286,16 +294,19 @@ export default function ChatPage() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="relative z-10 flex-1 flex overflow-hidden">
         {/* Chat Area */}
         <div className="flex-1 flex flex-col">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
             {messages.length === 0 ? (
               <div className="h-full flex items-center justify-center text-center">
-                <div className="text-muted-foreground">
-                  <p className="text-lg mb-2">No messages yet</p>
-                  <p className="text-sm">Be the first to send a message!</p>
+                <div className="text-slate-400">
+                  <div className="glass-dark p-8 rounded-2xl border border-slate-700/50 max-w-sm">
+                    <MessageSquare className="h-16 w-16 text-teal-400 mx-auto mb-4 opacity-50" />
+                    <p className="text-lg mb-2 text-slate-300">No messages yet</p>
+                    <p className="text-sm text-slate-500">Be the first to send a message!</p>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -312,7 +323,7 @@ export default function ChatPage() {
             
             {/* Typing Indicator */}
             {typingUsers.size > 0 && (
-              <div className="text-sm text-muted-foreground italic px-2">
+              <div className="text-sm text-slate-400 italic px-2 animate-pulse">
                 {Array.from(typingUsers).join(', ')} {typingUsers.size === 1 ? 'is' : 'are'} typing...
               </div>
             )}
@@ -330,7 +341,7 @@ export default function ChatPage() {
         </div>
 
         {/* Sidebar - Desktop */}
-        <aside className="hidden md:block w-80 border-l bg-card">
+        <aside className="hidden md:block w-80 glass-dark border-l border-slate-700/50">
           <ParticipantList participants={participants} currentUserName={name || ''} />
         </aside>
 
@@ -338,13 +349,13 @@ export default function ChatPage() {
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
             <div
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            <div className="absolute right-0 top-0 bottom-0 w-80 bg-card shadow-xl animate-in slide-in-from-right duration-200">
-              <div className="p-4 border-b flex items-center justify-between">
-                <h2 className="font-semibold">Participants</h2>
-                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
+            <div className="absolute right-0 top-0 bottom-0 w-80 glass-dark shadow-2xl animate-in slide-in-from-right duration-200">
+              <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
+                <h2 className="font-semibold text-slate-200">Participants</h2>
+                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="hover:bg-slate-800 text-slate-300">
                   <X className="h-5 w-5" />
                 </Button>
               </div>

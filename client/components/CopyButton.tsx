@@ -40,13 +40,13 @@ export function CopyButton({ text, label = 'Copy' }: CopyButtonProps) {
       onClick={handleCopy}
       variant="outline"
       size="sm"
-      className="gap-2"
+      className="gap-2 bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-teal-600 hover:text-white hover:border-teal-500 transition-all duration-300"
       aria-label={label}
     >
       {copied ? (
         <>
-          <Check className="h-4 w-4" />
-          Copied!
+          <Check className="h-4 w-4 text-emerald-400" />
+          <span className="text-emerald-400">Copied!</span>
         </>
       ) : (
         <>
