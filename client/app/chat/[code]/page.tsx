@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Search, Settings, Hash } from 'lucide-react';
 import Link from 'next/link';
@@ -51,6 +51,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
+  const hasJoinedRef = useRef<boolean>(false);
   
   // Create a lookup map for messages (for replies)
   const messagesMap = messages.reduce((acc, msg) => {
@@ -78,25 +79,33 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const connectToSocket = (userName: string) => {
+  const connectToSocket = useCallback((userName: string) => {
     const socket = getSocket();
     socketRef.current = socket;
+
+    // Remove all existing listeners to prevent duplicates
+    socket.removeAllListeners();
 
     // Connection events
     socket.on('connect', () => {
       console.log('Connected to server');
       setConnected(true);
       
-      // Join room
-      socket.emit('join-room', {
-        code: roomCode,
-        name: userName,
-      });
+      // Only join room if we haven't already joined
+      if (!hasJoinedRef.current) {
+        hasJoinedRef.current = true;
+        socket.emit('join-room', {
+          code: roomCode,
+          name: userName,
+        });
+      }
     });
 
     socket.on('disconnect', () => {
       console.log('Disconnected from server');
       setConnected(false);
+      // Reset joined flag on disconnect so we can rejoin when reconnected
+      hasJoinedRef.current = false;
     });
 
     socket.on('connect_error', (error: Error) => {
@@ -153,7 +162,16 @@ export default function ChatPage() {
         variant: 'destructive',
       });
     });
-  };
+
+    // If already connected, join immediately
+    if (socket.connected && !hasJoinedRef.current) {
+      hasJoinedRef.current = true;
+      socket.emit('join-room', {
+        code: roomCode,
+        name: userName,
+      });
+    }
+  }, [roomCode, toast, setConnected, setMessages, addMessage, updateMessage, setParticipants, setTypingUsers]);
 
   useEffect(() => {
     const container = messagesContainerRef.current;
@@ -227,6 +245,7 @@ export default function ChatPage() {
 
     // Cleanup on unmount
     return () => {
+      hasJoinedRef.current = false;
       if (socketRef.current) {
         disconnectSocket();
         reset();
