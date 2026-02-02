@@ -87,12 +87,17 @@ const getParticipants = (roomCode: string): string[] => {
   return participants ? Array.from(participants) : [];
 };
 
-// Helper to add participant
-const addParticipant = (roomCode: string, name: string): void => {
+// Helper to add participant - returns true if participant was newly added
+const addParticipant = (roomCode: string, name: string): boolean => {
   if (!roomParticipants.has(roomCode)) {
     roomParticipants.set(roomCode, new Set());
   }
-  roomParticipants.get(roomCode)!.add(name);
+  const participants = roomParticipants.get(roomCode)!;
+  if (participants.has(name)) {
+    return false; // Participant already exists
+  }
+  participants.add(name);
+  return true; // Participant was newly added
 };
 
 // Helper to remove participant and cleanup room if empty
@@ -157,10 +162,10 @@ export const setupSocketHandlers = (io: Server): void => {
         // Store user info for this socket
         socketToUser.set(socket.id, { roomCode: code, name });
 
-        // Add to participants
-        addParticipant(code, name);
+        // Add to participants - only notify if newly added
+        const isNewParticipant = addParticipant(code, name);
 
-        console.log(`👤 ${name} joined room ${code}`);
+        console.log(`👤 ${name} ${isNewParticipant ? 'joined' : 'reconnected to'} room ${code}`);
 
         // Fetch chat history
         const messages = await Message.find({ roomCode: code })
@@ -175,11 +180,13 @@ export const setupSocketHandlers = (io: Server): void => {
         const participants = getParticipants(code);
         io.to(code).emit('participants-update', participants);
 
-        // Notify others that someone joined
-        socket.to(code).emit('user-joined', {
-          name,
-          timestamp: new Date(),
-        });
+        // Notify others that someone joined (only if new participant)
+        if (isNewParticipant) {
+          socket.to(code).emit('user-joined', {
+            name,
+            timestamp: new Date(),
+          });
+        }
 
       } catch (error) {
         if (error instanceof z.ZodError) {

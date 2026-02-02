@@ -51,6 +51,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
+  const hasJoinedRef = useRef<boolean>(false);
   
   // Create a lookup map for messages (for replies)
   const messagesMap = messages.reduce((acc, msg) => {
@@ -82,21 +83,39 @@ export default function ChatPage() {
     const socket = getSocket();
     socketRef.current = socket;
 
+    // Remove any existing listeners to prevent duplicates
+    socket.off('connect');
+    socket.off('disconnect');
+    socket.off('connect_error');
+    socket.off('chat-history');
+    socket.off('new-message');
+    socket.off('reaction-updated');
+    socket.off('participants-update');
+    socket.off('user-joined');
+    socket.off('user-left');
+    socket.off('typing-users');
+    socket.off('error');
+
     // Connection events
     socket.on('connect', () => {
       console.log('Connected to server');
       setConnected(true);
       
-      // Join room
-      socket.emit('join-room', {
-        code: roomCode,
-        name: userName,
-      });
+      // Only join room if we haven't already joined
+      if (!hasJoinedRef.current) {
+        hasJoinedRef.current = true;
+        socket.emit('join-room', {
+          code: roomCode,
+          name: userName,
+        });
+      }
     });
 
     socket.on('disconnect', () => {
       console.log('Disconnected from server');
       setConnected(false);
+      // Reset joined flag on disconnect so we can rejoin when reconnected
+      hasJoinedRef.current = false;
     });
 
     socket.on('connect_error', (error: Error) => {
@@ -153,6 +172,15 @@ export default function ChatPage() {
         variant: 'destructive',
       });
     });
+
+    // If already connected, join immediately
+    if (socket.connected && !hasJoinedRef.current) {
+      hasJoinedRef.current = true;
+      socket.emit('join-room', {
+        code: roomCode,
+        name: userName,
+      });
+    }
   };
 
   useEffect(() => {
@@ -227,12 +255,14 @@ export default function ChatPage() {
 
     // Cleanup on unmount
     return () => {
+      hasJoinedRef.current = false;
       if (socketRef.current) {
         disconnectSocket();
         reset();
       }
     };
-  }, [roomCode, connectToSocket, loadUser, reset, router, toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomCode]);
 
   const handleSendMessage = (message: string, attachments?: Attachment[], replyToId?: string) => {
     if (!socketRef.current || !name) return;
