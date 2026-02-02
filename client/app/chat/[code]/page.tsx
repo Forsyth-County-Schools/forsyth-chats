@@ -321,7 +321,6 @@ export default function ChatPage() {
                   <MessageBubble
                     key={message._id}
                     message={message}
-                    isOwn={message.name === name}
                   />
                 ))}
               </>
@@ -348,7 +347,7 @@ export default function ChatPage() {
 
         {/* Sidebar - Desktop */}
         <aside className="hidden md:block w-80 shadow-sm border-l transition-colors duration-300" style={{backgroundColor: 'var(--card-background)', borderColor: 'var(--border)'}}>
-          <ParticipantList participants={participants} currentUserName={name || ''} />
+          <ParticipantList participants={participants} />
         </aside>
 
         {/* Sidebar - Mobile */}
@@ -365,7 +364,7 @@ export default function ChatPage() {
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-              <ParticipantList participants={participants} currentUserName={name || ''} />
+              <ParticipantList participants={participants} />
             </div>
           </div>
         )}

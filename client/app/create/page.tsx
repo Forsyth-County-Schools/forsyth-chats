@@ -421,8 +421,7 @@ export default function CreatePage() {
                   )}
                 </Button>
               </form>
-            </CardContent>
-          </Card>
+            </div>
           ) : (
             <div className="animate-scale-in">
               {/* Modern Success Card with Glassmorphism */}
@@ -552,8 +551,6 @@ export default function CreatePage() {
               </Card>
             </div>
           )}
-        </div>
-
         </div>
       </main>
     </GeoBlockWrapper>

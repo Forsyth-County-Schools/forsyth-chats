@@ -1,13 +1,14 @@
 'use client';
 
 import { Users } from 'lucide-react';
+import { useUserStore } from '@/lib/store';
 
 interface ParticipantListProps {
   participants: string[];
-  currentUserName: string;
 }
 
-export function ParticipantList({ participants, currentUserName }: ParticipantListProps) {
+export function ParticipantList({ participants }: ParticipantListProps) {
+  const { name: currentUserName } = useUserStore();
   return (
     <div className="h-full transition-colors duration-300" style={{backgroundColor: 'var(--card-background)'}}>
       <div className="p-6 border-b transition-colors duration-300" style={{borderColor: 'var(--border)'}}>
