@@ -75,7 +75,7 @@ const upload = multer({
 const rateLimitCreateRoom = (req: Request, res: Response, next: () => void) => {
   const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
   const now = Date.now();
-  const cooldownPeriod = 5 * 60 * 1000; // 5 minutes in milliseconds
+  const cooldownPeriod = 60 * 1000; // 1 minute in milliseconds
   
   const lastCreated = rateLimitStore.get(clientIP);
   
@@ -83,7 +83,7 @@ const rateLimitCreateRoom = (req: Request, res: Response, next: () => void) => {
     const timeLeft = Math.ceil((cooldownPeriod - (now - lastCreated)) / 1000);
     return res.status(429).json({
       success: false,
-      message: `Rate limit exceeded. Please wait ${Math.ceil(timeLeft / 60)} minutes before creating another room.`,
+      message: `Rate limit exceeded. Please wait ${timeLeft} seconds before creating another room.`,
       timeLeftSeconds: timeLeft
     });
   }

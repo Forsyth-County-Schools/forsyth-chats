@@ -56,6 +56,8 @@ interface ChatState {
   typingUsers: Set<string>;
   socket: Socket | null;
   isConnected: boolean;
+  isHost: boolean;
+  hostName: string | null;
   setMessages: (messages: Message[]) => void;
   addMessage: (message: Message) => void;
   updateMessage: (messageId: string, updates: Partial<Message>) => void;
@@ -64,6 +66,7 @@ interface ChatState {
   setTypingUsers: (users: Set<string>) => void;
   setSocket: (socket: Socket | null) => void;
   setConnected: (connected: boolean) => void;
+  setHost: (isHost: boolean, hostName: string | null) => void;
   reset: () => void;
 }
 
@@ -73,6 +76,8 @@ export const useChatStore = create<ChatState>((set) => ({
   typingUsers: new Set(),
   socket: null,
   isConnected: false,
+  isHost: false,
+  hostName: null,
   setMessages: (messages) => set({ messages }),
   addMessage: (message) => set((state) => ({ 
     messages: [...state.messages, message] 
@@ -94,12 +99,15 @@ export const useChatStore = create<ChatState>((set) => ({
   }),
   setTypingUsers: (users: Set<string>) => set({ typingUsers: new Set(users) }),
   setSocket: (socket) => set({ socket }),
-  setConnected: (connected) => set({ isConnected: connected }),
+  setConnected: (connected: boolean) => set({ isConnected: connected }),
+  setHost: (isHost: boolean, hostName: string | null) => set({ isHost, hostName }),
   reset: () => set({
     messages: [],
     participants: [],
     typingUsers: new Set(),
     socket: null,
     isConnected: false,
+    isHost: false,
+    hostName: null,
   }),
 }));

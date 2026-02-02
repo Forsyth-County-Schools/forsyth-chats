@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Search, Settings, Hash } from 'lucide-react';
+import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Search, Hash } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -12,6 +12,7 @@ import { TypingIndicator } from '@/components/TypingIndicator';
 import { CopyButton } from '@/components/CopyButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { WarningNotification } from '@/components/WarningNotification';
+import { HostSettingsPanel } from '@/components/HostSettingsPanel';
 import { useUserModeration } from '@/lib/userModeration';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
@@ -35,6 +36,8 @@ export default function ChatPage() {
     participants,
     typingUsers,
     isConnected,
+    isHost,
+    hostName,
     setMessages,
     addMessage,
     updateMessage,
@@ -42,6 +45,7 @@ export default function ChatPage() {
     setTypingUser,
     setTypingUsers,
     setConnected,
+    setHost,
     reset,
   } = useChatStore();
 
@@ -163,6 +167,31 @@ export default function ChatPage() {
       });
     });
 
+    socket.on('room-info', ({ creatorName }: { creatorName: string }) => {
+      const isUserHost = name === creatorName;
+      setHost(isUserHost, creatorName);
+    });
+
+    socket.on('user-kicked', ({ name: kickedName, kickedBy }: { name: string; kickedBy: string }) => {
+      if (kickedName !== name) {
+        toast({
+          title: 'User Kicked',
+          description: `${kickedName} was kicked by ${kickedBy}`,
+        });
+      }
+    });
+
+    socket.on('kicked-from-room', ({ message }: { message: string }) => {
+      toast({
+        title: 'Kicked from Room',
+        description: message,
+        variant: 'destructive',
+      });
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
+    });
+
     // If already connected, join immediately
     if (socket.connected && !hasJoinedRef.current) {
       hasJoinedRef.current = true;
@@ -171,7 +200,7 @@ export default function ChatPage() {
         name: userName,
       });
     }
-  }, [roomCode, toast, setConnected, setMessages, addMessage, updateMessage, setParticipants, setTypingUsers]);
+  }, [roomCode, toast, setConnected, setMessages, addMessage, updateMessage, setParticipants, setTypingUsers, setHost, name, router]);
 
   useEffect(() => {
     const container = messagesContainerRef.current;
@@ -377,14 +406,8 @@ export default function ChatPage() {
                 {/* Theme Toggle */}
                 <ThemeToggle />
 
-                {/* Settings */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-gray-400 hover:text-white hover:bg-gray-800"
-                >
-                  <Settings className="h-5 w-5" />
-                </Button>
+                {/* Host Settings - Only visible to host */}
+                <HostSettingsPanel roomCode={roomCode} />
               </div>
             </div>
           </header>

@@ -39,6 +39,12 @@ const typingSchema = z.object({
   name: z.string().trim().min(2).max(30),
 });
 
+const kickUserSchema = z.object({
+  roomCode: z.string().length(10).toUpperCase(),
+  hostName: z.string().trim().min(2).max(30),
+  targetUserName: z.string().trim().min(2).max(30),
+});
+
 // Store active participants per room
 // Map<roomCode, Set<userName>>
 const roomParticipants = new Map<string, Set<string>>();
@@ -179,6 +185,11 @@ export const setupSocketHandlers = (io: Server): void => {
         // Broadcast updated participant list to all in room
         const participants = getParticipants(code);
         io.to(code).emit('participants-update', participants);
+
+        // Send room info to the joining user
+        socket.emit('room-info', {
+          creatorName: room.creatorName,
+        });
 
         // Notify others that someone joined (only if new participant)
         if (isNewParticipant) {
@@ -378,6 +389,96 @@ export const setupSocketHandlers = (io: Server): void => {
 
       } catch (error) {
         console.error('Error in stop-typing event:', error);
+      }
+    });
+
+    // Handle kick user event
+    socket.on('kick-user', async (data) => {
+      try {
+        const validated = kickUserSchema.parse(data);
+        const { roomCode, hostName, targetUserName } = validated;
+
+        // Verify room exists and get room info
+        const room = await Room.findOne({ code: roomCode });
+        if (!room) {
+          socket.emit('error', {
+            message: 'Room not found',
+          });
+          return;
+        }
+
+        // Verify the requester is the host
+        if (room.creatorName !== hostName) {
+          socket.emit('error', {
+            message: 'Only the room host can kick users',
+          });
+          return;
+        }
+
+        // Find the target user's socket
+        let targetSocketId: string | null = null;
+        for (const [socketId, userInfo] of socketToUser.entries()) {
+          if (userInfo.roomCode === roomCode && userInfo.name === targetUserName) {
+            targetSocketId = socketId;
+            break;
+          }
+        }
+
+        if (!targetSocketId) {
+          socket.emit('error', {
+            message: 'User not found in room',
+          });
+          return;
+        }
+
+        // Cannot kick the host
+        if (targetUserName === hostName) {
+          socket.emit('error', {
+            message: 'Cannot kick the room host',
+          });
+          return;
+        }
+
+        // Get the target socket and disconnect them
+        const targetSocket = io.sockets.sockets.get(targetSocketId);
+        if (targetSocket) {
+          // Remove from participants
+          await removeParticipant(roomCode, targetUserName);
+          
+          // Notify everyone that user was kicked
+          io.to(roomCode).emit('user-kicked', {
+            name: targetUserName,
+            kickedBy: hostName,
+            timestamp: new Date(),
+          });
+
+          // Send updated participants list
+          const participants = getParticipants(roomCode);
+          io.to(roomCode).emit('participants-update', participants);
+
+          // Disconnect the kicked user
+          targetSocket.emit('kicked-from-room', {
+            message: `You have been kicked from the room by ${hostName}`,
+            roomCode,
+          });
+          
+          targetSocket.disconnect(true);
+          
+          console.log(`👢 ${hostName} kicked ${targetUserName} from room ${roomCode}`);
+        }
+
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          socket.emit('error', {
+            message: 'Invalid kick data',
+            errors: error.errors,
+          });
+        } else {
+          console.error('Error in kick-user:', error);
+          socket.emit('error', {
+            message: 'Failed to kick user',
+          });
+        }
       }
     });
 
