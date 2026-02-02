@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
-npm install
+echo "📦 Installing dependencies..."
+npm install --include=dev
+
+echo "🏗️ Building TypeScript..."
 npm run build
+
+echo "📁 Build output:"
 ls -la dist/
+
+echo "✅ Build completed successfully!"

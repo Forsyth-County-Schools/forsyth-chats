@@ -54,6 +54,15 @@ if (NODE_ENV === 'development') {
 // API Routes
 app.use('/api', roomRoutes);
 
+// Health check endpoint
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+  });
+});
+
 // Root endpoint
 app.get('/', (_req: Request, res: Response) => {
   res.json({

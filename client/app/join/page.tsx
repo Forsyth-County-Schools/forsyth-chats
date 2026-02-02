@@ -203,6 +203,11 @@ export default function JoinPage() {
                         setRoomCode(e.target.value.toUpperCase());
                         setCodeError('');
                       }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && roomCode.trim() && !isChecking) {
+                          handleCheckRoom(e as any);
+                        }
+                      }}
                       placeholder="ABC-123DEF"
                       maxLength={10}
                       autoComplete="off"
@@ -285,6 +290,11 @@ export default function JoinPage() {
                           setName(e.target.value);
                           setNameError('');
                         }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && name.trim() && agreedToPolicy && !isJoining) {
+                            handleJoinRoom(e as any);
+                          }
+                        }}
                         placeholder="Enter your full name"
                         autoComplete="name"
                         className="modern-input text-xl py-6 text-center border-2 rounded-2xl transition-all duration-300 group-hover:shadow-lg focus:shadow-xl focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
@@ -312,9 +322,20 @@ export default function JoinPage() {
                           checked={agreedToPolicy}
                           onCheckedChange={(checked) => setAgreedToPolicy(checked === true)}
                           disabled={isJoining}
-                          className="mt-1 h-6 w-6 rounded border-2 border-gray-400 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 cursor-pointer"
+                          className="mt-1 h-6 w-6 rounded border-2 border-gray-400 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 cursor-pointer focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setAgreedToPolicy(!agreedToPolicy);
+                            }
+                          }}
                         />
-                        <label htmlFor="policy" className="text-base leading-relaxed cursor-pointer flex-1 select-none" style={{color: 'var(--foreground)'}}>
+                        <label 
+                          htmlFor="policy" 
+                          className="text-base leading-relaxed cursor-pointer flex-1 select-none" 
+                          style={{color: 'var(--foreground)'}}
+                          onClick={() => setAgreedToPolicy(!agreedToPolicy)}
+                        >
                           <span className="font-bold text-blue-700 dark:text-blue-300">📋 I agree to:</span><br/>
                           Keep the classroom chat respectful and appropriate for educational purposes. 
                           I understand that all conversations may be monitored and inappropriate 

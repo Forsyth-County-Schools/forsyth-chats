@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { MessageSquare, Plus, LogIn, Rocket, Lock, Zap, Sparkles, Shield, Users } from 'lucide-react';
+import { MessageSquare, Plus, LogIn, Lock, Shield, Users, School } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -10,368 +10,125 @@ import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 export default function Home() {
   return (
     <GeoBlockWrapper>
-      <main className="min-h-screen bg-black text-white relative overflow-hidden">
-        {/* Advanced Mesh Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-black">
-          {/* Animated gradient orbs */}
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-red-600/30 via-pink-600/20 to-purple-600/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-red-500/25 via-orange-500/15 to-yellow-500/5 rounded-full blur-3xl animate-float-delayed" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-red-600/10 via-transparent to-transparent rounded-full blur-2xl animate-pulse-slow" />
-          
-          {/* Grid overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
-        </div>
-        
-        {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-red-500/30 rounded-full animate-float-particle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${10 + Math.random() * 20}s`
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Geometric background boxes */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(12)].map((_, i) => {
-            const size = Math.random() * 60 + 20; // 20-80px
-            const rotation = Math.random() * 360;
-            const opacity = Math.random() * 0.1 + 0.05; // 0.05-0.15
-            return (
-              <div
-                key={`box-${i}`}
-                className="absolute border border-white/20 backdrop-blur-sm animate-float-slow"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  transform: `rotate(${rotation}deg)`,
-                  opacity: opacity,
-                  animationDelay: `${Math.random() * 10}s`,
-                  animationDuration: `${15 + Math.random() * 25}s`
-                }}
-              />
-            );
-          })}
-        </div>
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 relative">
+        {/* Simple background pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.05)_25%,rgba(59,130,246,0.05)_50%,transparent_50%,transparent_75%,rgba(59,130,246,0.05)_75%)] bg-[length:20px_20px]" />
         
         {/* Theme Toggle */}
-        <div className="absolute top-8 right-8 z-50">
-          <div className="backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 p-1">
-            <ThemeToggle />
-          </div>
+        <div className="absolute top-6 right-6 z-10">
+          <ThemeToggle />
         </div>
         
-        <div className="container mx-auto px-6 py-16 max-w-6xl relative z-10">
+        <div className="container mx-auto px-6 py-16 max-w-4xl relative z-10">
           {/* Hero Section */}
-          <div className="text-center mb-20">
-            {/* Floating badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-600/20 to-pink-600/20 border border-red-500/30 backdrop-blur-xl mb-8 animate-fade-in-down">
-              <Sparkles className="w-4 h-4 text-red-400" />
-              <span className="text-sm font-semibold bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent">
-                Exclusive Educational Platform
-              </span>
-            </div>
-
-            {/* 3D Logo with advanced effects */}
-            <div className="flex justify-center mb-8 animate-fade-in-up">
-              <div className="relative group">
-                {/* Main logo container */}
-                <div className="relative z-20 bg-gradient-to-br from-amber-500 via-yellow-600 to-orange-600 p-6 rounded-3xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-3">
-                  <img 
-                    src="/forsyth-logo.svg" 
-                    alt="Forsyth County Logo" 
-                    className="h-20 w-20 drop-shadow-2xl"
-                  />
-                  
-                  {/* Inner glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-                
-                {/* Animated rings */}
-                <div className="absolute inset-0 -z-10">
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full blur-3xl opacity-50 animate-ping" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full blur-2xl opacity-30 animate-pulse" />
-                </div>
-                
-                {/* Orbiting elements */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 animate-spin-slow">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-amber-400 rounded-full shadow-lg shadow-amber-400/50" />
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-orange-400 rounded-full shadow-lg shadow-orange-400/50" />
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/50" />
-                </div>
+          <div className="text-center mb-16">
+            {/* Logo */}
+            <div className="flex justify-center mb-8">
+              <div className="bg-red-600 p-4 rounded-2xl shadow-lg">
+                <School className="h-12 w-12 text-white" />
               </div>
             </div>
 
-            {/* Main heading with gradient animation */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-8 leading-none animate-fade-in-up animation-delay-200">
-              <span className="bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent inline-block animate-gradient-x">
-                Forsyth Chat
-              </span>
+            {/* Main heading */}
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 dark:text-white">
+              Forsyth Chat
             </h1>
             
-            {/* Animated stats with modern cards */}
-            <div className="flex flex-wrap justify-center gap-4 mt-8 animate-fade-in-up animation-delay-600 max-w-2xl mx-auto">
-              {[
-                { value: '100%', label: 'Secure', icon: Shield },
-                { value: '23', label: 'Schools', icon: Users },
-                { value: 'GA', label: 'Only', icon: Lock }
-              ].map((stat, index) => (
-                <div
-                  key={index}
-                  className="group backdrop-blur-xl bg-gradient-to-br from-white/5 to-white/10 rounded-xl border border-white/10 p-4 min-w-[140px] hover:border-red-500/50 transition-all duration-500 hover:scale-110 hover:shadow-2xl hover:shadow-red-500/20"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <stat.icon className="w-5 h-5 text-red-400 mx-auto mb-2 group-hover:scale-125 transition-transform duration-300" />
-                  <div className="text-2xl font-black bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-400 font-semibold tracking-wide text-xs">{stat.label}</div>
-                </div>
-              ))}
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+              Secure classroom communication platform for Forsyth County Schools
+            </p>
+            
+            {/* Quick stats */}
+            <div className="flex flex-wrap justify-center gap-6 mb-12">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                <Shield className="w-5 h-5 text-green-600" />
+                <span>100% Secure</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                <Users className="w-5 h-5 text-blue-600" />
+                <span>23 Schools</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                <Lock className="w-5 h-5 text-red-600" />
+                <span>Georgia Only</span>
+              </div>
             </div>
           </div>
 
-          {/* CTA Buttons with modern design */}
-          <div className="flex flex-col md:flex-row gap-4 justify-center mb-16 max-w-2xl mx-auto animate-fade-in-up animation-delay-800">
-            <Link href="/create" className="flex-1 md:max-w-xs group">
-              <div className="relative overflow-hidden rounded-xl">
-                {/* Gradient border animation */}
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-pink-600 to-red-600 opacity-100 animate-gradient-x" />
-                <div className="relative m-[2px] bg-black rounded-xl">
-                  <Button className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-black text-base py-4 px-6 rounded-xl shadow-2xl shadow-red-600/30 transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Plus className="w-4 h-4" />
-                      Create Room
-                    </span>
-                    {/* Shimmer effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                  </Button>
-                </div>
-              </div>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 max-w-md mx-auto">
+            <Link href="/create" className="flex-1">
+              <Button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-lg py-3 px-8 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl">
+                <Plus className="w-5 h-5 mr-2" />
+                Create Room
+              </Button>
             </Link>
             
-            <Link href="/join" className="flex-1 md:max-w-xs group">
-              <Button className="w-full backdrop-blur-xl bg-white/5 hover:bg-white/10 border-2 border-white/10 hover:border-red-500/50 text-white font-black text-base py-4 px-6 rounded-xl shadow-2xl transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  <LogIn className="w-4 h-4" />
-                  Join Room
-                </span>
-                {/* Hover gradient */}
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600/0 via-red-600/10 to-red-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <Link href="/join" className="flex-1">
+              <Button variant="outline" className="w-full border-2 border-gray-300 dark:border-gray-600 hover:border-red-600 dark:hover:border-red-500 text-gray-700 dark:text-gray-300 font-semibold text-lg py-3 px-8 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl">
+                <LogIn className="w-5 h-5 mr-2" />
+                Join Room
               </Button>
             </Link>
           </div>
         
-          {/* Features Section with bento grid */}
-          <div className="animate-fade-in-up animation-delay-1000">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4">
-                <span className="text-white">Why </span>
-                <span className="bg-gradient-to-r from-red-400 via-pink-400 to-red-400 bg-clip-text text-transparent animate-gradient-x">
-                  Forsyth County
-                </span>
-                <span className="text-white"> Schools?</span>
-              </h2>
-              <p className="text-base text-gray-400 max-w-xl mx-auto leading-relaxed">
-                Built with cutting-edge technology for maximum security and educational excellence
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-              {[
-                {
-                  icon: Lock,
-                  title: 'School Secure',
-                  description: 'Georgia-restricted access with multi-layer school verification and AI-powered content filtering.',
-                  gradient: 'from-red-600 to-pink-600'
-                },
-                {
-                  icon: Rocket,
-                  title: 'Education Ready',
-                  description: 'Purpose-built for modern classrooms with intelligent content controls and real-time monitoring.',
-                  gradient: 'from-pink-600 to-purple-600'
-                },
-                {
-                  icon: Zap,
-                  title: 'Real-Time Learning',
-                  description: 'Lightning-fast messaging with automatic AI moderation for safe learning.',
-                  gradient: 'from-orange-600 to-red-600'
-                }
-              ].map((feature, index) => (
-                <div
-                  key={index}
-                  className="group relative"
-                  style={{ animationDelay: `${index * 150}ms` }}
-                >
-                  {/* Gradient border */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500`} />
-                  
-                  <div className="relative backdrop-blur-xl bg-gradient-to-br from-white/5 to-white/10 rounded-xl border border-white/10 p-4 h-full transition-all duration-500 group-hover:border-white/30 group-hover:scale-[1.02] group-hover:shadow-2xl">
-                    {/* Icon with gradient background */}
-                    <div className={`bg-gradient-to-br ${feature.gradient} w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 shadow-2xl transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
-                      <feature.icon className="h-6 w-6 text-white" strokeWidth={2.5} />
-                    </div>
-                    
-                    <h3 className="text-lg font-black mb-3 text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-red-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-300">
-                      {feature.title}
-                    </h3>
-                    
-                    <p className="leading-relaxed text-sm text-gray-300 group-hover:text-white transition-colors duration-300">
-                      {feature.description}
-                    </p>
-
-                    {/* Decorative corner accent */}
-                    <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-bl-full transition-opacity duration-500`} />
-                  </div>
+          {/* Features Section */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-16">
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+              <CardHeader className="text-center pb-4">
+                <div className="bg-red-100 dark:bg-red-900/20 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Lock className="h-6 w-6 text-red-600" />
                 </div>
-              ))}
-            </div>
+                <CardTitle className="text-xl font-bold">School Secure</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-center text-base">
+                  Georgia-restricted access with school verification and content monitoring.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+              <CardHeader className="text-center pb-4">
+                <div className="bg-blue-100 dark:bg-blue-900/20 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <School className="h-6 w-6 text-blue-600" />
+                </div>
+                <CardTitle className="text-xl font-bold">Education Ready</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-center text-base">
+                  Built for classrooms with teacher controls and safe communication tools.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+              <CardHeader className="text-center pb-4">
+                <div className="bg-green-100 dark:bg-green-900/20 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="h-6 w-6 text-green-600" />
+                </div>
+                <CardTitle className="text-xl font-bold">Real-Time Chat</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-center text-base">
+                  Fast messaging with automatic moderation for safe learning environments.
+                </CardDescription>
+              </CardContent>
+            </Card>
           </div>
         
-          {/* Modern Footer */}
-          <div className="text-center mt-20 pt-8 border-t border-white/5">
-            <div className="backdrop-blur-xl bg-white/5 rounded-xl border border-white/10 p-4 max-w-xl mx-auto">
-              <p className="text-gray-400 text-xs leading-relaxed">
-                <Lock className="inline w-3 h-3 mr-2 text-red-400" />
-                Authorized for use by <span className="text-red-400 font-semibold">Forsyth County Schools</span> students only
-              </p>
+          {/* Footer */}
+          <div className="text-center">
+            <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-lg mx-auto">
+              <div className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400">
+                <Lock className="w-4 h-4 text-red-600" />
+                <span className="text-sm">
+                  Authorized for <strong>Forsyth County Schools</strong> students only
+                </span>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Custom animations styles */}
-        <style jsx>{`
-          @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(30px, -30px) scale(1.05); }
-            50% { transform: translate(-20px, 20px) scale(0.95); }
-            75% { transform: translate(20px, 30px) scale(1.02); }
-          }
-
-          @keyframes float-delayed {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(-40px, 30px) scale(1.05); }
-            50% { transform: translate(30px, -20px) scale(0.95); }
-            75% { transform: translate(-30px, -30px) scale(1.02); }
-          }
-
-          @keyframes float-particle {
-            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
-          }
-
-          @keyframes gradient-x {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-          }
-
-          @keyframes float-slow {
-            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-            25% { transform: translate(10px, -15px) rotate(90deg) scale(1.1); }
-            50% { transform: translate(-10px, 10px) rotate(180deg) scale(0.9); }
-            75% { transform: translate(15px, 5px) rotate(270deg) scale(1.05); }
-          }
-
-          @keyframes pulse-slow {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
-          }
-
-          @keyframes spin-slow {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-          }
-
-          @keyframes fade-in-down {
-            from {
-              opacity: 0;
-              transform: translateY(-20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-
-          @keyframes fade-in-up {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-
-          .animate-float {
-            animation: float 20s ease-in-out infinite;
-          }
-
-          .animate-float-delayed {
-            animation: float-delayed 25s ease-in-out infinite;
-          }
-
-          .animate-float-particle {
-            animation: float-particle linear infinite;
-          }
-
-          .animate-gradient-x {
-            background-size: 200% 200%;
-            animation: gradient-x 3s ease infinite;
-          }
-
-          .animate-pulse-slow {
-            animation: pulse-slow 4s ease-in-out infinite;
-          }
-
-          .animate-spin-slow {
-            animation: spin-slow 10s linear infinite;
-          }
-
-          .animate-fade-in-down {
-            animation: fade-in-down 0.6s ease-out forwards;
-          }
-
-          .animate-fade-in-up {
-            animation: fade-in-up 0.6s ease-out forwards;
-          }
-
-          .animation-delay-200 {
-            animation-delay: 200ms;
-          }
-
-          .animation-delay-300 {
-            animation-delay: 300ms;
-          }
-
-          .animation-delay-400 {
-            animation-delay: 400ms;
-          }
-
-          .animation-delay-600 {
-            animation-delay: 600ms;
-          }
-
-          .animation-delay-800 {
-            animation-delay: 800ms;
-          }
-
-          .animation-delay-1000 {
-            animation-delay: 1000ms;
-          }
-        `}</style>
       </main>
     </GeoBlockWrapper>
   );
