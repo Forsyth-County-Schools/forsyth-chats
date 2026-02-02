@@ -15,6 +15,9 @@ import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { useUserStore, useChatStore } from '@/lib/store';
 import { getSocket, disconnectSocket, Message } from '@/lib/socket';
+import { parseSchoolCode } from '@/lib/schools';
+import { useRateLimit, sanitizeMessage } from '@/lib/security';
+import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 
 export default function ChatPage() {
   const params = useParams();
@@ -38,8 +41,12 @@ export default function ChatPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [schoolInfo, setSchoolInfo] = useState<{ name: string; category: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<any>(null);
+  
+  // Rate limiting hook
+  const { isRateLimited, checkRateLimit, recordMessage, getRemainingMessages, getResetTimeRemaining } = useRateLimit();
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {

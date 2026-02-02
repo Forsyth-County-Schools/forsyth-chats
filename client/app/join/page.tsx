@@ -14,6 +14,9 @@ import { api } from '@/lib/api';
 import { useUserStore } from '@/lib/store';
 import { nameSchema, roomCodeSchema } from '@/lib/validations';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { parseSchoolCode } from '@/lib/schools';
+import { validateUserName } from '@/lib/security';
+import GeoBlockWrapper from '@/components/GeoBlockWrapper';
 
 export default function JoinPage() {
   const [roomCode, setRoomCode] = useState('');
@@ -25,6 +28,7 @@ export default function JoinPage() {
   const [codeError, setCodeError] = useState('');
   const [nameError, setNameError] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
+  const [schoolInfo, setSchoolInfo] = useState<{ name: string; category: string } | null>(null);
   
   const router = useRouter();
   const { toast } = useToast();
@@ -47,11 +51,17 @@ export default function JoinPage() {
     setCodeError('');
     setRoomExists(null);
     
-    // Validate room code
+    // Validate room code and extract school information
     const validation = roomCodeSchema.safeParse({ code: roomCode.trim() });
     if (!validation.success) {
       setCodeError(validation.error.errors[0].message);
       return;
+    }
+    
+    // Parse school information from code
+    const { school } = parseSchoolCode(roomCode.trim());
+    if (school) {
+      setSchoolInfo({ name: school.name, category: school.category });
     }
     
     setIsChecking(true);
@@ -86,10 +96,10 @@ export default function JoinPage() {
     // Reset error
     setNameError('');
     
-    // Validate name
-    const validation = nameSchema.safeParse({ name: name.trim() });
-    if (!validation.success) {
-      setNameError(validation.error.errors[0].message);
+    // Validate name with enhanced security
+    const nameValidation = validateUserName(name.trim());
+    if (!nameValidation.isValid) {
+      setNameError(nameValidation.error!);
       return;
     }
     
@@ -137,33 +147,34 @@ export default function JoinPage() {
   };
 
   return (
-    <main className="min-h-screen transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
-      {/* Theme Toggle */}
-      <div className="absolute top-6 right-6 z-10">
-        <ThemeToggle />
-      </div>
-      
-      <div className="container mx-auto px-4 py-16 max-w-2xl">
-        {/* Back Button */}
-        <Link href="/" className="inline-flex items-center text-red-600 hover:text-red-700 mb-8 transition-colors">
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Home
-        </Link>
+    <GeoBlockWrapper>
+      <main className="min-h-screen transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
+        {/* Theme Toggle */}
+        <div className="absolute top-6 right-6 z-10">
+          <ThemeToggle />
+        </div>
+        
+        <div className="container mx-auto px-4 py-16 max-w-2xl">
+          {/* Back Button */}
+          <Link href="/" className="inline-flex items-center text-red-600 hover:text-red-700 mb-8 transition-colors">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Home
+          </Link>
 
-        <Card className="card-modern">
-          <CardHeader className="text-center space-y-4">
-            <div className="flex justify-center">
-              <div className="bg-red-600 p-6 rounded-2xl modern-shadow">
-                <LogIn className="h-12 w-12 text-white" />
+          <Card className="card-modern">
+            <CardHeader className="text-center space-y-4">
+              <div className="flex justify-center">
+                <div className="bg-red-600 p-6 rounded-2xl modern-shadow">
+                  <LogIn className="h-12 w-12 text-white" />
+                </div>
               </div>
-            </div>
-            <CardTitle className="text-3xl font-bold" style={{color: 'var(--foreground)'}}>
-              Join Classroom
-            </CardTitle>
-            <CardDescription className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
-              Enter a room code to join an existing classroom chat
-            </CardDescription>
-          </CardHeader>
+              <CardTitle className="text-3xl font-bold" style={{color: 'var(--foreground)'}}>
+                Join Forsyth County Classroom
+              </CardTitle>
+              <CardDescription className="text-lg" style={{color: 'var(--foreground-secondary)'}}>
+                Enter your teacher's room code to join the secure classroom chat
+              </CardDescription>
+            </CardHeader>
 
           <CardContent className="space-y-8">
             {/* Room Code Form */}
@@ -183,6 +194,7 @@ export default function JoinPage() {
                     }}
                     placeholder="Enter 10-character room code"
                     maxLength={10}
+                    autoComplete="off"
                     className="modern-input text-lg py-4 text-center tracking-wider font-mono"
                     style={{
                       backgroundColor: 'var(--input-background)',
@@ -219,7 +231,11 @@ export default function JoinPage() {
               <div className="space-y-6 animate-slide-up">
                 <div className="success-box">
                   <p className="text-green-700 dark:text-green-400 font-semibold text-lg">
-                    ✓ Room found! Please enter your details to join.
+                    ✓ Room found! {schoolInfo && (
+                      <span className="block text-sm mt-1">
+                        {schoolInfo.name} ({schoolInfo.category.charAt(0).toUpperCase() + schoolInfo.category.slice(1)})
+                      </span>
+                    )}
                   </p>
                 </div>
 
@@ -237,6 +253,7 @@ export default function JoinPage() {
                         setNameError('');
                       }}
                       placeholder="Enter your name"
+                      autoComplete="name"
                       className="modern-input text-lg py-4"
                       style={{
                         backgroundColor: 'var(--input-background)',
@@ -345,5 +362,6 @@ export default function JoinPage() {
         `
       }} />
     </main>
+    </GeoBlockWrapper>
   );
 }

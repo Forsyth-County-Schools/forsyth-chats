@@ -3,6 +3,7 @@ const API_URL = 'https://forsyth-chats.onrender.com';
 export interface CreateRoomResponse {
   success: boolean;
   code?: string;
+  school?: string;
   message?: string;
 }
 
@@ -24,13 +25,16 @@ export interface JoinRoomResponse {
 }
 
 export const api = {
-  async createRoom(creatorName?: string): Promise<CreateRoomResponse> {
+  async createRoom(creatorName?: string, schoolData?: { schoolName: string; schoolCode: string; turnstileToken: string }): Promise<CreateRoomResponse> {
     const response = await fetch(`${API_URL}/api/create-room`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ creatorName }),
+      body: JSON.stringify({ 
+        creatorName, 
+        ...schoolData 
+      }),
     });
 
     if (!response.ok) {
