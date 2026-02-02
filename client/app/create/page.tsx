@@ -212,6 +212,7 @@ export default function CreatePage() {
                   </label>
                   <Input
                     id="creatorName"
+                    name="creatorName"
                     type="text"
                     value={creatorName}
                     onChange={(e) => {
@@ -236,18 +237,27 @@ export default function CreatePage() {
 
                 {/* School Selection */}
                 <div className="space-y-3">
-                  <label className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
+                  <label htmlFor="schoolSelect" className="text-lg font-semibold block" style={{color: 'var(--foreground)'}}>
                     Select Your Forsyth County School *
                   </label>
-                  <Select value={selectedSchool} onValueChange={(value) => {
-                    setSelectedSchool(value);
-                    setSchoolError('');
-                  }}>
-                    <SelectTrigger className="modern-input text-lg py-4" style={{
-                      backgroundColor: 'var(--input-background)',
-                      borderColor: 'var(--input-border)',
-                      color: 'var(--foreground)'
-                    }}>
+                  <Select 
+                    value={selectedSchool} 
+                    onValueChange={(value) => {
+                      setSelectedSchool(value);
+                      setSchoolError('');
+                    }}
+                    name="schoolSelect"
+                  >
+                    <SelectTrigger 
+                      id="schoolSelect"
+                      className="modern-input text-lg py-4" 
+                      style={{
+                        backgroundColor: 'var(--input-background)',
+                        borderColor: 'var(--input-border)',
+                        color: 'var(--foreground)'
+                      }}
+                      aria-label="Select your Forsyth County School"
+                    >
                       <SelectValue placeholder="Choose your school..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -313,6 +323,8 @@ export default function CreatePage() {
                     className="cf-turnstile" 
                     data-sitekey="0x4AAAAAACW20p-WO0bwShk2"
                     data-callback="onTurnstileSuccess"
+                    role="button"
+                    aria-label="Complete security verification"
                   ></div>
                 </div>
 

@@ -83,32 +83,14 @@ export default function Home() {
             </div>
 
             {/* Main heading with gradient animation */}
-            <h1 className="text-7xl md:text-8xl lg:text-9xl font-black mb-10 leading-none animate-fade-in-up animation-delay-200">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-16 leading-none animate-fade-in-up animation-delay-200">
               <span className="bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent inline-block animate-gradient-x">
-                Canvas
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-red-500 via-pink-500 to-red-500 bg-clip-text text-transparent inline-block animate-gradient-x animation-delay-300">
-                Dashboard
+                Forsyth Chat
               </span>
             </h1>
-
-            {/* Subtitle with glassmorphism */}
-            <div className="max-w-5xl mx-auto mb-12 animate-fade-in-up animation-delay-400">
-              <div className="backdrop-blur-xl bg-gradient-to-r from-white/5 to-white/10 rounded-3xl border border-white/10 p-8 shadow-2xl">
-                <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-400 via-pink-400 to-red-400 bg-clip-text text-transparent mb-3 animate-gradient-x">
-                  Forsyth County Schools
-                </p>
-                <p className="text-lg text-red-400/80 font-semibold mb-4">Georgia</p>
-                <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-                  Next-generation secure communication platform designed exclusively for students.
-                  <span className="block mt-2 text-red-400 font-bold">🔒 School-verified access required</span>
-                </p>
-              </div>
-            </div>
             
             {/* Animated stats with modern cards */}
-            <div className="flex flex-wrap justify-center gap-6 mt-20 animate-fade-in-up animation-delay-600">
+            <div className="flex flex-wrap justify-center gap-8 mt-20 animate-fade-in-up animation-delay-600 max-w-4xl mx-auto">
               {[
                 { value: '100%', label: 'Secure', icon: Shield },
                 { value: '23', label: 'Schools', icon: Users },
@@ -116,7 +98,7 @@ export default function Home() {
               ].map((stat, index) => (
                 <div
                   key={index}
-                  className="group backdrop-blur-xl bg-gradient-to-br from-white/5 to-white/10 rounded-2xl border border-white/10 p-8 min-w-[180px] hover:border-red-500/50 transition-all duration-500 hover:scale-110 hover:shadow-2xl hover:shadow-red-500/20"
+                  className="group backdrop-blur-xl bg-gradient-to-br from-white/5 to-white/10 rounded-2xl border border-white/10 p-8 min-w-[200px] xl:min-w-[240px] hover:border-red-500/50 transition-all duration-500 hover:scale-110 hover:shadow-2xl hover:shadow-red-500/20"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <stat.icon className="w-8 h-8 text-red-400 mx-auto mb-4 group-hover:scale-125 transition-transform duration-300" />
@@ -130,15 +112,15 @@ export default function Home() {
           </div>
 
           {/* CTA Buttons with modern design */}
-          <div className="flex flex-col md:flex-row gap-6 justify-center mb-32 max-w-3xl mx-auto animate-fade-in-up animation-delay-800">
-            <Link href="/create" className="flex-1 group">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 justify-center mb-32 max-w-5xl mx-auto animate-fade-in-up animation-delay-800">
+            <Link href="/create" className="flex-1 lg:max-w-md group">
               <div className="relative overflow-hidden rounded-3xl">
                 {/* Gradient border animation */}
                 <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-pink-600 to-red-600 opacity-100 animate-gradient-x" />
                 <div className="relative m-[2px] bg-black rounded-3xl">
-                  <Button className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-black text-2xl py-10 px-10 rounded-3xl shadow-2xl shadow-red-600/30 transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
-                    <span className="relative z-10 flex items-center justify-center gap-3">
-                      <Plus className="w-7 h-7" />
+                  <Button className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-black text-xl lg:text-2xl xl:text-3xl py-8 lg:py-12 px-10 lg:px-12 rounded-3xl shadow-2xl shadow-red-600/30 transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
+                    <span className="relative z-10 flex items-center justify-center gap-3 lg:gap-4">
+                      <Plus className="w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
                       Create Room
                     </span>
                     {/* Shimmer effect */}
@@ -148,10 +130,10 @@ export default function Home() {
               </div>
             </Link>
             
-            <Link href="/join" className="flex-1 group">
-              <Button className="w-full backdrop-blur-xl bg-white/5 hover:bg-white/10 border-2 border-white/10 hover:border-red-500/50 text-white font-black text-2xl py-10 px-10 rounded-3xl shadow-2xl transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
-                <span className="relative z-10 flex items-center justify-center gap-3">
-                  <LogIn className="w-7 h-7" />
+            <Link href="/join" className="flex-1 lg:max-w-md group">
+              <Button className="w-full backdrop-blur-xl bg-white/5 hover:bg-white/10 border-2 border-white/10 hover:border-red-500/50 text-white font-black text-xl lg:text-2xl xl:text-3xl py-8 lg:py-12 px-10 lg:px-12 rounded-3xl shadow-2xl transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
+                <span className="relative z-10 flex items-center justify-center gap-3 lg:gap-4">
+                  <LogIn className="w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
                   Join Room
                 </span>
                 {/* Hover gradient */}
@@ -162,20 +144,20 @@ export default function Home() {
         
           {/* Features Section with bento grid */}
           <div className="animate-fade-in-up animation-delay-1000">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-6xl font-black mb-6">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-8">
                 <span className="text-white">Why </span>
                 <span className="bg-gradient-to-r from-red-400 via-pink-400 to-red-400 bg-clip-text text-transparent animate-gradient-x">
                   Forsyth County
                 </span>
                 <span className="text-white"> Schools?</span>
               </h2>
-              <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              <p className="text-xl lg:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
                 Built with cutting-edge technology for maximum security and educational excellence
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8 lg:gap-10 max-w-7xl mx-auto">
               {[
                 {
                   icon: Lock,
