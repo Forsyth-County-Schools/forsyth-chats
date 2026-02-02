@@ -148,10 +148,10 @@ export function ChatInput({
     <div className="space-y-3">
       {/* Reply indicator */}
       {replyingTo && (
-        <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 border-l-2 border-blue-500 rounded-r-lg">
-          <Reply className="w-4 h-4 text-blue-500" />
+        <div className="flex items-center gap-3 p-3 bg-blue-50/80 dark:bg-blue-900/20 border-l-3 border-blue-500 rounded-r-xl transition-all duration-200 hover:bg-blue-100/80 dark:hover:bg-blue-900/30">
+          <Reply className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           <div className="flex-1">
-            <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
+            <p className="text-sm text-blue-700 dark:text-blue-400 font-semibold">
               Replying to {replyingTo.name}
             </p>
             <p className="text-xs text-blue-600 dark:text-blue-300 truncate">
@@ -163,7 +163,7 @@ export function ChatInput({
             variant="ghost"
             size="sm"
             onClick={onCancelReply}
-            className="p-1 h-6 w-6 text-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-800"
+            className="p-1 h-6 w-6 text-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-800 transition-all duration-200 hover:scale-110"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -172,7 +172,7 @@ export function ChatInput({
       
       {/* Attachments preview */}
       {attachments.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+        <div className="flex flex-wrap gap-2 p-3 bg-slate-50/80 dark:bg-slate-800/60 rounded-2xl transition-all duration-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/80">
           {attachments.map((attachment, index) => (
             <div key={index} className="relative group">
               {attachment.type === 'image' ? (
@@ -180,17 +180,17 @@ export function ChatInput({
                   <img
                     src={`https://forsyth-chats.onrender.com${attachment.url}`}
                     alt={attachment.originalName}
-                    className="w-16 h-16 object-cover rounded-lg"
+                    className="w-16 h-16 object-cover rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-md"
                   />
                   <button
                     onClick={() => removeAttachment(index)}
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 hover:bg-red-600 shadow-md"
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </div>
               ) : (
-                <div className="relative flex items-center gap-2 p-2 bg-white dark:bg-slate-700 border dark:border-slate-600 rounded-lg">
+                <div className="relative flex items-center gap-2 p-2 bg-white/90 dark:bg-slate-700/90 border dark:border-slate-600 rounded-lg transition-all duration-200 hover:shadow-md hover:scale-105">
                   <div className="w-8 h-8 bg-slate-200 dark:bg-slate-600 rounded flex items-center justify-center text-xs">
                     📄
                   </div>
@@ -199,7 +199,7 @@ export function ChatInput({
                   </span>
                   <button
                     onClick={() => removeAttachment(index)}
-                    className="w-4 h-4 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="w-4 h-4 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -220,15 +220,15 @@ export function ChatInput({
             placeholder={disabled ? 'Connection lost...' : 'Type your message... (Enter to send, Shift+Enter for new line)'}
             disabled={disabled || uploading}
             className={cn(
-              'min-h-[52px] max-h-[120px] resize-none rounded-2xl border-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm transition-all duration-200 focus:ring-4 pr-20 py-4 px-6',
+              'min-h-[48px] max-h-[120px] resize-none rounded-2xl border-2 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm transition-all duration-200 focus:ring-4 pr-20 py-3.5 px-5 text-sm',
               disabled || uploading
-                ? 'border-slate-300 dark:border-slate-600 text-slate-400 dark:text-slate-500' 
-                : 'border-slate-200 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-500'
+                ? 'border-slate-300 dark:border-slate-600 text-slate-400 dark:text-slate-500 cursor-not-allowed' 
+                : 'border-slate-200 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-500 hover:shadow-md'
             )}
           />
           
           {/* File upload and emoji buttons */}
-          <div className="absolute right-3 top-3 flex items-center gap-1">
+          <div className="absolute right-2.5 top-2.5 flex items-center gap-1">
             <input
               ref={fileInputRef}
               type="file"
@@ -244,7 +244,7 @@ export function ChatInput({
               size="sm"
               onClick={() => fileInputRef.current?.click()}
               disabled={disabled || uploading}
-              className="p-2 h-8 w-8 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors duration-200"
+              className="p-2 h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 hover:scale-110"
               title="Attach files"
             >
               <Paperclip className={cn(
@@ -257,7 +257,7 @@ export function ChatInput({
               type="button"
               variant="ghost"
               size="sm"
-              className="p-2 h-8 w-8 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors duration-200"
+              className="p-2 h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 hover:scale-110"
               disabled={disabled}
             >
               <Smile className="w-4 h-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" />
@@ -265,20 +265,20 @@ export function ChatInput({
           </div>
           
           {/* Hover effect */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/3 to-purple-500/3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         </div>
         
         <Button
           type="submit"
           disabled={(!message.trim() && attachments.length === 0) || disabled || uploading}
           className={cn(
-            'h-[52px] w-[52px] rounded-2xl shadow-lg transition-all duration-200 relative overflow-hidden group',
+            'h-[48px] w-[48px] rounded-2xl shadow-md transition-all duration-200 relative overflow-hidden group',
             (!message.trim() && attachments.length === 0) || disabled || uploading
               ? 'bg-slate-300 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-600 cursor-not-allowed'
-              : 'bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-200 dark:shadow-blue-900/50 hover:shadow-xl transform hover:scale-105'
+              : 'bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-200/50 dark:shadow-blue-900/30 hover:shadow-lg transform hover:scale-105 active:scale-95'
           )}
         >
-          <Send className="w-5 h-5 text-white relative z-10" />
+          <Send className="w-4.5 h-4.5 text-white relative z-10" />
           
           {/* Hover effect */}
           {(!disabled && !uploading && (message.trim() || attachments.length > 0)) && (

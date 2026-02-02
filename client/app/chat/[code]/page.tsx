@@ -264,53 +264,58 @@ export default function ChatPage() {
   return (
     <div className="h-screen flex flex-col transition-colors duration-300" style={{backgroundColor: 'var(--background)'}}>
       {/* Header */}
-      <header className="border-b shadow-sm transition-colors duration-300" style={{backgroundColor: 'var(--card-background)', borderColor: 'var(--border)'}}>
+      <header className="border-b shadow-sm transition-all duration-300" style={{backgroundColor: 'var(--card-background)', borderColor: 'var(--border)'}}>
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" size="icon" className="transition-colors duration-300" style={{color: 'var(--foreground-secondary)'}}>
+              <Button variant="ghost" size="icon" className="transition-all duration-200 hover:scale-110" style={{color: 'var(--foreground-secondary)'}}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold" style={{color: 'var(--foreground)'}}>Classroom Chat</h1>
-              <div className="flex items-center gap-3 text-sm">
-                <span className="font-mono text-red-600 font-bold text-lg">{roomCode}</span>
+              <h1 className="text-xl font-bold transition-colors duration-300" style={{color: 'var(--foreground)'}}>Classroom Chat</h1>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="font-mono text-sm font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-lg">{roomCode}</span>
                 <CopyButton text={roomCode} label="Copy" />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {/* Connection Status */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-200">
               {isConnected ? (
                 <>
-                  <Wifi className="h-5 w-5 text-green-600" />
-                  <span className="hidden sm:inline text-green-600 font-medium">Connected</span>
+                  <div className="relative">
+                    <Wifi className="h-4 w-4 text-green-600" />
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  </div>
+                  <span className="hidden sm:inline text-xs font-semibold text-green-600">Connected</span>
                 </>
               ) : (
                 <>
-                  <WifiOff className="h-5 w-5 text-red-600" />
-                  <span className="hidden sm:inline text-red-600 font-medium">Disconnected</span>
+                  <WifiOff className="h-4 w-4 text-red-600" />
+                  <span className="hidden sm:inline text-xs font-semibold text-red-600">Disconnected</span>
                 </>
               )}
             </div>
 
             {/* Participant Count */}
-            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-600/30 rounded-full">
-              <Users className="h-5 w-5 text-red-600" />
-              <span className="text-sm font-semibold text-red-700 dark:text-red-400">{participants.length}</span>
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 border border-red-200 dark:border-red-700/30 rounded-full transition-all duration-200 hover:scale-105">
+              <Users className="h-4 w-4 text-red-600" />
+              <span className="text-xs font-bold text-red-700 dark:text-red-400">{participants.length}</span>
             </div>
 
             {/* Theme Toggle */}
-            <ThemeToggle />
+            <div className="transition-all duration-200 hover:scale-110">
+              <ThemeToggle />
+            </div>
 
             {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden transition-colors duration-300" style={{color: 'var(--foreground-secondary)'}}
+              className="md:hidden transition-all duration-200 hover:scale-110" style={{color: 'var(--foreground-secondary)'}}
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

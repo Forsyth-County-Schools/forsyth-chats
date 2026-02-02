@@ -6,44 +6,44 @@
 
 @layer base {
   :root {
-    /* Modern Red-Light Color Palette */
-    --red-primary: #DB4437;
-    --red-hover: #C1352F;
+    /* Modern Red-Light Color Palette with better contrast */
+    --red-primary: #DC2626;
+    --red-hover: #B91C1C;
     --white: #FFFFFF;
     --bg-light: #FAFAFA;
-    --text-primary: #202124;
-    --text-secondary: #5F6368;
-    --border-light: #DADCE0;
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --border-light: #E5E7EB;
     --shadow: 0 4px 20px rgba(0,0,0,0.08);
     --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
-    --red-light: #FCE8E6;
-    --red-text: #D93025;
+    --red-light: #FEF2F2;
+    --red-text: #DC2626;
     
-    /* Light theme variables */
+    /* Light theme variables with improved contrast */
     --background: #FFFFFF;
-    --background-secondary: #FAFAFA;
-    --foreground: #202124;
-    --foreground-secondary: #5F6368;
+    --background-secondary: #F9FAFB;
+    --foreground: #111827;
+    --foreground-secondary: #374151;
     --card-background: #FFFFFF;
-    --border: #DADCE0;
+    --border: #E5E7EB;
     --input-background: #FFFFFF;
-    --input-border: #DADCE0;
-    --success-background: #FCE8E6;
-    --success-border: #DB4437;
+    --input-border: #D1D5DB;
+    --success-background: #FEF2F2;
+    --success-border: #DC2626;
   }
 
   .dark {
-    /* Ultra Dark Theme Variables - Even Darker */
-    --background: #000000;
-    --background-secondary: #050505;
-    --foreground: #FFFFFF;
+    /* Enhanced Dark Theme Variables with better contrast */
+    --background: #0A0A0A;
+    --background-secondary: #111111;
+    --foreground: #FAFAFA;
     --foreground-secondary: #A1A1AA;
-    --card-background: #0A0A0A;
-    --border: #1A1A1A;
-    --input-background: #0F0F0F;
-    --input-border: #2A2A2A;
-    --success-background: rgba(220, 68, 55, 0.15);
-    --success-border: rgba(220, 68, 55, 0.4);
+    --card-background: #141414;
+    --border: #2A2A2A;
+    --input-background: #1A1A1A;
+    --input-border: #333333;
+    --success-background: rgba(220, 38, 38, 0.15);
+    --success-border: rgba(220, 38, 38, 0.4);
   }
 }
 
@@ -60,11 +60,11 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.3s ease, color 0.3s ease;
-    /* Ultra subtle dark gradients for even darker theme */
+    /* Enhanced subtle gradients for modern dark theme */
     background-image: 
-      radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 40% 20%, rgba(255, 219, 98, 0.02) 0%, transparent 50%);
+      radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(255, 219, 98, 0.01) 0%, transparent 50%);
     background-attachment: fixed;
   }
   
@@ -83,8 +83,21 @@
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-primary);
+    line-height: 1.25;
+  }
+  
+  /* Improved base typography */
+  p {
+    line-height: 1.6;
+    color: var(--foreground);
+  }
+  
+  /* Better focus states for accessibility */
+  *:focus-visible {
+    outline: 2px solid var(--red-primary);
+    outline-offset: 2px;
   }
 }
 
@@ -103,7 +116,7 @@
   }
   
   .btn-red-primary {
-    @apply bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border-0;
+    @apply bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border-0 focus:ring-4 focus:ring-red-500/20;
   }
   
   .btn-red-outline {
@@ -122,7 +135,7 @@
     background-color: var(--input-background);
     border-color: var(--input-border);
     color: var(--foreground);
-    @apply focus:border-red-500 focus:ring-4 focus:ring-red-500/20 rounded-xl px-4 py-3 transition-all duration-200;
+    @apply focus:border-red-500 focus:ring-4 focus:ring-red-500/20 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none;
   }
   
   .modern-input::placeholder {

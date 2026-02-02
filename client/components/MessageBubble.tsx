@@ -229,39 +229,39 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
   return (
     <div
       className={cn(
-        'flex mb-6 group',
+        'flex mb-4 group animate-fade-in',
         isOwn ? 'justify-end' : 'justify-start'
       )}
     >
       {/* Avatar for other users */}
       {!isOwn && (
-        <div className="flex-shrink-0 mr-4 mt-1">
+        <div className="flex-shrink-0 mr-3 mt-1">
           {profileImage ? (
             <img
               src={profileImage}
               alt={message.name}
-              className="w-12 h-12 rounded-2xl object-cover shadow-lg ring-2 ring-white dark:ring-slate-800"
+              className="w-10 h-10 rounded-2xl object-cover shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg"
             />
           ) : (
-            <div className={`w-12 h-12 bg-gradient-to-br ${getUserColor(message.name)} rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-lg ring-2 ring-white dark:ring-slate-800`}>
+            <div className={`w-10 h-10 bg-gradient-to-br ${getUserColor(message.name)} rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg`}>
               {initials}
             </div>
           )}
         </div>
       )}
       
-      <div className="flex flex-col max-w-[75%] sm:max-w-lg">
+      <div className="flex flex-col max-w-[70%] sm:max-w-xl">
         {!isOwn && (
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 ml-4 font-semibold">{message.name}</p>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2 ml-1 transition-colors duration-200">{message.name}</p>
         )}
         
         {/* Reply indicator */}
         {message.replyTo && replyToMessage && (
-          <div className="ml-4 mb-2 p-2 border-l-2 border-blue-300 bg-slate-50 dark:bg-slate-800/50 rounded-r-lg">
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          <div className="ml-2 mb-2 p-3 border-l-3 border-blue-400 bg-slate-50 dark:bg-slate-800/60 rounded-r-xl transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800/80">
+            <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-1">
               Replying to {replyToMessage.name}
             </p>
-            <p className="text-xs text-slate-600 dark:text-slate-300 truncate">
+            <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
               {replyToMessage.message}
             </p>
           </div>
@@ -270,14 +270,14 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
         <div className="relative">
           <div
             className={cn(
-              'rounded-3xl px-6 py-4 shadow-lg transition-all duration-200 group-hover:shadow-xl relative',
+              'rounded-2xl px-5 py-3 shadow-md transition-all duration-200 group-hover:shadow-lg relative backdrop-blur-sm',
               isOwn
-                ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-200 dark:shadow-blue-900/50'
-                : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white shadow-slate-200 dark:shadow-slate-900/50'
+                ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-200/50 dark:shadow-blue-900/30 hover:from-blue-600 hover:to-blue-700'
+                : 'bg-white/95 dark:bg-slate-800/95 border border-slate-200/60 dark:border-slate-700/60 text-slate-900 dark:text-white shadow-slate-200/50 dark:shadow-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
             )}
           >
             {message.message.trim() && (
-              <p className="whitespace-pre-wrap break-words text-base leading-relaxed">
+              <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
                 {message.message}
               </p>
             )}
@@ -285,26 +285,26 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
             {renderAttachments()}
             {renderLinkPreviews()}
             
-            <div className="flex items-center justify-between mt-3">
+            <div className="flex items-center justify-between mt-2">
               <p
                 className={cn(
-                  'text-xs font-medium',
+                  'text-xs font-medium opacity-70 transition-opacity duration-200',
                   isOwn ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
                 )}
               >
                 {format(new Date(message.timestamp), 'h:mm a')}
-                {message.edited && ' (edited)'}
+                {message.edited && <span className="ml-1 text-xs opacity-60">(edited)</span>}
               </p>
               
               {/* Action buttons */}
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
                 <button
                   onClick={() => onReply?.(message)}
                   className={cn(
-                    'p-1.5 rounded-lg transition-colors text-xs',
+                    'p-1.5 rounded-lg transition-all duration-200 text-xs hover:scale-110',
                     isOwn
-                      ? 'hover:bg-blue-400/20 text-blue-100'
-                      : 'hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-400'
+                      ? 'hover:bg-blue-400/25 text-blue-100 hover:text-white'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                   )}
                   title="Reply"
                 >
@@ -315,10 +315,10 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
                   <button
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                     className={cn(
-                      'p-1.5 rounded-lg transition-colors text-xs',
+                      'p-1.5 rounded-lg transition-all duration-200 text-xs hover:scale-110',
                       isOwn
-                        ? 'hover:bg-blue-400/20 text-blue-100'
-                        : 'hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-400'
+                        ? 'hover:bg-blue-400/25 text-blue-100 hover:text-white'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                     )}
                     title="Add reaction"
                   >
@@ -327,12 +327,12 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
                   
                   {/* Simple emoji picker */}
                   {showEmojiPicker && (
-                    <div className="absolute top-8 right-0 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-lg p-2 flex gap-1 z-10">
+                    <div className="absolute top-8 right-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border dark:border-slate-700 rounded-xl shadow-xl p-2 flex gap-1 z-20 animate-scale-in">
                       {['👍', '❤️', '😂', '😮', '😢', '😡'].map((emoji) => (
                         <button
                           key={emoji}
                           onClick={() => handleReaction(emoji)}
-                          className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-lg"
+                          className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-lg transition-all duration-200 hover:scale-110"
                         >
                           {emoji}
                         </button>
@@ -350,15 +350,15 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
       
       {/* Avatar for own messages */}
       {isOwn && (
-        <div className="flex-shrink-0 ml-4 mt-1">
+        <div className="flex-shrink-0 ml-3 mt-1">
           {profileImage ? (
             <img
               src={profileImage}
               alt={message.name}
-              className="w-12 h-12 rounded-2xl object-cover shadow-lg ring-2 ring-white dark:ring-slate-800"
+              className="w-10 h-10 rounded-2xl object-cover shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg"
             />
           ) : (
-            <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-lg ring-2 ring-white dark:ring-slate-800">
+            <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg">
               {initials}
             </div>
           )}
