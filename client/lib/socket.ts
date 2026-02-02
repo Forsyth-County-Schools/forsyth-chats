@@ -37,6 +37,7 @@ export interface Message {
   linkPreviews: LinkPreview[];
   edited?: boolean;
   editedAt?: Date;
+  read?: boolean;
 }
 
 export interface SocketEvents {

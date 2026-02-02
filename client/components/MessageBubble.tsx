@@ -6,18 +6,20 @@ import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
 import { useState } from 'react';
 import { getSocket } from '@/lib/socket';
-import { Download, ExternalLink, Reply, Smile } from 'lucide-react';
+import { Download, ExternalLink, Reply, Smile, MoreVertical, Check, CheckCheck } from 'lucide-react';
 
 interface MessageBubbleProps {
   message: Message;
   onReply?: (message: Message) => void;
   replyToMessage?: Message | null;
   userProfiles?: Record<string, { displayName: string; profileImageUrl?: string }>;
+  showMessageMenu?: boolean;
 }
 
-export function MessageBubble({ message, onReply, replyToMessage, userProfiles }: MessageBubbleProps) {
+export function MessageBubble({ message, onReply, replyToMessage, userProfiles, showMessageMenu = true }: MessageBubbleProps) {
   const { name: currentUserName, roomCode } = useUserStore();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showMessageActions, setShowMessageActions] = useState(false);
   const isOwn = message.name === currentUserName;
   
   // Get initials for avatar
@@ -232,6 +234,8 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
         'flex mb-4 group animate-fade-in',
         isOwn ? 'justify-end' : 'justify-start'
       )}
+      onMouseEnter={() => showMessageMenu && setShowMessageActions(true)}
+      onMouseLeave={() => showMessageMenu && setShowMessageActions(false)}
     >
       {/* Avatar for other users */}
       {!isOwn && (
@@ -268,12 +272,18 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
         )}
         
         <div className="relative">
+          {/* Message bubble tail */}
+          <div className={cn(
+            "absolute top-0 w-3 h-3 transform rotate-45",
+            isOwn ? "-right-1 bg-blue-500" : "-left-1 bg-white dark:bg-slate-800"
+          )} />
+          
           <div
             className={cn(
-              'rounded-2xl px-5 py-3 shadow-md transition-all duration-200 group-hover:shadow-lg relative backdrop-blur-sm',
+              'rounded-2xl px-5 py-3 shadow-lg transition-all duration-200 group-hover:shadow-xl relative backdrop-blur-sm border',
               isOwn
-                ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-200/50 dark:shadow-blue-900/30 hover:from-blue-600 hover:to-blue-700'
-                : 'bg-white/95 dark:bg-slate-800/95 border border-slate-200/60 dark:border-slate-700/60 text-slate-900 dark:text-white shadow-slate-200/50 dark:shadow-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
+                ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-200/50 dark:shadow-blue-900/30 hover:from-blue-600 hover:to-blue-700 border-blue-400/20'
+                : 'bg-white/95 dark:bg-slate-800/95 border-slate-200/60 dark:border-slate-700/60 text-slate-900 dark:text-white shadow-slate-200/50 dark:shadow-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
             )}
           >
             {message.message.trim() && (
@@ -286,61 +296,96 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles }
             {renderLinkPreviews()}
             
             <div className="flex items-center justify-between mt-2">
-              <p
-                className={cn(
-                  'text-xs font-medium opacity-70 transition-opacity duration-200',
-                  isOwn ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
+              <div className="flex items-center gap-2">
+                <p
+                  className={cn(
+                    'text-xs font-medium opacity-70 transition-opacity duration-200',
+                    isOwn ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
+                  )}
+                >
+                  {format(new Date(message.timestamp), 'h:mm a')}
+                </p>
+                {message.edited && (
+                  <span className={cn(
+                    'text-xs opacity-60',
+                    isOwn ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
+                  )}>
+                    edited
+                  </span>
                 )}
-              >
-                {format(new Date(message.timestamp), 'h:mm a')}
-                {message.edited && <span className="ml-1 text-xs opacity-60">(edited)</span>}
-              </p>
+                {isOwn && (
+                  <div className="flex items-center gap-1">
+                    {message.read ? (
+                      <CheckCheck className="w-3 h-3 text-blue-200" />
+                    ) : (
+                      <Check className="w-3 h-3 text-blue-200/70" />
+                    )}
+                  </div>
+                )}
+              </div>
               
               {/* Action buttons */}
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                <button
-                  onClick={() => onReply?.(message)}
-                  className={cn(
-                    'p-1.5 rounded-lg transition-all duration-200 text-xs hover:scale-110',
-                    isOwn
-                      ? 'hover:bg-blue-400/25 text-blue-100 hover:text-white'
-                      : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
-                  )}
-                  title="Reply"
-                >
-                  <Reply className="w-3.5 h-3.5" />
-                </button>
-                
-                <div className="relative">
+              {showMessageMenu && (
+                <div className={cn(
+                  'flex items-center gap-1 transition-all duration-200',
+                  showMessageActions ? 'opacity-100' : 'opacity-0'
+                )}>
                   <button
-                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    onClick={() => onReply?.(message)}
                     className={cn(
                       'p-1.5 rounded-lg transition-all duration-200 text-xs hover:scale-110',
                       isOwn
                         ? 'hover:bg-blue-400/25 text-blue-100 hover:text-white'
                         : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                     )}
-                    title="Add reaction"
+                    title="Reply"
                   >
-                    <Smile className="w-3.5 h-3.5" />
+                    <Reply className="w-3.5 h-3.5" />
                   </button>
                   
-                  {/* Simple emoji picker */}
-                  {showEmojiPicker && (
-                    <div className="absolute top-8 right-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border dark:border-slate-700 rounded-xl shadow-xl p-2 flex gap-1 z-20 animate-scale-in">
-                      {['👍', '❤️', '😂', '😮', '😢', '😡'].map((emoji) => (
-                        <button
-                          key={emoji}
-                          onClick={() => handleReaction(emoji)}
-                          className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-lg transition-all duration-200 hover:scale-110"
-                        >
-                          {emoji}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className={cn(
+                        'p-1.5 rounded-lg transition-all duration-200 text-xs hover:scale-110',
+                        isOwn
+                          ? 'hover:bg-blue-400/25 text-blue-100 hover:text-white'
+                          : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                      )}
+                      title="Add reaction"
+                    >
+                      <Smile className="w-3.5 h-3.5" />
+                    </button>
+                    
+                    {/* Enhanced emoji picker */}
+                    {showEmojiPicker && (
+                      <div className="absolute bottom-8 right-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border dark:border-slate-700 rounded-xl shadow-xl p-2 grid grid-cols-6 gap-1 z-20 animate-scale-in">
+                        {['👍', '❤️', '😂', '😮', '😢', '😡', '🎉', '🔥', '👏', '🙌', '💯', '🚀'].map((emoji) => (
+                          <button
+                            key={emoji}
+                            onClick={() => handleReaction(emoji)}
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-lg transition-all duration-200 hover:scale-110"
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    className={cn(
+                      'p-1.5 rounded-lg transition-all duration-200 text-xs hover:scale-110',
+                      isOwn
+                        ? 'hover:bg-blue-400/25 text-blue-100 hover:text-white'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                    )}
+                    title="More options"
+                  >
+                    <MoreVertical className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           
