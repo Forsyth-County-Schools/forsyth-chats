@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
@@ -45,7 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Request logging in development
 if (NODE_ENV === 'development') {
-  app.use((req, _res, next) => {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
     console.log(`${req.method} ${req.path}`);
     next();
   });
@@ -55,7 +55,7 @@ if (NODE_ENV === 'development') {
 app.use('/api', roomRoutes);
 
 // Root endpoint
-app.get('/', (_req, res) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     message: 'Classroom Chat Center API',
     version: '1.0.0',
@@ -64,7 +64,7 @@ app.get('/', (_req, res) => {
 });
 
 // 404 handler
-app.use((_req, res) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
     message: 'Route not found',
@@ -72,7 +72,7 @@ app.use((_req, res) => {
 });
 
 // Error handler
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error:', err);
   res.status(500).json({
     success: false,

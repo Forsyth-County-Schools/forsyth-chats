@@ -45,9 +45,9 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="container mx-auto px-6 py-20 max-w-7xl relative z-10">
+        <div className="container mx-auto px-6 py-16 max-w-6xl relative z-10">
           {/* Hero Section */}
-          <div className="text-center mb-40">
+          <div className="text-center mb-20">
             {/* Floating badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-600/20 to-pink-600/20 border border-red-500/30 backdrop-blur-xl mb-8 animate-fade-in-down">
               <Sparkles className="w-4 h-4 text-red-400" />
@@ -57,14 +57,14 @@ export default function Home() {
             </div>
 
             {/* 3D Logo with advanced effects */}
-            <div className="flex justify-center mb-16 animate-fade-in-up">
+            <div className="flex justify-center mb-8 animate-fade-in-up">
               <div className="relative group">
                 {/* Main logo container */}
-                <div className="relative z-20 bg-gradient-to-br from-red-600 via-red-500 to-pink-600 p-16 rounded-[2.5rem] shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-3">
-                  <MessageSquare className="h-24 w-24 text-white drop-shadow-2xl" strokeWidth={2.5} />
+                <div className="relative z-20 bg-gradient-to-br from-red-600 via-red-500 to-pink-600 p-8 rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-3">
+                  <MessageSquare className="h-16 w-16 text-white drop-shadow-2xl" strokeWidth={2.5} />
                   
                   {/* Inner glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
                 
                 {/* Animated rings */}
@@ -74,23 +74,23 @@ export default function Home() {
                 </div>
                 
                 {/* Orbiting elements */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 animate-spin-slow">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-red-400 rounded-full shadow-lg shadow-red-400/50" />
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-pink-400 rounded-full shadow-lg shadow-pink-400/50" />
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-orange-400 rounded-full shadow-lg shadow-orange-400/50" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 animate-spin-slow">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-red-400 rounded-full shadow-lg shadow-red-400/50" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-pink-400 rounded-full shadow-lg shadow-pink-400/50" />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-orange-400 rounded-full shadow-lg shadow-orange-400/50" />
                 </div>
               </div>
             </div>
 
             {/* Main heading with gradient animation */}
-            <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-16 leading-none animate-fade-in-up animation-delay-200">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-8 leading-none animate-fade-in-up animation-delay-200">
               <span className="bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent inline-block animate-gradient-x">
                 Forsyth Chat
               </span>
             </h1>
             
             {/* Animated stats with modern cards */}
-            <div className="flex flex-wrap justify-center gap-8 mt-20 animate-fade-in-up animation-delay-600 max-w-4xl mx-auto">
+            <div className="flex flex-wrap justify-center gap-4 mt-8 animate-fade-in-up animation-delay-600 max-w-2xl mx-auto">
               {[
                 { value: '100%', label: 'Secure', icon: Shield },
                 { value: '23', label: 'Schools', icon: Users },
@@ -98,29 +98,29 @@ export default function Home() {
               ].map((stat, index) => (
                 <div
                   key={index}
-                  className="group backdrop-blur-xl bg-gradient-to-br from-white/5 to-white/10 rounded-2xl border border-white/10 p-8 min-w-[200px] xl:min-w-[240px] hover:border-red-500/50 transition-all duration-500 hover:scale-110 hover:shadow-2xl hover:shadow-red-500/20"
+                  className="group backdrop-blur-xl bg-gradient-to-br from-white/5 to-white/10 rounded-xl border border-white/10 p-4 min-w-[140px] hover:border-red-500/50 transition-all duration-500 hover:scale-110 hover:shadow-2xl hover:shadow-red-500/20"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <stat.icon className="w-8 h-8 text-red-400 mx-auto mb-4 group-hover:scale-125 transition-transform duration-300" />
-                  <div className="text-5xl font-black bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                  <stat.icon className="w-5 h-5 text-red-400 mx-auto mb-2 group-hover:scale-125 transition-transform duration-300" />
+                  <div className="text-2xl font-black bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-gray-400 font-semibold tracking-wide">{stat.label}</div>
+                  <div className="text-gray-400 font-semibold tracking-wide text-xs">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* CTA Buttons with modern design */}
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 justify-center mb-32 max-w-5xl mx-auto animate-fade-in-up animation-delay-800">
-            <Link href="/create" className="flex-1 lg:max-w-md group">
-              <div className="relative overflow-hidden rounded-3xl">
+          <div className="flex flex-col md:flex-row gap-4 justify-center mb-16 max-w-2xl mx-auto animate-fade-in-up animation-delay-800">
+            <Link href="/create" className="flex-1 md:max-w-xs group">
+              <div className="relative overflow-hidden rounded-xl">
                 {/* Gradient border animation */}
                 <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-pink-600 to-red-600 opacity-100 animate-gradient-x" />
-                <div className="relative m-[2px] bg-black rounded-3xl">
-                  <Button className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-black text-xl lg:text-2xl xl:text-3xl py-8 lg:py-12 px-10 lg:px-12 rounded-3xl shadow-2xl shadow-red-600/30 transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
-                    <span className="relative z-10 flex items-center justify-center gap-3 lg:gap-4">
-                      <Plus className="w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
+                <div className="relative m-[2px] bg-black rounded-xl">
+                  <Button className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-black text-base py-4 px-6 rounded-xl shadow-2xl shadow-red-600/30 transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <Plus className="w-4 h-4" />
                       Create Room
                     </span>
                     {/* Shimmer effect */}
@@ -130,10 +130,10 @@ export default function Home() {
               </div>
             </Link>
             
-            <Link href="/join" className="flex-1 lg:max-w-md group">
-              <Button className="w-full backdrop-blur-xl bg-white/5 hover:bg-white/10 border-2 border-white/10 hover:border-red-500/50 text-white font-black text-xl lg:text-2xl xl:text-3xl py-8 lg:py-12 px-10 lg:px-12 rounded-3xl shadow-2xl transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
-                <span className="relative z-10 flex items-center justify-center gap-3 lg:gap-4">
-                  <LogIn className="w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
+            <Link href="/join" className="flex-1 md:max-w-xs group">
+              <Button className="w-full backdrop-blur-xl bg-white/5 hover:bg-white/10 border-2 border-white/10 hover:border-red-500/50 text-white font-black text-base py-4 px-6 rounded-xl shadow-2xl transition-all duration-500 transform group-hover:scale-[1.02] relative overflow-hidden">
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <LogIn className="w-4 h-4" />
                   Join Room
                 </span>
                 {/* Hover gradient */}
@@ -144,20 +144,20 @@ export default function Home() {
         
           {/* Features Section with bento grid */}
           <div className="animate-fade-in-up animation-delay-1000">
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-8">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4">
                 <span className="text-white">Why </span>
                 <span className="bg-gradient-to-r from-red-400 via-pink-400 to-red-400 bg-clip-text text-transparent animate-gradient-x">
                   Forsyth County
                 </span>
                 <span className="text-white"> Schools?</span>
               </h2>
-              <p className="text-xl lg:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-base text-gray-400 max-w-xl mx-auto leading-relaxed">
                 Built with cutting-edge technology for maximum security and educational excellence
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 lg:gap-10 max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
               {[
                 {
                   icon: Lock,
@@ -186,22 +186,22 @@ export default function Home() {
                   {/* Gradient border */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500`} />
                   
-                  <div className="relative backdrop-blur-xl bg-gradient-to-br from-white/5 to-white/10 rounded-3xl border border-white/10 p-10 h-full transition-all duration-500 group-hover:border-white/30 group-hover:scale-[1.02] group-hover:shadow-2xl">
+                  <div className="relative backdrop-blur-xl bg-gradient-to-br from-white/5 to-white/10 rounded-xl border border-white/10 p-4 h-full transition-all duration-500 group-hover:border-white/30 group-hover:scale-[1.02] group-hover:shadow-2xl">
                     {/* Icon with gradient background */}
-                    <div className={`bg-gradient-to-br ${feature.gradient} w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
-                      <feature.icon className="h-10 w-10 text-white" strokeWidth={2.5} />
+                    <div className={`bg-gradient-to-br ${feature.gradient} w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 shadow-2xl transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                      <feature.icon className="h-6 w-6 text-white" strokeWidth={2.5} />
                     </div>
                     
-                    <h3 className="text-3xl font-black mb-5 text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-red-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-300">
+                    <h3 className="text-lg font-black mb-3 text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-red-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-300">
                       {feature.title}
                     </h3>
                     
-                    <p className="leading-relaxed text-lg text-gray-300 group-hover:text-white transition-colors duration-300">
+                    <p className="leading-relaxed text-sm text-gray-300 group-hover:text-white transition-colors duration-300">
                       {feature.description}
                     </p>
 
                     {/* Decorative corner accent */}
-                    <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-bl-full transition-opacity duration-500`} />
+                    <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-bl-full transition-opacity duration-500`} />
                   </div>
                 </div>
               ))}
@@ -209,10 +209,10 @@ export default function Home() {
           </div>
         
           {/* Modern Footer */}
-          <div className="text-center mt-32 pt-12 border-t border-white/5">
-            <div className="backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 p-6 max-w-2xl mx-auto">
-              <p className="text-gray-400 text-sm leading-relaxed">
-                <Lock className="inline w-4 h-4 mr-2 text-red-400" />
+          <div className="text-center mt-20 pt-8 border-t border-white/5">
+            <div className="backdrop-blur-xl bg-white/5 rounded-xl border border-white/10 p-4 max-w-xl mx-auto">
+              <p className="text-gray-400 text-xs leading-relaxed">
+                <Lock className="inline w-3 h-3 mr-2 text-red-400" />
                 Authorized for use by <span className="text-red-400 font-semibold">Forsyth County Schools</span> students only
               </p>
             </div>
