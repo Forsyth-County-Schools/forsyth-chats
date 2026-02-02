@@ -54,12 +54,10 @@ export function HostSettingsPanel({ className, roomCode }: HostSettingsPanelProp
     return colors[Math.abs(hash) % colors.length];
   };
 
-  // Temporarily show for all users to test UI
-  // TODO: Fix host detection and uncomment this
-  // if (!isHost) {
-  //   console.log('User is not host, hiding settings panel');
-  //   return null;
-  // }
+  if (!isHost) {
+    console.log('User is not host, hiding settings panel');
+    return null;
+  }
 
   return (
     <>
@@ -72,152 +70,151 @@ export function HostSettingsPanel({ className, roomCode }: HostSettingsPanelProp
         <Settings className="h-5 w-5" />
       </Button>
 
-      {/* Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Overlay */}
+      {/* Sidebar Panel */}
+      <div className={cn(
+        "fixed inset-y-0 right-0 z-50 w-80 bg-gray-900 border-l border-gray-800 transform transition-transform duration-300 ease-in-out",
+        isOpen ? "translate-x-0" : "translate-x-full"
+      )}>
+        {/* Overlay */}
+        {isOpen && (
           <div 
-            className="fixed inset-0 bg-black/80 animate-in fade-in duration-200"
+            className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setIsOpen(false)}
           />
-          
-          {/* Content */}
-          <div className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] bg-gray-900 border border-gray-800 rounded-lg p-6 shadow-lg">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Crown className="w-5 h-5 text-yellow-500" />
-                <h2 className="text-lg font-semibold text-white">Host Settings</h2>
+        )}
+        
+        {/* Panel Content */}
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-800">
+            <div className="flex items-center gap-2">
+              <Crown className="w-5 h-5 text-yellow-500" />
+              <h2 className="text-lg font-semibold text-white">Host Settings</h2>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(false)}
+              className="text-gray-400 hover:text-white hover:bg-gray-800"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {/* Room Info */}
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+              <div className="flex items-center gap-2 mb-2">
+                <Crown className="w-4 h-4 text-yellow-500" />
+                <span className="text-sm font-medium text-white">You are the host</span>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-white hover:bg-gray-800"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+              <p className="text-xs text-gray-400">
+                As the host, you can remove participants from this room.
+              </p>
             </div>
 
-            <p className="text-sm text-gray-400 mb-4">
-              Manage participants in your chat room
-            </p>
-
-            <div className="space-y-4">
-              {/* Room Info */}
-              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                <div className="flex items-center gap-2 mb-2">
-                  <Crown className="w-4 h-4 text-yellow-500" />
-                  <span className="text-sm font-medium text-white">You are the host</span>
-                </div>
-                <p className="text-xs text-gray-400">
-                  As the host, you can remove participants from this room.
-                </p>
+            {/* Participants List */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-white">
+                <Users className="w-4 h-4" />
+                Participants ({participants.length})
               </div>
-
-              {/* Participants List */}
+              
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-white">
-                  <Users className="w-4 h-4" />
-                  Participants ({participants.length})
-                </div>
-                
-                <div className="max-h-64 overflow-y-auto space-y-2">
-                  {participants.map((participant) => {
-                    const isCurrentUser = participant === currentUserName;
-                    
-                    return (
-                      <div
-                        key={participant}
-                        className={cn(
-                          "flex items-center gap-3 p-3 rounded-lg border transition-all duration-200",
-                          "bg-gray-800/30 border-gray-700/50 hover:bg-gray-800/50",
-                          isCurrentUser && "bg-blue-900/20 border-blue-700/50"
-                        )}
-                      >
-                        {/* Avatar */}
-                        <div className="relative">
-                          <div className={cn(
-                            "w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold",
-                            isCurrentUser
-                              ? "bg-gradient-to-br from-yellow-500 to-orange-600"
-                              : `bg-gradient-to-br ${getUserColor(participant)}`
-                          )}>
-                            {getInitials(participant)}
-                          </div>
-                          
-                          {isCurrentUser && (
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full flex items-center justify-center">
-                              <Crown className="w-2 h-2 text-white" />
-                            </div>
-                          )}
+                {participants.map((participant) => {
+                  const isCurrentUser = participant === currentUserName;
+                  
+                  return (
+                    <div
+                      key={participant}
+                      className={cn(
+                        "flex items-center gap-3 p-3 rounded-lg border transition-all duration-200",
+                        "bg-gray-800/30 border-gray-700/50 hover:bg-gray-800/50",
+                        isCurrentUser && "bg-blue-900/20 border-blue-700/50"
+                      )}
+                    >
+                      {/* Avatar */}
+                      <div className="relative">
+                        <div className={cn(
+                          "w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold",
+                          isCurrentUser
+                            ? "bg-gradient-to-br from-yellow-500 to-orange-600"
+                            : `bg-gradient-to-br ${getUserColor(participant)}`
+                        )}>
+                          {getInitials(participant)}
                         </div>
-
-                        {/* User Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-white truncate">
-                              {participant}
-                            </span>
-                            {isCurrentUser && (
-                              <span className="text-xs text-blue-400 font-medium bg-blue-500/10 px-2 py-0.5 rounded-full">
-                                You
-                              </span>
-                            )}
-                            {isCurrentUser && (
-                              <span className="text-xs text-yellow-400 font-medium bg-yellow-500/10 px-2 py-0.5 rounded-full">
-                                Host
-                              </span>
-                            )}
+                        
+                        {isCurrentUser && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full flex items-center justify-center">
+                            <Crown className="w-2 h-2 text-white" />
                           </div>
-                        </div>
-
-                        {/* Actions */}
-                        {!isCurrentUser && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              if (confirm(`Are you sure you want to kick ${participant} from the room?`)) {
-                                handleKickUser(participant);
-                              }
-                            }}
-                            className="p-1.5 h-8 w-8 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-900/20 transition-all duration-200"
-                          >
-                            <UserX className="w-4 h-4" />
-                          </Button>
                         )}
                       </div>
-                    );
-                  })}
 
-                  {participants.length === 0 && (
-                    <div className="text-center py-8">
-                      <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                      <p className="text-gray-400 text-sm">No participants in room</p>
+                      {/* User Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-white truncate">
+                            {participant}
+                          </span>
+                          {isCurrentUser && (
+                            <span className="text-xs text-blue-400 font-medium bg-blue-500/10 px-2 py-0.5 rounded-full">
+                              You
+                            </span>
+                          )}
+                          {isCurrentUser && (
+                            <span className="text-xs text-yellow-400 font-medium bg-yellow-500/10 px-2 py-0.5 rounded-full">
+                              Host
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      {!isCurrentUser && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            if (confirm(`Are you sure you want to kick ${participant} from the room?`)) {
+                              handleKickUser(participant);
+                            }
+                          }}
+                          className="p-1.5 h-8 w-8 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-900/20 transition-all duration-200"
+                        >
+                          <UserX className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
+                  );
+                })}
 
-              {/* Warning */}
-              <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-3">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                  <div className="text-xs text-yellow-400">
-                    <p className="font-medium mb-1">Host Responsibilities:</p>
-                    <ul className="space-y-0.5 text-gray-400">
-                      <li>• Only kick users who violate chat rules</li>
-                      <li>• Kicked users cannot rejoin the room</li>
-                      <li>• Use this feature responsibly</li>
-                    </ul>
+                {participants.length === 0 && (
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-400 text-sm">No participants in room</p>
                   </div>
+                )}
+              </div>
+            </div>
+
+            {/* Warning */}
+            <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                <div className="text-xs text-yellow-400">
+                  <p className="font-medium mb-1">Host Responsibilities:</p>
+                  <ul className="space-y-0.5 text-gray-400">
+                    <li>• Only kick users who violate chat rules</li>
+                    <li>• Kicked users cannot rejoin the room</li>
+                    <li>• Use this feature responsibly</li>
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }
