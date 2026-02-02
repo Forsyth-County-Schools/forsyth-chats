@@ -7,13 +7,13 @@ import { Analytics } from '@vercel/analytics/next';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Canvas Dashboard - Forsyth County Schools',
+  title: 'Forsyth Chat - Forsyth County Schools',
   description: 'Secure classroom chat exclusively for Forsyth County Schools in Georgia',
   keywords: 'classroom, chat, forsyth county schools, education, georgia',
   authors: [{ name: 'Forsyth County Schools IT Department' }],
   robots: 'noindex, nofollow', // Keep private for school use
   icons: {
-    icon: 'https://www.csc.edu/media/website/content-assets/images/tlpec/canvas_reversed_logo.png',
+    icon: '/favicon.ico',
   },
   other: {
     'X-Content-Type-Options': 'nosniff',
@@ -34,7 +34,7 @@ export default function RootLayout({
         {/* Content Security Policy for XSS protection */}
         <meta 
           httpEquiv="Content-Security-Policy" 
-          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://ipapi.co https://ipwho.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://forsyth-chats.onrender.com https://ipapi.co https://ipwho.is wss:; frame-src 'self' https://challenges.cloudflare.com;" 
+          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://*.cloudflare.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://forsyth-chats.onrender.com https://ipapi.co https://ipwho.is https://api.ipgeolocation.io https://api.ipify.org https://challenges.cloudflare.com https://*.cloudflare.com wss: ws:; frame-src 'self' https://challenges.cloudflare.com https://*.cloudflare.com; worker-src 'self' blob:; child-src 'self' https://challenges.cloudflare.com;" 
         />
         {/* Force HTTPS in production */}
         <script dangerouslySetInnerHTML={{

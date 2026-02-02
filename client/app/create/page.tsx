@@ -56,13 +56,36 @@ export default function CreatePage() {
   };
 
   useEffect(() => {
-    // Handle Turnstile callback
-    const handleTurnstileSuccess = (event: any) => {
-      setTurnstileToken(event.detail);
-    };
-    
-    window.addEventListener('turnstileSuccess', handleTurnstileSuccess);
-    return () => window.removeEventListener('turnstileSuccess', handleTurnstileSuccess);
+    // Setup Turnstile callback globally
+    if (typeof window !== 'undefined') {
+      window.onTurnstileSuccess = function(token) {
+        setTurnstileToken(token);
+      };
+      
+      // Cleanup function
+      return () => {
+        if (window.onTurnstileSuccess) {
+          window.onTurnstileSuccess = undefined;
+        }
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    // Load Cloudflare Turnstile script if not already loaded
+    if (typeof window !== 'undefined' && !window.turnstile) {
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+      
+      return () => {
+        // Cleanup script if component unmounts
+        const scripts = document.querySelectorAll('script[src*="turnstile"]');
+        scripts.forEach(script => script.remove());
+      };
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -323,6 +346,8 @@ export default function CreatePage() {
                     className="cf-turnstile" 
                     data-sitekey="0x4AAAAAACW20p-WO0bwShk2"
                     data-callback="onTurnstileSuccess"
+                    data-theme="auto"
+                    data-size="normal"
                     role="button"
                     aria-label="Complete security verification"
                   ></div>
@@ -415,14 +440,6 @@ export default function CreatePage() {
           )}
         </div>
 
-        {/* Turnstile Success Handler Script */}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            window.onTurnstileSuccess = function(token) {
-              window.dispatchEvent(new CustomEvent('turnstileSuccess', { detail: token }));
-            };
-          `
-        }} />
         </div>
       </main>
     </GeoBlockWrapper>
