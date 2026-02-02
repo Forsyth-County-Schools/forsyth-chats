@@ -4,6 +4,28 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   
+  // Image domains for development and production
+  images: {
+    domains: [
+      'forsyth-chats.onrender.com',
+      'localhost'
+    ],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4000',
+        pathname: '/api/file/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'forsyth-chats.onrender.com',
+        pathname: '/api/file/**',
+      },
+    ],
+    unoptimized: process.env.NODE_ENV === 'development',
+  },
+  
   // Environment variables that should be available on the client
   env: {
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,

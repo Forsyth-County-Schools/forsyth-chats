@@ -351,7 +351,15 @@ router.get('/file/:filename', (req: Request, res: Response): void => {
 
   // Set proper headers for image serving
   res.setHeader('Content-Type', getContentType(filename));
-  res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+  
+  // Set different cache headers based on environment
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  if (isDevelopment) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  } else {
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // 1 hour in production
+  }
+  
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

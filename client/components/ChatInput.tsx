@@ -224,6 +224,17 @@ export function ChatInput({
                     width={64}
                     height={64}
                     className="w-16 h-16 object-cover rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg border border-slate-200 dark:border-slate-700"
+                    onError={(e) => {
+                      console.error('Failed to load attachment preview:', attachment.url);
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      // Show fallback
+                      const fallback = document.createElement('div');
+                      fallback.className = 'w-16 h-16 rounded-xl bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 border border-slate-200 dark:border-slate-700';
+                      fallback.innerHTML = '<div class="text-xl">🖼️</div>';
+                      target.parentNode?.replaceChild(fallback, target);
+                    }}
+                    unoptimized={process.env.NODE_ENV === 'development'}
                   />
                   <button
                     onClick={() => removeAttachment(index)}

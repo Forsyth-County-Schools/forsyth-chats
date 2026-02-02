@@ -158,6 +158,24 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
                 height={256}
                 className="rounded-xl max-w-sm max-h-64 object-cover cursor-pointer hover:scale-105 transition-transform"
                 onClick={() => window.open(`${SERVER_URL}${attachment.url}`, '_blank')}
+                onError={(e) => {
+                  // Handle image loading errors
+                  console.error('Failed to load image:', attachment.url);
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  // Show fallback
+                  const fallback = document.createElement('div');
+                  fallback.className = 'rounded-xl max-w-sm max-h-64 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm p-4';
+                  fallback.innerHTML = `
+                    <div class="text-center">
+                      <div class="text-2xl mb-2">🖼️</div>
+                      <div>Image unavailable</div>
+                      <div class="text-xs mt-1">${attachment.originalName}</div>
+                    </div>
+                  `;
+                  target.parentNode?.replaceChild(fallback, target);
+                }}
+                unoptimized={process.env.NODE_ENV === 'development'}
               />
             ) : (
               <div className={cn(
@@ -253,6 +271,17 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
               width={40}
               height={40}
               className="w-10 h-10 rounded-2xl object-cover shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg"
+              onError={(e) => {
+                console.error('Failed to load profile image:', profileImage);
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                // Show fallback
+                const fallback = document.createElement('div');
+                fallback.className = 'w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg';
+                fallback.textContent = initials;
+                target.parentNode?.replaceChild(fallback, target);
+              }}
+              unoptimized={process.env.NODE_ENV === 'development'}
             />
           ) : (
             <div className={`w-10 h-10 bg-gradient-to-br ${getUserColor(message.name)} rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg`}>
@@ -411,6 +440,17 @@ export function MessageBubble({ message, onReply, replyToMessage, userProfiles, 
               width={40}
               height={40}
               className="w-10 h-10 rounded-2xl object-cover shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg"
+              onError={(e) => {
+                console.error('Failed to load profile image:', profileImage);
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                // Show fallback
+                const fallback = document.createElement('div');
+                fallback.className = 'w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg';
+                fallback.textContent = initials;
+                target.parentNode?.replaceChild(fallback, target);
+              }}
+              unoptimized={process.env.NODE_ENV === 'development'}
             />
           ) : (
             <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white dark:ring-slate-800 transition-all duration-200 hover:scale-105 hover:shadow-lg">
