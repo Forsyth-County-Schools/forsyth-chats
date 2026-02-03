@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Search, Hash, Menu, X as CloseIcon } from 'lucide-react';
+import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Hash } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
