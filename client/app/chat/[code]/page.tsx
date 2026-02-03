@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Search, Hash } from 'lucide-react';
+import { ArrowLeft, Users, Wifi, WifiOff, MessageSquare, Hash } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -13,6 +13,7 @@ import { CopyButton } from '@/components/CopyButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { WarningNotification } from '@/components/WarningNotification';
 import HostSettingsPanel from '@/components/HostSettingsPanel';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useUserModeration } from '@/lib/userModeration';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
@@ -48,6 +49,7 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [showJumpToBottom, setShowJumpToBottom] = useState(false);
+  const [showParticipantsSheet, setShowParticipantsSheet] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
@@ -331,33 +333,34 @@ export default function ChatPage() {
 
   return (
     <GeoBlockWrapper>
-      <div className="h-screen flex bg-black overflow-hidden">
-        {/* Main Chat Area - Full Width */}
+      {/* Mobile-first responsive layout */}
+      <div className="h-screen flex flex-col bg-black overflow-hidden">
+        {/* Main Chat Area */}
         <div className="flex-1 flex flex-col bg-gray-950">
-          {/* Modern Header */}
-          <header className="bg-gray-900/95 backdrop-blur-md border-b border-gray-800 px-4 py-3">
+          {/* Mobile-optimized Header */}
+          <header className="bg-gray-900/95 backdrop-blur-md border-b border-gray-800 px-3 sm:px-4 py-2 sm:py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                 {/* Back Button */}
                 <Link href="/">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gray-400 hover:text-white hover:bg-gray-800"
+                    className="text-gray-400 hover:text-white hover:bg-gray-800 h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
                   >
-                    <ArrowLeft className="h-5 w-5" />
+                    <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </Link>
 
-                {/* Room Info */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                    <Hash className="w-5 h-5 text-white" />
+                {/* Room Info - Compact on mobile */}
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Hash className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
-                  <div>
-                    <h1 className="text-lg font-bold text-white">Student Chat</h1>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-blue-400 bg-blue-500/10 px-2 py-1 rounded-lg">
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-sm sm:text-lg font-bold text-white truncate">Student Chat</h1>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <span className="font-mono text-xs bg-blue-500/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg text-blue-400 truncate">
                         {roomCode}
                       </span>
                       <CopyButton text={roomCode} />
@@ -366,17 +369,8 @@ export default function ChatPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                {/* Search Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hidden sm:flex text-gray-400 hover:text-white hover:bg-gray-800"
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
-
-                {/* Connection Status */}
+              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                {/* Connection Status - Hidden on mobile, shown on sm+ */}
                 <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/50">
                   {isConnected ? (
                     <>
@@ -394,8 +388,21 @@ export default function ChatPage() {
                   )}
                 </div>
 
-                {/* Participant Count */}
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/50">
+                {/* Mobile Participant Button - Visible only on mobile */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowParticipantsSheet(true)}
+                  className="md:hidden text-gray-400 hover:text-white hover:bg-gray-800 h-8 w-8 relative"
+                >
+                  <Users className="h-4 w-4" />
+                  <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">
+                    {participants.length}
+                  </span>
+                </Button>
+
+                {/* Desktop Participant Count - Hidden on mobile */}
+                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/50">
                   <Users className="h-4 w-4" />
                   <span className="text-sm font-medium text-gray-300">{participants.length}</span>
                 </div>
@@ -409,26 +416,26 @@ export default function ChatPage() {
             </div>
           </header>
 
-          {/* Messages Area - Expanded */}
+          {/* Messages Area - Mobile optimized */}
           <div 
             ref={messagesContainerRef}
-            className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-950 to-black"
+            className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-950 to-black overscroll-none"
           >
-            <div className="max-w-6xl mx-auto px-4 py-6">
+            <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
               {messages.length === 0 ? (
-                <div className="h-full flex items-center justify-center text-center py-20">
-                  <div className="bg-gray-900/50 backdrop-blur-sm p-12 rounded-3xl border border-gray-800 max-w-md">
-                    <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                      <MessageSquare className="h-10 w-10 text-white" />
+                <div className="h-full flex items-center justify-center text-center py-12 sm:py-20">
+                  <div className="bg-gray-900/50 backdrop-blur-sm p-8 sm:p-12 rounded-3xl border border-gray-800 max-w-md">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                      <MessageSquare className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-3">No messages yet</h3>
-                    <p className="text-gray-400 text-lg">Be the first to send a message!</p>
+                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">No messages yet</h3>
+                    <p className="text-gray-400 text-base sm:text-lg">Be the first to send a message!</p>
                   </div>
                 </div>
               ) : (
                 <>
                   {/* Date Separator */}
-                  <div className="flex items-center gap-4 my-6">
+                  <div className="flex items-center gap-4 my-4 sm:my-6">
                     <div className="flex-1 h-px bg-gray-800" />
                     <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">Today</span>
                     <div className="flex-1 h-px bg-gray-800" />
@@ -452,20 +459,21 @@ export default function ChatPage() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Jump to Bottom Button */}
+            {/* Jump to Bottom Button - Mobile optimized */}
             {showJumpToBottom && (
               <Button
                 onClick={scrollToBottom}
-                className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 shadow-lg z-10 animate-fade-in"
+                className="fixed bottom-20 sm:bottom-24 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 sm:px-4 py-2 shadow-lg z-10 animate-fade-in text-sm"
               >
-                <ArrowLeft className="w-4 h-4 mr-2 rotate-90" />
-                Jump to bottom
+                <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2 rotate-90" />
+                <span className="hidden sm:inline">Jump to bottom</span>
+                <span className="sm:hidden">Bottom</span>
               </Button>
             )}
           </div>
 
-          {/* Chat Input */}
-          <div className="bg-gray-900/95 backdrop-blur-md border-t border-gray-800 p-4">
+          {/* Chat Input - Mobile optimized with safe-area support */}
+          <div className="bg-gray-900/95 backdrop-blur-md border-t border-gray-800 p-2 pb-safe-or-2 sm:p-4 sm:pb-safe-or-4">
             <div className="max-w-6xl mx-auto">
               <ChatInput
                 onSendMessage={handleSendMessage}
@@ -479,6 +487,28 @@ export default function ChatPage() {
             </div>
           </div>
         </div>
+
+        {/* Mobile Participants Sheet */}
+        <Sheet open={showParticipantsSheet} onOpenChange={setShowParticipantsSheet}>
+          <SheetContent side="right">
+            <SheetHeader>
+              <SheetTitle>Participants ({participants.length})</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6 space-y-2">
+              {participants.map((participant, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                    {participant.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-white font-medium">{participant}</span>
+                </div>
+              ))}
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {/* Warning Notification */}

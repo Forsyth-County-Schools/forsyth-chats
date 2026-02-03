@@ -32,6 +32,14 @@
     --success-border: #DC2626;
   }
 
+  /* iOS safe-area support */
+  @supports (padding: max(0px)) {
+    body {
+      padding-left: max(0px, env(safe-area-inset-left));
+      padding-right: max(0px, env(safe-area-inset-right));
+    }
+  }
+
   .dark {
     /* Enhanced Dark Theme Variables with better contrast */
     --background: #0A0A0A;
@@ -192,6 +200,15 @@
   
   .animate-shimmer {
     animation: shimmer 2s infinite linear;
+  }
+  
+  /* Safe area padding for mobile input */
+  .pb-safe-or-2 {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+  
+  .pb-safe-or-4 {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }
 

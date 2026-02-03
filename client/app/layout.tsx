@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -33,6 +33,13 @@ export const metadata: Metadata = {
     'X-XSS-Protection': '1; mode=block',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
   },
+};
+
+// Viewport configuration for mobile support
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+  themeColor: '#0f172a', // Dark theme color (slate-900)
 };
 
 export default function RootLayout({
@@ -96,15 +103,15 @@ export default function RootLayout({
           />
         </head>
         <body className={inter.className}>
-          <header className="flex justify-end items-center p-4 gap-4 h-16 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <header className="flex justify-end items-center p-2 sm:p-4 gap-2 sm:gap-4 h-12 sm:h-16 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
             <SignedOut>
               <SignInButton>
-                <button className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors">
+                <button className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors text-sm sm:text-base">
                   Sign In
                 </button>
               </SignInButton>
               <SignUpButton>
-                <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl font-medium text-sm h-10 px-6 cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg">
+                <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl sm:rounded-2xl font-medium text-xs sm:text-sm h-8 sm:h-10 px-4 sm:px-6 cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg">
                   Sign Up
                 </button>
               </SignUpButton>
