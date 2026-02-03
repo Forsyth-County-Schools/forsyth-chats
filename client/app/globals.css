@@ -201,6 +201,15 @@
   .animate-shimmer {
     animation: shimmer 2s infinite linear;
   }
+  
+  /* Safe area padding for mobile input */
+  .pb-safe-or-2 {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+  
+  .pb-safe-or-4 {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
 }
 
 @keyframes scale-in {

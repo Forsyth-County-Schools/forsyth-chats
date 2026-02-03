@@ -64,10 +64,10 @@ const SheetContent = React.forwardRef<
   if (!open) return null
 
   const sideClasses = {
-    left: "left-0 top-0 h-full w-3/4 max-w-sm animate-in slide-in-from-left duration-300",
-    right: "right-0 top-0 h-full w-3/4 max-w-sm animate-in slide-in-from-right duration-300",
-    top: "top-0 left-0 w-full h-3/4 max-h-screen animate-in slide-in-from-top duration-300",
-    bottom: "bottom-0 left-0 w-full h-3/4 max-h-screen animate-in slide-in-from-bottom duration-300",
+    left: "left-0 top-0 h-full w-3/4 max-w-sm animate-slide-in-from-left",
+    right: "right-0 top-0 h-full w-3/4 max-w-sm animate-slide-in-from-right",
+    top: "top-0 left-0 w-full h-3/4 max-h-screen animate-slide-in-from-top",
+    bottom: "bottom-0 left-0 w-full h-3/4 max-h-screen animate-slide-in-from-bottom",
   }
 
   return (

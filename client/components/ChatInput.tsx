@@ -349,7 +349,7 @@ export function ChatInput({
           
           {/* Enhanced hover effect */}
           {(!disabled && !uploading && (message.trim() || attachments.length > 0)) && (
-            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl sm:rounded-2xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           )}
         </Button>
       </form>

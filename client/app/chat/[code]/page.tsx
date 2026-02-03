@@ -473,7 +473,7 @@ export default function ChatPage() {
           </div>
 
           {/* Chat Input - Mobile optimized with safe-area support */}
-          <div className="bg-gray-900/95 backdrop-blur-md border-t border-gray-800 p-2 sm:p-4" style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
+          <div className="bg-gray-900/95 backdrop-blur-md border-t border-gray-800 p-2 pb-safe-or-2 sm:p-4 sm:pb-safe-or-4">
             <div className="max-w-6xl mx-auto">
               <ChatInput
                 onSendMessage={handleSendMessage}
