@@ -264,7 +264,7 @@ export function ChatInput({
         </div>
       )}
       
-      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-end gap-3">
+      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-end gap-2 sm:gap-3">
         <div className="flex-1 relative group">
           <Textarea
             ref={textareaRef}
@@ -274,15 +274,15 @@ export function ChatInput({
             placeholder={disabled ? 'Connection lost...' : 'Type your message...'}
             disabled={disabled || uploading}
             className={cn(
-              'min-h-[52px] max-h-[120px] resize-none rounded-2xl border-2 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm transition-all duration-200 focus:ring-4 pr-24 py-4 px-5 text-base shadow-sm',
+              'min-h-[44px] sm:min-h-[52px] max-h-[120px] resize-none rounded-xl sm:rounded-2xl border-2 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm transition-all duration-200 focus:ring-4 pr-20 sm:pr-24 py-3 sm:py-4 px-4 sm:px-5 text-sm sm:text-base shadow-sm',
               disabled || uploading
                 ? 'border-slate-300 dark:border-slate-600 text-slate-400 dark:text-slate-500 cursor-not-allowed' 
                 : 'border-slate-200 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-500 hover:shadow-md'
             )}
           />
           
-          {/* Enhanced action buttons */}
-          <div className="absolute right-3 top-3 flex items-center gap-1">
+          {/* Enhanced action buttons - Mobile optimized */}
+          <div className="absolute right-2 sm:right-3 top-2 sm:top-3 flex items-center gap-0.5 sm:gap-1">
             <input
               ref={fileInputRef}
               type="file"
@@ -298,11 +298,11 @@ export function ChatInput({
               size="sm"
               onClick={() => fileInputRef.current?.click()}
               disabled={disabled || uploading}
-              className="p-2 h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 hover:scale-110 group/btn"
+              className="p-1.5 sm:p-2 h-7 w-7 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 hover:scale-110 group/btn"
               title="Attach files"
             >
               <Paperclip className={cn(
-                'w-4 h-4 transition-colors',
+                'w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors',
                 uploading ? 'text-blue-500 animate-pulse' : 'text-slate-400 group-hover/btn:text-slate-600 dark:group-hover/btn:text-slate-300'
               )} />
             </Button>
@@ -311,7 +311,7 @@ export function ChatInput({
               type="button"
               variant="ghost"
               size="sm"
-              className="p-2 h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 hover:scale-110 group/btn"
+              className="hidden sm:flex p-2 h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 hover:scale-110 group/btn"
               disabled={disabled}
               title="Add emoji"
             >
@@ -322,7 +322,7 @@ export function ChatInput({
               type="button"
               variant="ghost"
               size="sm"
-              className="p-2 h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 hover:scale-110 group/btn"
+              className="hidden sm:flex p-2 h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 hover:scale-110 group/btn"
               disabled={disabled}
               title="Voice message"
             >
@@ -331,24 +331,25 @@ export function ChatInput({
           </div>
           
           {/* Enhanced hover effect */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
+          <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         </div>
         
+        {/* Mobile-optimized send button with better touch target */}
         <Button
           type="submit"
           disabled={(!message.trim() && attachments.length === 0) || disabled || uploading}
           className={cn(
-            'h-[52px] w-[52px] rounded-2xl shadow-lg transition-all duration-200 relative overflow-hidden group',
+            'h-[44px] w-[44px] sm:h-[52px] sm:w-[52px] rounded-xl sm:rounded-2xl shadow-lg transition-all duration-200 relative overflow-hidden group flex-shrink-0',
             (!message.trim() && attachments.length === 0) || disabled || uploading
               ? 'bg-slate-300 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-600 cursor-not-allowed'
               : 'bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 hover:from-blue-600 hover:via-blue-700 hover:to-purple-700 shadow-blue-200/50 dark:shadow-blue-900/30 hover:shadow-xl transform hover:scale-105 active:scale-95'
           )}
         >
-          <Send className="w-5 h-5 text-white relative z-10" />
+          <Send className="w-4 h-4 sm:w-5 sm:h-5 text-white relative z-10" />
           
           {/* Enhanced hover effect */}
           {(!disabled && !uploading && (message.trim() || attachments.length > 0)) && (
-            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl sm:rounded-2xl" />
           )}
         </Button>
       </form>
